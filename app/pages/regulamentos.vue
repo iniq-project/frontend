@@ -2,6 +2,10 @@
 definePageMeta({
   layout: 'default',
 })
+
+useHead({
+  title: 'INIQ » Regulamentos Técnicos',
+})
 </script>
 
 <template>

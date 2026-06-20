@@ -372,6 +372,10 @@
 </template>
 
 <script setup lang="ts">
+useHead({
+  title: 'INIQ » Normas Técnicas & Normalização',
+})
+
 const activeTab = ref("venda")
 const modalOpen = ref(false)
 const modalMode = ref("venda")

@@ -2,6 +2,10 @@
 definePageMeta({
   layout: 'default',
 })
+
+useHead({
+  title: 'INIQ » Validação, Verificação e Certificação de Produtos a Importar',
+})
 </script>
 
 <template>

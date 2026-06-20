@@ -15,6 +15,7 @@
 
       <main class="center-content">
         <slot />
+        <PartnerCarousel />
       </main>
 
       <NavigatorBarComponent />
@@ -26,6 +27,7 @@
 import HeaderComponent from "~/Components/ui/HeaderComponent.vue"
 import SideBarComponent from "~/Components/ui/SideBarComponent.vue"
 import NavigatorBarComponent from "~/Components/ui/NavigatorBarComponent.vue"
+import PartnerCarousel from "~/Components/ui/PartnerCarousel.vue"
 </script>
 
 <style scoped>
@@ -52,5 +54,12 @@ import NavigatorBarComponent from "~/Components/ui/NavigatorBarComponent.vue"
 .center-content {
   padding: 2rem 2rem;
   overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.center-content > :first-child {
+  flex: 1;
 }
 </style>
