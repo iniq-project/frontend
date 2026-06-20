@@ -1,331 +1,369 @@
 <template>
-  <div class="new-layout">
-    <header class="new-header">
-      <div class="logo-left">
-        <img src="/iniq-logo.png" alt="INIQ" />
-      </div>
-      <div class="header-center">
-        <h1>Normas Técnicas & Normalização</h1>
-      </div>
-      <div class="logo-right">
-        <img src="/gov-mindcom-t.png" alt="Governo de Angola" />
-      </div>
-    </header>
-
-    <div class="main-container">
-      <aside class="sidebar-left">
-        <div class="sidebar-content">
-          <div class="eyebrow">Quem Somos</div>
-          <h2 class="main-title">
-            O Instituto Nacional das Infra-Estruturas da Qualidade
-          </h2>
-          <div class="about-text">
-            <p>
-              Criado pelo Decreto Presidencial n.º 95/21, de Abril de 2021, o
-              Instituto Nacional das Infra-Estruturas da Qualidade (INIQ) é um
-              instituto público dotado de personalidade jurídica e autonomia
-              administrativa, financeira e patrimonial, sob superintendência do
-              Ministério da Indústria e Comércio.
-            </p>
-            <p>
-              Ao INIQ compete coordenar, supervisionar e desenvolver o Sistema
-              Nacional da Qualidade, integrando as componentes de normalização,
-              metrologia, ensaios, certificação e acreditação.
-            </p>
-          </div>
+  <div class="combined-card">
+    <div class="dg-top">
+      <div class="dg-photo-wrapper">
+        <img
+          class="dg-photo"
+          src="/chefe-normalizacao.png"
+          alt="Chefe do Departamento de Normalização"
+        />
+        <div class="dg-details">
+          <h3>Dra. Inês Cabral</h3>
+          <p class="role">Chefe do Departamento de Normalização</p>
         </div>
+      </div>
+      <div class="dg-message">
+        <h4>Mensagem do Responsável</h4>
+        <p>
+          “A normalização é o ponto de partida da qualidade. Construímos, com as
+          comissões técnicas, as referências que dão confiança ao mercado.”
+        </p>
+      </div>
+    </div>
 
-        <div class="sidebar-footer">
-          <div class="gov-info">
-            Palácio de Vidro, Largo 17 de Setembro, Luanda
-          </div>
-          <div class="lang-btns">
-            <button class="active">PT</button>
-            <button>EN</button>
-          </div>
+    <div class="quality-policy-section">
+      <h4>Política de Qualidade para Normalização</h4>
+      <p>
+        O INIQ compromete-se a coordenar e desenvolver o sistema nacional de
+        normalização de Angola, garantindo a conformidade com as melhores
+        práticas internacionais, promovendo a participação transparente de todas
+        as partes interessadas, e garantindo que as normas angolanas apoiem a
+        inovação, a competitividade empresarial e a proteção do consumidor, com
+        foco na melhoria contínua e excelência.
+      </p>
+    </div>
+
+    <div class="tabs-bar">
+      <div class="tabs">
+        <button
+          :class="['tab-btn', { 'is-active': activeTab === 'venda' }]"
+          @click="activeTab = 'venda'"
+        >
+          <span class="n">01</span> Venda de Normas
+        </button>
+        <button
+          :class="['tab-btn', { 'is-active': activeTab === 'consulta' }]"
+          @click="activeTab = 'consulta'"
+        >
+          <span class="n">02</span> Projectos em Consulta Pública
+        </button>
+      </div>
+    </div>
+
+    <div v-if="activeTab === 'venda'" class="tab-panel">
+      <div class="panel-head">
+        <span class="eyebrow">Venda de Normas</span>
+        <h2>Catálogo nacional de normas</h2>
+        <p>
+          Pesquise as normas em vigor e solicite a sua aquisição. Ao clicar em
+          <b>Solicitar</b>, abre-se o formulário de pedido com pagamento por
+          Referência Multicaixa ou Multicaixa Express.
+        </p>
+      </div>
+
+      <div class="catalog-toolbar">
+        <div class="catalog-search">
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+          >
+            <circle cx="11" cy="11" r="7"></circle>
+            <path d="m21 21-4.3-4.3"></path>
+          </svg>
+          <input
+            type="text"
+            placeholder="Pesquisar por referência ou título…"
+            aria-label="Pesquisar normas"
+          />
         </div>
-      </aside>
+        <div class="catalog-filter">
+          <button class="chip is-active">Todos</button>
+          <button class="chip">Alimentar</button>
+          <button class="chip">Construção</button>
+          <button class="chip">Ambiente</button>
+          <button class="chip">Gestão</button>
+        </div>
+      </div>
 
-      <main class="center-content">
-        <div class="combined-card">
-          <div class="dg-top">
-            <div class="dg-photo-wrapper">
-              <img
-                class="dg-photo"
-                src="/chefe-normalizacao.png"
-                alt="Chefe do Departamento de Normalização"
-              />
-              <div class="dg-details">
-                <h3>Dra. Inês Cabral</h3>
-                <p class="role">Chefe do Departamento de Normalização</p>
+      <div class="catalog">
+        <div class="catalog-item" v-for="norma in normas" :key="norma.code">
+          <div class="catalog-item-top">
+            <div class="catalog-item-code">{{ norma.code }}</div>
+            <span class="badge badge--sector badge--green">{{
+              norma.sector
+            }}</span>
+            <div class="catalog-item-price">
+              <span class="price-value">{{ formatPrice(norma.price) }}</span>
+              <span class="price-currency">AOA</span>
+            </div>
+            <button class="btn btn--primary" @click="openModal('venda', norma)">
+              Solicitar
+            </button>
+          </div>
+          <h3 class="catalog-item-title">{{ norma.title }}</h3>
+        </div>
+      </div>
+    </div>
+
+    <div v-if="activeTab === 'consulta'" class="tab-panel">
+      <div class="panel-head">
+        <span class="eyebrow">Projectos-Normas em Consulta Pública</span>
+        <h2>Participe na elaboração das normas</h2>
+        <p>
+          Os projectos abaixo estão em fase de consulta pública. Qualquer
+          interessado pode submeter contribuições dentro do prazo indicado.
+        </p>
+      </div>
+      <div class="consulta">
+        <article
+          class="consulta-item"
+          v-for="projeto in projetosConsulta"
+          :key="projeto.code"
+        >
+          <div>
+            <div class="consulta-tags">
+              <span class="consulta-code">{{ projeto.code }}</span>
+              <span class="badge badge--sector">{{ projeto.sector }}</span>
+            </div>
+            <h3>{{ projeto.title }}</h3>
+            <p class="consulta-desc">
+              {{ projeto.description }}
+            </p>
+            <div class="consulta-bar">
+              <span :style="{ width: projeto.progress + '%' }"></span>
+            </div>
+          </div>
+          <div class="consulta-deadline">
+            <span :class="['deadline-pill', { urgent: projeto.urgent }]"
+              >Termina {{ projeto.deadline }}</span
+            >
+            <button
+              class="btn btn--green"
+              @click="openModal('contrib', projeto)"
+            >
+              Contribuir
+            </button>
+          </div>
+        </article>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal -->
+  <div
+    v-if="modalOpen"
+    class="modal"
+    :class="{ open: modalOpen }"
+    @click.self="closeModal"
+  >
+    <div class="modal-scrim" @click="closeModal"></div>
+    <div
+      class="modal-panel"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="modalTitle"
+    >
+      <div class="modal-head">
+        <div>
+          <span class="eyebrow" id="modalEyebrow">{{ modalEyebrow }}</span>
+          <h3 id="modalTitle">{{ modalTitle }}</h3>
+          <div class="modal-ref" id="modalRef">{{ modalRef }}</div>
+        </div>
+        <button class="modal-close" @click="closeModal" aria-label="Fechar">
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+          >
+            <path d="M6 6l12 12M18 6 6 18"></path>
+          </svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div v-if="!formSubmitted" class="form-wrap" id="formWrap">
+          <form @submit.prevent="handleSubmit">
+            <div class="field-row">
+              <div class="field">
+                <label for="f-nome"
+                  >Nome completo <span class="req">*</span></label
+                >
+                <input
+                  type="text"
+                  id="f-nome"
+                  name="nome"
+                  required
+                  placeholder="Nome do requerente"
+                  v-model="formData.nome"
+                />
+              </div>
+              <div class="field">
+                <label for="f-entidade">Entidade / Empresa</label>
+                <input
+                  type="text"
+                  id="f-entidade"
+                  name="entidade"
+                  placeholder="Opcional"
+                  v-model="formData.entidade"
+                />
               </div>
             </div>
-            <div class="dg-message">
-              <h4>Mensagem do Responsável</h4>
-              <p>
-                “A normalização é o ponto de partida da qualidade. Construímos,
-                com as comissões técnicas, as referências que dão confiança ao
-                mercado.”
-              </p>
+            <div class="field-row">
+              <div class="field">
+                <label for="f-email">E-mail <span class="req">*</span></label>
+                <input
+                  type="email"
+                  id="f-email"
+                  name="email"
+                  required
+                  placeholder="nome@exemplo.ao"
+                  v-model="formData.email"
+                />
+              </div>
+              <div class="field">
+                <label for="f-tel">Telefone <span class="req">*</span></label>
+                <input
+                  type="tel"
+                  id="f-tel"
+                  name="telefone"
+                  required
+                  placeholder="+244 9XX XXX XXX"
+                  v-model="formData.telefone"
+                />
+              </div>
             </div>
-          </div>
-
-          <div class="quality-policy-section">
-            <h4>Política de Qualidade para Normalização</h4>
-            <p>
-              O INIQ compromete-se a coordenar e desenvolver o sistema nacional de
-              normalização de Angola, garantindo a conformidade com as melhores práticas
-              internacionais, promovendo a participação transparente de todas as
-              partes interessadas, e garantindo que as normas angolanas apoiem a
-              inovação, a competitividade empresarial e a proteção do consumidor,
-              com foco na melhoria contínua e excelência.
-            </p>
-          </div>
-
-          <div class="tabs-bar">
-            <div class="tabs">
-              <button
-                :class="['tab-btn', { 'is-active': activeTab === 'venda' }]"
-                @click="activeTab = 'venda'"
-              >
-                <span class="n">01</span> Venda de Normas
+            <div class="field-row">
+              <div class="field">
+                <label for="f-nif">NIF / BI</label>
+                <input
+                  type="text"
+                  id="f-nif"
+                  name="nif"
+                  placeholder="Para emissão de recibo"
+                  v-model="formData.nif"
+                />
+              </div>
+              <div class="field">
+                <label for="f-formato"
+                  >Formato <span class="req">*</span></label
+                >
+                <select
+                  id="f-formato"
+                  name="formato"
+                  required
+                  v-model="formData.formato"
+                >
+                  <option value="PDF (digital)">PDF (digital)</option>
+                  <option value="Impresso">Impresso</option>
+                  <option value="Digital + Impresso">Digital + Impresso</option>
+                </select>
+              </div>
+            </div>
+            <div v-if="modalMode === 'contrib'" class="field" id="contribField">
+              <label for="f-contrib">A sua contribuição</label>
+              <textarea
+                id="f-contrib"
+                name="contribuicao"
+                placeholder="Indique o artigo/secção e a redacção alternativa proposta, com a respectiva fundamentação."
+                v-model="formData.contribuicao"
+              ></textarea>
+            </div>
+            <div v-if="modalMode === 'venda'" class="field" id="payField">
+              <label>Meio de pagamento <span class="req">*</span></label>
+              <div class="pay-options">
+                <label
+                  class="pay-opt"
+                  :class="{
+                    sel: formData.pagamento === 'Referência Multicaixa',
+                  }"
+                >
+                  <input
+                    type="radio"
+                    name="pagamento"
+                    value="Referência Multicaixa"
+                    v-model="formData.pagamento"
+                    checked
+                  />
+                  <span
+                    ><b>Referência Multicaixa</b
+                    ><span>Pague em ATM ou homebanking</span></span
+                  >
+                </label>
+                <label
+                  class="pay-opt"
+                  :class="{ sel: formData.pagamento === 'Multicaixa Express' }"
+                >
+                  <input
+                    type="radio"
+                    name="pagamento"
+                    value="Multicaixa Express"
+                    v-model="formData.pagamento"
+                  />
+                  <span
+                    ><b>Multicaixa Express</b
+                    ><span>QR code ou link por SMS</span></span
+                  >
+                </label>
+              </div>
+            </div>
+            <div class="field">
+              <label for="f-obs">Observações</label>
+              <textarea
+                id="f-obs"
+                name="observacoes"
+                placeholder="Informação adicional (opcional)"
+                v-model="formData.observacoes"
+              ></textarea>
+            </div>
+            <div class="modal-foot">
+              <button type="button" class="btn btn--ghost" @click="closeModal">
+                Cancelar
               </button>
-              <button
-                :class="['tab-btn', { 'is-active': activeTab === 'consulta' }]"
-                @click="activeTab = 'consulta'"
-              >
-                <span class="n">02</span> Projectos em Consulta Pública
-              </button>
-            </div>
-          </div>
-
-          <div v-if="activeTab === 'venda'" class="tab-panel">
-            <div class="panel-head">
-              <span class="eyebrow">Venda de Normas</span>
-              <h2>Catálogo nacional de normas</h2>
-              <p>
-                Pesquise as normas em vigor e solicite a sua aquisição. Ao
-                clicar em <b>Solicitar</b>, abre-se o formulário de pedido com
-                pagamento por Referência Multicaixa ou Multicaixa Express.
-              </p>
-            </div>
-
-            <div class="catalog-toolbar">
-              <div class="catalog-search">
+              <button type="submit" class="btn btn--primary" id="submitBtn">
+                {{
+                  modalMode === "contrib"
+                    ? "Enviar contribuição"
+                    : "Submeter pedido"
+                }}
                 <svg
                   viewBox="0 0 24 24"
                   fill="none"
                   stroke="currentColor"
-                  stroke-width="2"
+                  stroke-width="2.2"
                   stroke-linecap="round"
+                  stroke-linejoin="round"
                 >
-                  <circle cx="11" cy="11" r="7"></circle>
-                  <path d="m21 21-4.3-4.3"></path>
+                  <path d="M5 12h14M13 6l6 6-6 6"></path>
                 </svg>
-                <input
-                  type="text"
-                  placeholder="Pesquisar por referência ou título…"
-                  aria-label="Pesquisar normas"
-                />
-              </div>
-              <div class="catalog-filter">
-                <button class="chip is-active">Todos</button>
-                <button class="chip">Alimentar</button>
-                <button class="chip">Construção</button>
-                <button class="chip">Ambiente</button>
-                <button class="chip">Gestão</button>
-              </div>
+              </button>
             </div>
-
-            <div class="catalog">
-              <div class="catalog-item" v-for="norma in normas" :key="norma.code">
-                <div class="catalog-item-top">
-                  <div class="catalog-item-code">{{ norma.code }}</div>
-                  <span class="badge badge--sector badge--green">{{ norma.sector }}</span>
-                  <div class="catalog-item-price">
-                    <span class="price-value">{{ formatPrice(norma.price) }}</span>
-                    <span class="price-currency">AOA</span>
-                  </div>
-                  <button class="btn btn--primary" @click="openModal('venda', norma)">Solicitar</button>
-                </div>
-                <h3 class="catalog-item-title">{{ norma.title }}</h3>
-              </div>
-            </div>
-          </div>
-
-          <div v-if="activeTab === 'consulta'" class="tab-panel">
-            <div class="panel-head">
-              <span class="eyebrow">Projectos-Normas em Consulta Pública</span>
-              <h2>Participe na elaboração das normas</h2>
-              <p>
-                Os projectos abaixo estão em fase de consulta pública. Qualquer
-                interessado pode submeter contribuições dentro do prazo
-                indicado.
-              </p>
-            </div>
-            <div class="consulta">
-              <article class="consulta-item" v-for="projeto in projetosConsulta" :key="projeto.code">
-                <div>
-                  <div class="consulta-tags">
-                    <span class="consulta-code">{{ projeto.code }}</span>
-                    <span class="badge badge--sector">{{ projeto.sector }}</span>
-                  </div>
-                  <h3>{{ projeto.title }}</h3>
-                  <p class="consulta-desc">
-                    {{ projeto.description }}
-                  </p>
-                  <div class="consulta-bar">
-                    <span :style="{ width: projeto.progress + '%' }"></span>
-                  </div>
-                </div>
-                <div class="consulta-deadline">
-                  <span :class="['deadline-pill', { urgent: projeto.urgent }]">Termina {{ projeto.deadline }}</span>
-                  <button class="btn btn--green" @click="openModal('contrib', projeto)">Contribuir</button>
-                </div>
-              </article>
-            </div>
-          </div>
+          </form>
         </div>
-      </main>
 
-      <aside class="sidebar-right">
-        <NuxtLink to="/" class="back-btn">← Voltar à Página Inicial</NuxtLink>
-        <h2>Serviços</h2>
-        <nav class="services-list">
-          <NuxtLink to="/normas-tecnicas" class="service-item active">
-            <span class="n">01</span>
-            <span>Normas Técnicas & Normalização</span>
-          </NuxtLink>
-          <NuxtLink to="/metrologia" class="service-item">
-            <span class="n">02</span>
-            <span>Metrologia</span>
-          </NuxtLink>
-          <a href="#" class="service-item">
-            <span class="n">03</span>
-            <span>Registo, Cadastro e Acreditação</span>
-          </a>
-          <NuxtLink to="/importacao" class="service-item">
-            <span class="n">04</span>
-            <span>Validação, Verificação e Certificação de Produtos a Importar</span>
-          </NuxtLink>
-          <NuxtLink to="/formacao" class="service-item">
-            <span class="n">05</span>
-            <span>Formação e Qualificação em Qualidade</span>
-          </NuxtLink>
-          <a href="#" class="service-item">
-            <span class="n">06</span>
-            <span>Conformidade de Rótulos e Embalagens</span>
-          </a>
-          <a href="#" class="service-item">
-            <span class="n">07</span>
-            <span>Regulamentos Técnicos</span>
-          </a>
-          <a href="#" class="service-item">
-            <span class="n">08</span>
-            <span>Prémio Nacional da Qualidade</span>
-          </a>
-        </nav>
-      </aside>
-    </div>
-
-    <!-- Modal -->
-    <div v-if="modalOpen" class="modal" :class="{ open: modalOpen }" @click.self="closeModal">
-      <div class="modal-scrim" @click="closeModal"></div>
-      <div class="modal-panel" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
-        <div class="modal-head">
-          <div>
-            <span class="eyebrow" id="modalEyebrow">{{ modalEyebrow }}</span>
-            <h3 id="modalTitle">{{ modalTitle }}</h3>
-            <div class="modal-ref" id="modalRef">{{ modalRef }}</div>
-          </div>
-          <button class="modal-close" @click="closeModal" aria-label="Fechar">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-              <path d="M6 6l12 12M18 6 6 18"></path>
+        <div v-if="formSubmitted" class="modal-success" id="successState">
+          <div class="ok">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.4"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M20 6 9 17l-5-5"></path>
             </svg>
-          </button>
-        </div>
-        <div class="modal-body">
-          <div v-if="!formSubmitted" class="form-wrap" id="formWrap">
-            <form @submit.prevent="handleSubmit">
-              <div class="field-row">
-                <div class="field">
-                  <label for="f-nome">Nome completo <span class="req">*</span></label>
-                  <input type="text" id="f-nome" name="nome" required placeholder="Nome do requerente" v-model="formData.nome" />
-                </div>
-                <div class="field">
-                  <label for="f-entidade">Entidade / Empresa</label>
-                  <input type="text" id="f-entidade" name="entidade" placeholder="Opcional" v-model="formData.entidade" />
-                </div>
-              </div>
-              <div class="field-row">
-                <div class="field">
-                  <label for="f-email">E-mail <span class="req">*</span></label>
-                  <input type="email" id="f-email" name="email" required placeholder="nome@exemplo.ao" v-model="formData.email" />
-                </div>
-                <div class="field">
-                  <label for="f-tel">Telefone <span class="req">*</span></label>
-                  <input type="tel" id="f-tel" name="telefone" required placeholder="+244 9XX XXX XXX" v-model="formData.telefone" />
-                </div>
-              </div>
-              <div class="field-row">
-                <div class="field">
-                  <label for="f-nif">NIF / BI</label>
-                  <input type="text" id="f-nif" name="nif" placeholder="Para emissão de recibo" v-model="formData.nif" />
-                </div>
-                <div class="field">
-                  <label for="f-formato">Formato <span class="req">*</span></label>
-                  <select id="f-formato" name="formato" required v-model="formData.formato">
-                    <option value="PDF (digital)">PDF (digital)</option>
-                    <option value="Impresso">Impresso</option>
-                    <option value="Digital + Impresso">Digital + Impresso</option>
-                  </select>
-                </div>
-              </div>
-              <div v-if="modalMode === 'contrib'" class="field" id="contribField">
-                <label for="f-contrib">A sua contribuição</label>
-                <textarea id="f-contrib" name="contribuicao" placeholder="Indique o artigo/secção e a redacção alternativa proposta, com a respectiva fundamentação." v-model="formData.contribuicao"></textarea>
-              </div>
-              <div v-if="modalMode === 'venda'" class="field" id="payField">
-                <label>Meio de pagamento <span class="req">*</span></label>
-                <div class="pay-options">
-                  <label class="pay-opt" :class="{ sel: formData.pagamento === 'Referência Multicaixa' }">
-                    <input type="radio" name="pagamento" value="Referência Multicaixa" v-model="formData.pagamento" checked />
-                    <span><b>Referência Multicaixa</b><span>Pague em ATM ou homebanking</span></span>
-                  </label>
-                  <label class="pay-opt" :class="{ sel: formData.pagamento === 'Multicaixa Express' }">
-                    <input type="radio" name="pagamento" value="Multicaixa Express" v-model="formData.pagamento" />
-                    <span><b>Multicaixa Express</b><span>QR code ou link por SMS</span></span>
-                  </label>
-                </div>
-              </div>
-              <div class="field">
-                <label for="f-obs">Observações</label>
-                <textarea id="f-obs" name="observacoes" placeholder="Informação adicional (opcional)" v-model="formData.observacoes"></textarea>
-              </div>
-              <div class="modal-foot">
-                <button type="button" class="btn btn--ghost" @click="closeModal">Cancelar</button>
-                <button type="submit" class="btn btn--primary" id="submitBtn">
-                  {{ modalMode === 'contrib' ? 'Enviar contribuição' : 'Submeter pedido' }}
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M5 12h14M13 6l6 6-6 6"></path>
-                  </svg>
-                </button>
-              </div>
-            </form>
           </div>
-
-          <div v-if="formSubmitted" class="modal-success" id="successState">
-            <div class="ok">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M20 6 9 17l-5-5"></path>
-              </svg>
-            </div>
-            <h3 id="successTitle">{{ successTitle }}</h3>
-            <p id="successMsg">{{ successMsg }}</p>
-            <div class="order-ref" id="orderRef">{{ orderRef }}</div>
-            <div class="modal-foot" style="justify-content: center;">
-              <button type="button" class="btn btn--primary" @click="closeModal">Concluir</button>
-            </div>
+          <h3 id="successTitle">{{ successTitle }}</h3>
+          <p id="successMsg">{{ successMsg }}</p>
+          <div class="order-ref" id="orderRef">{{ orderRef }}</div>
+          <div class="modal-foot" style="justify-content: center">
+            <button type="button" class="btn btn--primary" @click="closeModal">
+              Concluir
+            </button>
           </div>
         </div>
       </div>
@@ -333,77 +371,122 @@
   </div>
 </template>
 
-<script setup>
-const activeTab = ref('venda')
+<script setup lang="ts">
+const activeTab = ref("venda")
 const modalOpen = ref(false)
-const modalMode = ref('venda')
-const modalEyebrow = ref('Venda de Normas')
-const modalTitle = ref('Solicitar Norma')
-const modalRef = ref('')
+const modalMode = ref("venda")
+const modalEyebrow = ref("Venda de Normas")
+const modalTitle = ref("Solicitar Norma")
+const modalRef = ref("")
 const formSubmitted = ref(false)
-const successTitle = ref('Pedido submetido com sucesso')
-const successMsg = ref('Receberá por e-mail os dados de pagamento (Referência Multicaixa). Após confirmação, a norma fica imediatamente disponível na sua área reservada.')
-const orderRef = ref('')
+const successTitle = ref("Pedido submetido com sucesso")
+const successMsg = ref(
+  "Receberá por e-mail os dados de pagamento (Referência Multicaixa). Após confirmação, a norma fica imediatamente disponível na sua área reservada.",
+)
+const orderRef = ref("")
 
 const normas = ref([
-  { code: 'NA 0042:2025', title: 'Águas de consumo humano — Requisitos de qualidade', sector: 'Ambiente', price: 12500 },
-  { code: 'NA 0309:2024', title: 'Cimento Portland — Especificações e ensaios', sector: 'Construção', price: 15000 },
-  { code: 'NA 0756:2023', title: 'Segurança de brinquedos — Requisitos gerais', sector: 'Gestão', price: 9800 },
+  {
+    code: "NA 0042:2025",
+    title: "Águas de consumo humano — Requisitos de qualidade",
+    sector: "Ambiente",
+    price: 12500,
+  },
+  {
+    code: "NA 0309:2024",
+    title: "Cimento Portland — Especificações e ensaios",
+    sector: "Construção",
+    price: 15000,
+  },
+  {
+    code: "NA 0756:2023",
+    title: "Segurança de brinquedos — Requisitos gerais",
+    sector: "Gestão",
+    price: 9800,
+  },
 ])
 
 const projetosConsulta = ref([
-  { code: 'prNA 1187:2026', title: 'Rotulagem de produtos alimentares pré-embalados', sector: 'Alimentar', description: 'Requisitos de informação obrigatória, declaração nutricional e alergénios na rotulagem de géneros alimentícios.', deadline: '30 Jun 2026', progress: 62, urgent: false },
-  { code: 'prNA 1402:2026', title: 'Sistemas de gestão da qualidade — Fundamentos e vocabulário', sector: 'Gestão', description: 'Princípios, conceitos e terminologia de base para os sistemas de gestão da qualidade.', deadline: '15 Jul 2026', progress: 38, urgent: false },
-  { code: 'prNA 0991:2026', title: 'Blocos de betão para alvenaria — Requisitos', sector: 'Construção', description: 'Especificações dimensionais, resistência mecânica e métodos de ensaio para blocos de betão.', deadline: '12 Jun 2026', progress: 88, urgent: true },
+  {
+    code: "prNA 1187:2026",
+    title: "Rotulagem de produtos alimentares pré-embalados",
+    sector: "Alimentar",
+    description:
+      "Requisitos de informação obrigatória, declaração nutricional e alergénios na rotulagem de géneros alimentícios.",
+    deadline: "30 Jun 2026",
+    progress: 62,
+    urgent: false,
+  },
+  {
+    code: "prNA 1402:2026",
+    title: "Sistemas de gestão da qualidade — Fundamentos e vocabulário",
+    sector: "Gestão",
+    description:
+      "Princípios, conceitos e terminologia de base para os sistemas de gestão da qualidade.",
+    deadline: "15 Jul 2026",
+    progress: 38,
+    urgent: false,
+  },
+  {
+    code: "prNA 0991:2026",
+    title: "Blocos de betão para alvenaria — Requisitos",
+    sector: "Construção",
+    description:
+      "Especificações dimensionais, resistência mecânica e métodos de ensaio para blocos de betão.",
+    deadline: "12 Jun 2026",
+    progress: 88,
+    urgent: true,
+  },
 ])
 
 const formData = ref({
-  nome: '',
-  entidade: '',
-  email: '',
-  telefone: '',
-  nif: '',
-  formato: 'PDF (digital)',
-  contribuicao: '',
-  pagamento: 'Referência Multicaixa',
-  observacoes: '',
+  nome: "",
+  entidade: "",
+  email: "",
+  telefone: "",
+  nif: "",
+  formato: "PDF (digital)",
+  contribuicao: "",
+  pagamento: "Referência Multicaixa",
+  observacoes: "",
 })
 
-const formatPrice = (price) => {
-  return price.toLocaleString('pt-PT')
+const formatPrice = (price: number) => {
+  return price.toLocaleString("pt-PT")
 }
 
-const openModal = (mode, item) => {
+const openModal = (mode: string, item: any) => {
   modalMode.value = mode
   formSubmitted.value = false
-  
-  if (mode === 'venda') {
-    modalEyebrow.value = 'Venda de Normas'
-    modalTitle.value = 'Solicitar Norma'
+
+  if (mode === "venda") {
+    modalEyebrow.value = "Venda de Normas"
+    modalTitle.value = "Solicitar Norma"
     modalRef.value = `${item.code} — ${item.title}`
-    successTitle.value = 'Pedido submetido com sucesso'
+    successTitle.value = "Pedido submetido com sucesso"
     successMsg.value = `Receberá por e-mail os dados de pagamento (${formData.value.pagamento}). Após confirmação, a norma fica imediatamente disponível na sua área reservada.`
   } else {
-    modalEyebrow.value = 'Consulta Pública'
-    modalTitle.value = 'Submeter Contribuição'
+    modalEyebrow.value = "Consulta Pública"
+    modalTitle.value = "Submeter Contribuição"
     modalRef.value = `${item.code} — ${item.title}`
-    successTitle.value = 'Contribuição enviada com sucesso'
-    successMsg.value = 'A sua contribuição foi registada e será analisada pela Comissão Técnica responsável. Receberá por e-mail o resultado do tratamento.'
+    successTitle.value = "Contribuição enviada com sucesso"
+    successMsg.value =
+      "A sua contribuição foi registada e será analisada pela Comissão Técnica responsável. Receberá por e-mail o resultado do tratamento."
   }
 
   // Reset form
   formData.value = {
-    nome: '',
-    entidade: '',
-    email: '',
-    telefone: '',
-    nif: '',
-    formato: 'PDF (digital)',
-    contribuicao: '',
-    pagamento: 'Referência Multicaixa',
-    observacoes: '',
+    nome: "",
+    entidade: "",
+    email: "",
+    telefone: "",
+    nif: "",
+    formato: "PDF (digital)",
+    contribuicao: "",
+    pagamento: "Referência Multicaixa",
+    observacoes: "",
   }
-  
+
   modalOpen.value = true
 }
 
@@ -420,200 +503,8 @@ const handleSubmit = () => {
 </script>
 
 <style scoped>
-.new-layout {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  background: linear-gradient(135deg, #f0f4f8 0%, #e9eff6 100%);
-}
-
 .tab-panel {
   display: block !important;
-}
-
-.new-header {
-  display: grid;
-  grid-template-columns: 1fr 2fr 1fr;
-  align-items: center;
-  padding: 1.25rem 2.5rem;
-  background: white;
-  border-bottom: 1px solid #d0d9e3;
-  box-shadow: 0 2px 8px rgba(10, 58, 99, 0.08);
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  flex-shrink: 0;
-}
-
-.logo-left,
-.logo-right {
-  display: flex;
-  align-items: center;
-  height: 80px;
-  width: 100%;
-}
-
-.logo-left img {
-  height: 70px;
-  width: auto;
-  max-height: 70px;
-  object-fit: contain;
-}
-
-.logo-right img {
-  height: 48px;
-  width: auto;
-  max-height: 48px;
-  object-fit: contain;
-}
-
-.logo-left {
-  justify-content: flex-start;
-}
-
-.logo-right {
-  justify-content: flex-end;
-}
-
-.header-center {
-  text-align: center;
-}
-
-.header-center h1 {
-  margin: 0;
-  font-size: 1.5rem;
-  color: #0a3a63;
-  font-weight: 700;
-  line-height: 1.3;
-}
-
-.main-container {
-  display: grid;
-  grid-template-columns: 420px 1fr 380px;
-  gap: 0;
-  padding: 0;
-  max-width: 100%;
-  margin: 0;
-  width: 100%;
-  box-sizing: border-box;
-  flex: 1;
-  min-height: 0;
-}
-
-.sidebar-left {
-  position: sticky;
-  top: 0;
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  background: linear-gradient(180deg, #0f172a 0%, #1e293b 100%);
-  padding: 1.25rem 1.25rem 0 1.25rem;
-  overflow-y: auto;
-  margin-top: 0;
-  border-radius: 0;
-}
-
-.sidebar-content {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  min-height: 0;
-  padding-top: 2rem;
-}
-
-.eyebrow {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-family: monospace;
-  font-size: 0.75rem;
-  text-transform: uppercase;
-  letter-spacing: 0.15em;
-  color: #5cb947;
-  margin-bottom: 1rem;
-  margin-top: 0;
-}
-
-.eyebrow::before {
-  content: '';
-  width: 20px;
-  height: 2px;
-  background: linear-gradient(90deg, #5cb947, #2ba9e0);
-}
-
-.main-title {
-  font-family: 'Archivo', system-ui, sans-serif;
-  font-size: clamp(1.5rem, 2vw, 1.85rem);
-  font-weight: 800;
-  color: white;
-  line-height: 1.2;
-  margin: 0 0 1.25rem 0;
-}
-
-.about-text {
-  color: #cbd5e1;
-  line-height: 1.7;
-  font-size: 0.95rem;
-}
-
-.about-text p {
-  margin-bottom: 1.25rem;
-}
-
-.about-text p:last-child {
-  margin-bottom: 0;
-}
-
-.sidebar-footer {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
-  margin-top: auto;
-  padding-top: 1.5rem;
-  padding-bottom: 1.5rem;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-  flex-shrink: 0;
-}
-
-.gov-info {
-  font-family: monospace;
-  font-size: 0.85rem;
-  color: #94a3b8;
-  line-height: 1.5;
-}
-
-.lang-btns {
-  display: flex;
-  gap: 0.5rem;
-}
-
-.lang-btns button {
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  background: rgba(255, 255, 255, 0.08);
-  color: white;
-  padding: 0.35rem 0.75rem;
-  font-size: 0.8rem;
-  border-radius: 6px;
-  cursor: pointer;
-  font-weight: 600;
-}
-
-.lang-btns button:hover {
-  background: rgba(255, 255, 255, 0.15);
-  border-color: rgba(255, 255, 255, 0.3);
-}
-
-.lang-btns button.active {
-  background: #5cb947;
-  border-color: #5cb947;
-  color: #0f172a;
-}
-
-.center-content {
-  padding: 2rem 2rem;
-  overflow-y: auto;
 }
 
 .combined-card {
@@ -766,8 +657,23 @@ const handleSubmit = () => {
 }
 
 .panel-head .eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: monospace;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
   color: #2ba9e0;
   margin-bottom: 0.5rem;
+  margin-top: 0;
+}
+
+.panel-head .eyebrow::before {
+  content: "";
+  width: 20px;
+  height: 2px;
+  background: linear-gradient(90deg, #5cb947, #2ba9e0);
 }
 
 .panel-head h2 {
@@ -1044,91 +950,6 @@ const handleSubmit = () => {
   color: #dc2626;
 }
 
-.sidebar-right {
-  position: sticky;
-  top: 0;
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  padding: 1.5rem 1.5rem 0 1.5rem;
-  margin-top: 0;
-  overflow-y: auto;
-  background: white;
-  border-radius: 0;
-  box-shadow: none;
-}
-
-.back-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  color: #0a3a63;
-  text-decoration: none;
-  font-weight: 600;
-  margin-bottom: 1.5rem;
-  font-size: 0.95rem;
-  padding: 0.75rem 1.25rem;
-  border: 2px solid #0a3a63;
-  border-radius: 8px;
-  background: white;
-  transition: all 0.2s;
-}
-
-.back-btn:hover {
-  background: #eff6fc;
-  border-color: #0a3a63;
-  color: #0a3a63;
-}
-
-.sidebar-right h2 {
-  font-size: 1.35rem;
-  color: #0a3a63;
-  margin: 0 0 1.25rem 0;
-  font-weight: 700;
-  border-left: 4px solid #5cb947;
-  padding-left: 0.75rem;
-}
-
-.services-list {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-.service-item {
-  display: grid;
-  grid-template-columns: auto 1fr;
-  gap: 0.75rem;
-  align-items: flex-start;
-  text-decoration: none;
-  padding: 0.75rem 0.85rem;
-  border-radius: 8px;
-  transition: all 0.2s;
-  border: 1px solid transparent;
-}
-
-.service-item:hover,
-.service-item.active {
-  background: linear-gradient(135deg, #f0f7f2 0%, #eff6fc 100%);
-  border-color: #d0e8d6;
-}
-
-.service-item .n {
-  font-weight: 800;
-  color: #5cb947;
-  font-size: 1.1rem;
-  font-family: 'Archivo', system-ui, sans-serif;
-  min-width: 28px;
-}
-
-.service-item span:last-child {
-  color: #0a3a63;
-  font-size: 0.95rem;
-  font-weight: 500;
-  line-height: 1.4;
-}
-
 /* Modal Styles */
 .modal {
   position: fixed;
@@ -1158,7 +979,8 @@ const handleSubmit = () => {
   overflow-y: auto;
   background: white;
   border-radius: 16px;
-  box-shadow: 0 24px 56px -18px rgba(10, 58, 99, 0.30), 0 8px 20px -10px rgba(16, 33, 48, 0.12);
+  box-shadow: 0 24px 56px -18px rgba(10, 58, 99, 0.3),
+    0 8px 20px -10px rgba(16, 33, 48, 0.12);
 }
 
 .modal-head {
@@ -1175,12 +997,29 @@ const handleSubmit = () => {
 }
 
 .modal-head .eyebrow {
-  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: monospace;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: #2ba9e0;
+  margin-bottom: 0.5rem;
+  margin-top: 0;
+}
+
+.modal-head .eyebrow::before {
+  content: "";
+  width: 20px;
+  height: 2px;
+  background: linear-gradient(90deg, #5cb947, #2ba9e0);
 }
 
 .modal-head h3 {
   font-size: 22px;
   margin: 0;
+  color: #0a3a63;
 }
 
 .modal-ref {
@@ -1235,7 +1074,7 @@ const handleSubmit = () => {
   padding: 12px 14px;
   border: 1px solid #d0d9e3;
   border-radius: 6px;
-  font-family: 'IBM Plex Sans', system-ui, sans-serif;
+  font-family: "IBM Plex Sans", system-ui, sans-serif;
   font-size: 15px;
   color: #0f172a;
   background: white;
@@ -1296,8 +1135,9 @@ const handleSubmit = () => {
 
 .pay-opt b {
   font-size: 14.5px;
-  font-family: 'Archivo', system-ui, sans-serif;
+  font-family: "Archivo", system-ui, sans-serif;
   display: block;
+  color: #0a3a63;
 }
 
 .pay-opt span:last-child {
@@ -1340,6 +1180,7 @@ const handleSubmit = () => {
 .modal-success h3 {
   font-size: 24px;
   margin-bottom: 10px;
+  color: #0a3a63;
 }
 
 .modal-success p {

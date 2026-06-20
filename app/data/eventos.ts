@@ -1,13 +1,35 @@
-/* INIQ — Eventos: shared data source.
-   NOTE: backend-ready — replace this array with a fetch() to the events API.
-   eventos.html (listagem) and evento.html (detalhe) consume window.EVENTS. */
-window.EVENTS = [
+export interface Evento {
+  id: number
+  slug: string
+  titulo: string
+  tipo: string
+  data: string
+  horaIni: string
+  horaFim: string
+  local: string
+  cidade: string
+  img: string
+  inscricao: boolean
+  preco: string
+  resumo: string
+  corpo: string[]
+  programa: Array<{ h: string; t: string }>
+}
+
+export const eventos: Evento[] = [
   {
-    id: 1, slug: 'semana-nacional-qualidade-2026',
+    id: 1,
+    slug: 'semana-nacional-qualidade-2026',
     titulo: 'Semana Nacional da Qualidade 2026',
-    tipo: 'Conferência', data: '2026-06-17', horaIni: '08h30', horaFim: '17h00',
-    local: 'Centro de Convenções de Talatona', cidade: 'Luanda',
-    img: 'assets/cover-qualidade.jpg', inscricao: true, preco: 'Entrada gratuita · inscrição obrigatória',
+    tipo: 'Conferência',
+    data: '2026-06-17',
+    horaIni: '08h30',
+    horaFim: '17h00',
+    local: 'Centro de Convenções de Talatona',
+    cidade: 'Luanda',
+    img: 'assets/cover-qualidade.jpg',
+    inscricao: true,
+    preco: 'Entrada gratuita · inscrição obrigatória',
     resumo: 'O maior encontro anual dedicado à qualidade em Angola, reunindo instituições, empresas e especialistas em torno da normalização, metrologia e avaliação da conformidade.',
     corpo: [
       'A Semana Nacional da Qualidade é o principal evento do calendário do INIQ, um espaço de reflexão e partilha sobre o papel da qualidade no desenvolvimento económico do país.',
@@ -23,11 +45,18 @@ window.EVENTS = [
     ]
   },
   {
-    id: 2, slug: 'workshop-regulamentos-importacao',
+    id: 2,
+    slug: 'workshop-regulamentos-importacao',
     titulo: 'Workshop — Aplicação de Regulamentos Técnicos na Importação',
-    tipo: 'Formação', data: '2026-07-03', horaIni: '09h00', horaFim: '13h00',
-    local: 'Sede do INIQ — Palácio do Vidro', cidade: 'Luanda',
-    img: 'assets/cover-seguranca.jpg', inscricao: true, preco: '15 000 AOA por participante',
+    tipo: 'Formação',
+    data: '2026-07-03',
+    horaIni: '09h00',
+    horaFim: '13h00',
+    local: 'Sede do INIQ — Palácio do Vidro',
+    cidade: 'Luanda',
+    img: 'assets/cover-seguranca.jpg',
+    inscricao: true,
+    preco: '15 000 AOA por participante',
     resumo: 'Sessão prática dirigida a importadores e despachantes sobre a aplicação dos regulamentos técnicos e a certificação de produtos destinados à importação.',
     corpo: [
       'Este workshop aborda, de forma prática, os requisitos de conformidade aplicáveis aos produtos importados e os procedimentos de validação, verificação e certificação junto do INIQ.',
@@ -42,14 +71,21 @@ window.EVENTS = [
     ]
   },
   {
-    id: 3, slug: 'cerimonia-premio-nacional-qualidade',
+    id: 3,
+    slug: 'cerimonia-premio-nacional-qualidade',
     titulo: 'Cerimónia do Prémio Nacional da Qualidade',
-    tipo: 'Cerimónia', data: '2026-07-22', horaIni: '18h00', horaFim: '20h30',
-    local: 'Auditório — Palácio do Vidro', cidade: 'Luanda',
-    img: 'assets/cover-qualidade.jpg', inscricao: true, preco: 'Por convite',
+    tipo: 'Cerimónia',
+    data: '2026-07-22',
+    horaIni: '18h00',
+    horaFim: '20h30',
+    local: 'Auditório — Palácio do Vidro',
+    cidade: 'Luanda',
+    img: 'assets/cover-qualidade.jpg',
+    inscricao: true,
+    preco: 'Por convite',
     resumo: 'Cerimónia solene de entrega do Prémio Nacional da Qualidade às organizações distinguidas pela excelência da sua gestão.',
     corpo: [
-      'A cerimónia do Prémio Nacional da Qualidade reconhece publicamente as organizações angolanas que se destacam pelas suas práticas de gestão e cultura de melhoria contínua.',
+      'A cerimónia do Prémio Nacional da Qualidade reconhece publicamente as organizações angolanas que se destacam pelas boas práticas de gestão e cultura de melhoria contínua.',
       'O evento reúne os finalistas, o júri, representantes do Governo e convidados do tecido empresarial nacional.'
     ],
     programa: [
@@ -60,14 +96,21 @@ window.EVENTS = [
     ]
   },
   {
-    id: 4, slug: 'jornada-metrologia-industria',
+    id: 4,
+    slug: 'jornada-metrologia-industria',
     titulo: 'Jornada de Metrologia para a Indústria',
-    tipo: 'Conferência', data: '2026-08-14', horaIni: '09h00', horaFim: '16h00',
-    local: 'Hotel de Convenções', cidade: 'Benguela',
-    img: 'assets/cover-metrologia.jpg', inscricao: true, preco: 'Entrada gratuita · inscrição obrigatória',
+    tipo: 'Conferência',
+    data: '2026-08-14',
+    horaIni: '09h00',
+    horaFim: '16h00',
+    local: 'Hotel de Convenções',
+    cidade: 'Benguela',
+    img: 'assets/cover-metrologia.jpg',
+    inscricao: true,
+    preco: 'Entrada gratuita · inscrição obrigatória',
     resumo: 'Encontro técnico sobre rastreabilidade metrológica, calibração e o impacto das medições fiáveis na competitividade industrial.',
     corpo: [
-      'A Jornada de Metrologia leva à região de Benguela o debate sobre a importância das medições rigorosas para a indústria, o comércio e a protecção do consumidor.',
+      'A Jornada de Metrologia leva à região de Benguela o debate sobre a importância das medições rigorosas para a indústria, o comércio e a proteção do consumidor.',
       'Inclui demonstrações do Laboratório Nacional de Metrologia e sessões sobre os serviços de calibração disponíveis para as empresas.'
     ],
     programa: [
@@ -77,11 +120,18 @@ window.EVENTS = [
     ]
   },
   {
-    id: 5, slug: 'formacao-auditores-iso-9001',
+    id: 5,
+    slug: 'formacao-auditores-iso-9001',
     titulo: 'Formação de Auditores Internos ISO 9001',
-    tipo: 'Formação', data: '2026-09-08', horaIni: '08h30', horaFim: '17h30',
-    local: 'Centro de Formação do INIQ', cidade: 'Luanda',
-    img: 'assets/cover-qualidade.jpg', inscricao: true, preco: '45 000 AOA · 3 dias',
+    tipo: 'Formação',
+    data: '2026-09-08',
+    horaIni: '08h30',
+    horaFim: '17h30',
+    local: 'Centro de Formação do INIQ',
+    cidade: 'Luanda',
+    img: 'assets/cover-qualidade.jpg',
+    inscricao: true,
+    preco: '45 000 AOA · 3 dias',
     resumo: 'Curso intensivo de três dias para capacitar auditores internos de sistemas de gestão da qualidade segundo a norma ISO 9001.',
     corpo: [
       'Programa intensivo que prepara os participantes para planear, conduzir e reportar auditorias internas a sistemas de gestão da qualidade.',
@@ -93,34 +143,54 @@ window.EVENTS = [
       { h: 'Dia 3', t: 'Relato, seguimento e exame final' }
     ]
   },
-  /* ---- evento passado (para o separador "Realizados") ---- */
   {
-    id: 6, slug: 'forum-iniq-cplp-luanda-2026',
+    id: 6,
+    slug: 'forum-iniq-cplp-luanda-2026',
     titulo: 'Reunião do Fórum das IE da Qualidade da CPLP',
-    tipo: 'Conferência', data: '2026-05-19', horaIni: '09h00', horaFim: '17h00',
-    local: 'Sede do INIQ — Palácio do Vidro', cidade: 'Luanda',
-    img: 'assets/cover-cplp.jpg', inscricao: false, preco: 'Evento institucional',
+    tipo: 'Conferência',
+    data: '2026-05-19',
+    horaIni: '09h00',
+    horaFim: '17h00',
+    local: 'Sede do INIQ — Palácio do Vidro',
+    cidade: 'Luanda',
+    img: 'assets/cover-cplp.jpg',
+    inscricao: false,
+    preco: 'Evento institucional',
     resumo: 'Encontro dos institutos da qualidade dos países da CPLP para harmonização de normas, metrologia e acreditação.',
     corpo: [
       'Angola acolheu a reunião do Fórum das Infra-Estruturas da Qualidade da CPLP, que reuniu representantes dos institutos lusófonos.',
-      'Em agenda estiveram a harmonização de normas, o reconhecimento mútuo de certificados e a cooperação técnica entre os Estados-membros.'
+      'Em agenda estavam a harmonização de normas, o reconhecimento mútuo de certificados e a cooperação técnica entre os Estados-membros.'
     ],
     programa: []
   }
-];
+]
 
-window.EVENTS_UTIL = {
-  meses: ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'],
-  mesesLongo: ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'],
-  // "fixed" today for this demo so upcoming/past split is stable
-  hoje: '2026-06-09',
-  parse: function (iso) { return new Date(iso + 'T00:00:00'); },
-  dia: function (iso) { return this.parse(iso).getDate(); },
-  mesAbrev: function (iso) { return this.meses[this.parse(iso).getMonth()]; },
-  dataLonga: function (iso) {
-    var d = this.parse(iso);
-    return d.getDate() + ' de ' + this.mesesLongo[d.getMonth()] + ' de ' + d.getFullYear();
-  },
-  isPast: function (iso) { return iso < this.hoje; },
-  byId: function (id) { return window.EVENTS.find(function (e) { return String(e.id) === String(id); }); }
-};
+export const meses = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez']
+export const mesesLongo = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro']
+
+export const hoje = '2026-06-09'
+
+export function parseData(iso: string) {
+  return new Date(iso + 'T00:00:00')
+}
+
+export function getDia(iso: string) {
+  return parseData(iso).getDate()
+}
+
+export function getMesAbrev(iso: string) {
+  return meses[parseData(iso).getMonth()]
+}
+
+export function getDataLonga(iso: string) {
+  const d = parseData(iso)
+  return d.getDate() + ' de ' + mesesLongo[d.getMonth()] + ' de ' + d.getFullYear()
+}
+
+export function isPast(iso: string) {
+  return iso < hoje
+}
+
+export function getEventoById(id: string | number) {
+  return eventos.find(e => String(e.id) === String(id))
+}
