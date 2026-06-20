@@ -3,6 +3,10 @@ definePageMeta({
   layout: 'default',
 })
 
+useHead({
+  title: 'INIQ » Contactos',
+})
+
 const formSubmitted = ref(false)
 const formData = ref({
   nome: '',

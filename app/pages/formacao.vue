@@ -3,6 +3,10 @@ definePageMeta({
   layout: 'default',
 })
 
+useHead({
+  title: 'INIQ » Formação e Qualificação em Qualidade',
+})
+
 const activeTab = ref('catalogo')
 const modalOpen = ref(false)
 const modalMode = ref('detalhe')

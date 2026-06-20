@@ -2,6 +2,10 @@
 definePageMeta({
   layout: 'default',
 })
+
+useHead({
+  title: 'INIQ » Registo, Cadastro e Acreditação',
+})
 </script>
 
 <template>

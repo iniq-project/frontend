@@ -2,6 +2,10 @@
 definePageMeta({
   layout: 'default',
 })
+
+useHead({
+  title: 'INIQ » Conformidade de Rótulos e Embalagens',
+})
 </script>
 
 <template>
