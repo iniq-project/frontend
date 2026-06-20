@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="pt"><head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Notícias — INIQ</title>
+<meta name="description" content="Notícias e actualidade do Instituto Nacional das Infra-Estruturas da Qualidade (INIQ).">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800&amp;family=IBM+Plex+Sans:wght@400;500;600;700&amp;family=IBM+Plex+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="normas.css">
+<link rel="stylesheet" href="noticias.css">
+<link rel="stylesheet" href="shell.css"></head>
+<body class="shell-page" data-active="noticias" data-eyebrow="Notícias" data-title="Notícias" data-intro="A actualidade do Instituto: normas, metrologia, formação, cooperação e eventos.">
+
+<!-- ============ UTILITY BAR ============ -->
+
+
+<!-- ============ HEADER ============ -->
+
+
+<!-- ============ SUBPAGE HERO ============ -->
+
+
+<main class="section">
+  <div class="container">
+
+    <!-- filtros -->
+    <div class="catalog-filter" id="newsFilter" style="margin-bottom:32px;">
+      <button class="chip is-active" data-cat="todas">Todas</button>
+      <button class="chip" data-cat="Normalização">Normalização</button>
+      <button class="chip" data-cat="Metrologia">Metrologia</button>
+      <button class="chip" data-cat="Qualidade">Qualidade</button>
+      <button class="chip" data-cat="Formação">Formação</button>
+      <button class="chip" data-cat="CPLP">CPLP</button>
+    </div>
+
+    <!-- featured (rendered by JS) -->
+    <div id="newsFeatured"></div>
+
+    <!-- grid (rendered by JS) -->
+    <div class="news-grid" id="newsGrid"></div>
+    <div id="newsEmpty" style="display:none;padding:50px;text-align:center;color:var(--slate-500);">Nenhuma notícia nesta categoria.</div>
+
+  </div>
+</main>
+
+<!-- ============ FOOTER ============ -->
+
+
+<!-- ============ MOBILE NAV ============ -->
+
+
+<script src="script.js"></script>
+<script src="cms-store.js"></script>
+<script src="noticias.js"></script>
+
+
+<script src="shell.js"></script></body></html>

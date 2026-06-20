@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="pt"><head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Eventos — INIQ</title>
+<meta name="description" content="Agenda de eventos do Instituto Nacional das Infra-Estruturas da Qualidade (INIQ): conferências, formações e cerimónias.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800&amp;family=IBM+Plex+Sans:wght@400;500;600;700&amp;family=IBM+Plex+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="normas.css">
+<link rel="stylesheet" href="eventos.css">
+<link rel="stylesheet" href="shell.css"></head>
+<body class="shell-page" data-active="eventos" data-eyebrow="Agenda" data-title="Eventos" data-intro="Conferências, formações, workshops e cerimónias promovidos pelo INIQ.">
+
+
+
+
+
+
+
+<main class="section">
+  <div class="container">
+
+    <div class="ev-tabs" id="evTabs" role="tablist">
+      <button class="is-active" data-mode="proximos">Próximos <span class="c" id="countProx">0</span></button>
+      <button data-mode="passados">Realizados <span class="c" id="countPass">0</span></button>
+    </div>
+
+    <div id="evFeatured"></div>
+    <div class="ev-grid" id="evGrid"></div>
+    <div class="ev-empty" id="evEmpty">Não há eventos nesta categoria de momento.</div>
+
+  </div>
+</main>
+
+
+
+
+
+<script src="script.js"></script>
+<script src="cms-store.js"></script>
+<script src="eventos.js"></script>
+
+
+<script src="shell.js"></script></body></html>

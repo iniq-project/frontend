@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>INIQ — Gestão de Conteúdos (CMS)</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="admin.css">
+</head>
+<body>
+
+<!-- ============ LOGIN ============ -->
+<div class="login" id="login" data-screen-label="Admin — Login">
+  <div class="login__card">
+    <img class="login__logo" src="assets/iniq-logo.png" alt="INIQ">
+    <h1>Gestão de Conteúdos</h1>
+    <p>Área reservada do INIQ — notícias, eventos e cursos.</p>
+    <form id="loginForm" novalidate>
+      <div class="login__field">
+        <label for="lgUser">Utilizador</label>
+        <input type="text" id="lgUser" autocomplete="username" value="admin">
+      </div>
+      <div class="login__field">
+        <label for="lgPass">Palavra-passe</label>
+        <input type="password" id="lgPass" autocomplete="current-password" placeholder="••••••••">
+      </div>
+      <button type="submit" class="login__btn">Entrar</button>
+      <div class="login__err" id="lgErr"></div>
+    </form>
+    <div class="login__hint"><b>Demonstração:</b> utilizador <span class="mono">admin</span> · palavra-passe <span class="mono">iniq2026</span></div>
+  </div>
+</div>
+
+<!-- ============ APP ============ -->
+<div class="app" id="app">
+  <!-- sidebar -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar__brand">
+      <img src="assets/iniq-logo.png" alt="INIQ">
+      <div><b>INIQ CMS</b><br><span>Gestão de conteúdos</span></div>
+    </div>
+    <nav class="sidebar__nav">
+      <button data-view="dashboard" class="is-active">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>
+        Painel
+      </button>
+      <button data-view="news">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h13v16H6a2 2 0 0 1-2-2V4Z"/><path d="M17 8h3v10a2 2 0 0 1-2 2"/><path d="M8 8h6M8 12h6M8 16h4"/></svg>
+        Notícias <span class="count" id="cNews">0</span>
+      </button>
+      <button data-view="events">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 9h18M8 3v4M16 3v4"/></svg>
+        Eventos <span class="count" id="cEvents">0</span>
+      </button>
+      <button data-view="courses">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 10-10-5L2 10l10 5 10-5Z"/><path d="M6 12v5c0 1 2.7 2.5 6 2.5s6-1.5 6-2.5v-5"/></svg>
+        Cursos <span class="count" id="cCourses">0</span>
+      </button>
+    </nav>
+    <div class="sidebar__foot">
+      <a href="index.html" target="_blank">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+        Ver o site público
+      </a>
+      <button id="logoutBtn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5M21 12H9"/></svg>
+        Terminar sessão
+      </button>
+    </div>
+  </aside>
+
+  <!-- main -->
+  <div class="main">
+    <div class="topbar">
+      <div style="display:flex;align-items:center;gap:14px;">
+        <button class="burger-admin" id="adminBurger" aria-label="Menu">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+        </button>
+        <div>
+          <div class="crumb" id="crumb">Painel</div>
+          <h2 id="viewTitle">Painel</h2>
+        </div>
+      </div>
+      <div class="who">
+        <span>Administrador</span>
+        <span class="av">AD</span>
+      </div>
+    </div>
+    <div class="content" id="content"></div>
+    <div style="padding:18px 28px;color:#93a3b1;font-size:12.5px;">© <span id="yr">2026</span> INIQ · Gestão de Conteúdos. Os conteúdos são guardados neste navegador (demonstração).</div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="cms-store.js"></script>
+<script src="admin.js"></script>
+</body>
+</html>

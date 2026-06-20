@@ -1,0 +1,93 @@
+/* ============================================================
+   INIQ — Shared page shell (3-column chrome for inner pages)
+   [ LEFT: page identity ] [ CENTER: page content, scrolls ] [ RIGHT: menu ]
+   Loads AFTER styles.css. Chrome only — page content keeps its own CSS.
+   ============================================================ */
+
+html, body { height: 100%; }
+body.shell-page { overflow: hidden; background: var(--ink); margin: 0; }
+
+.hs-app {
+  position: fixed; inset: 0;
+  display: grid;
+  grid-template-columns: minmax(280px, 24%) 1fr 268px;
+  background: var(--mist);
+}
+
+/* ---------- LEFT · identity ---------- */
+.hs-info { position: relative; overflow: hidden; background: var(--ink); color: #eaf1f7; display: flex; flex-direction: column; padding: clamp(28px,3.2vw,48px); }
+.hs-info::before { content: ""; position: absolute; inset: 0; background: radial-gradient(560px 420px at 115% -8%, rgba(27,143,214,.34), transparent 60%), radial-gradient(480px 460px at -20% 115%, rgba(52,161,63,.30), transparent 58%); pointer-events: none; }
+.hs-info__grid { position: absolute; inset: 0; background-image: linear-gradient(rgba(255,255,255,.04) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.04) 1px, transparent 1px); background-size: 54px 54px; mask-image: radial-gradient(80% 70% at 30% 30%, #000 35%, transparent 80%); pointer-events: none; }
+.hs-info > * { position: relative; z-index: 1; }
+.hs-info__brand { display: flex; align-items: center; gap: 13px; }
+.hs-info__brand img.iniq { height: 50px; width: auto; }
+.hs-info__brand .divider { width: 1px; height: 36px; background: rgba(255,255,255,.2); }
+.hs-info__brand img.gov { height: 36px; width: auto; }
+.hs-info__body { margin-top: auto; padding-top: 36px; }
+.hs-info__welcome { font-family: var(--font-mono); font-size: 12px; letter-spacing: .2em; text-transform: uppercase; color: var(--green-400); display: inline-flex; align-items: center; gap: 10px; }
+.hs-info__welcome::before { content: ""; width: 24px; height: 2px; background: var(--green-500); }
+.hs-info h1 { font-family: var(--font-display); font-weight: 700; letter-spacing: -.02em; font-size: clamp(28px, 2.8vw, 46px); line-height: 1.05; color: #fff; margin: 18px 0 0; }
+.hs-info p.lead { color: #b4c4d4; font-size: clamp(14px, 1.05vw, 17px); margin-top: 18px; max-width: 440px; }
+.hs-info__back { margin-top: 22px; display: inline-flex; align-items: center; gap: 8px; font-size: 13.5px; font-weight: 600; color: #9fd0f0; }
+.hs-info__back svg { width: 16px; height: 16px; }
+.hs-info__back:hover { color: #fff; }
+
+/* person card (e.g. chefe de departamento) */
+.hs-person { display: flex; gap: 14px; align-items: flex-start; margin-top: 22px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,.12); }
+.hs-person__photo { width: 104px; height: 104px; border-radius: var(--r-md); object-fit: cover; object-position: top center; flex: none; border: 1px solid rgba(255,255,255,.18); background: #0c2438; }
+.hs-person__txt b { font-family: var(--font-display); font-size: 15.5px; color: #fff; display: block; line-height: 1.2; }
+.hs-person__txt .role { font-family: var(--font-mono); font-size: 10.5px; letter-spacing: .04em; text-transform: uppercase; color: var(--green-400); margin-top: 4px; display: block; }
+.hs-person__txt p { font-size: 12.5px; color: #aebccb; margin-top: 9px; line-height: 1.5; }
+.hs-info__foot { margin-top: auto; padding-top: 30px; display: flex; align-items: center; justify-content: space-between; gap: 14px; }
+.hs-info__gov { font-family: var(--font-mono); font-size: 10.5px; letter-spacing: .04em; color: #8aa1b5; line-height: 1.5; }
+.hs-lang { display: inline-flex; gap: 2px; flex: none; }
+.hs-lang button { background: none; border: 0; color: #87a6c2; font-family: var(--font-mono); font-size: 12px; font-weight: 600; cursor: pointer; padding: 4px 9px; border-radius: 5px; letter-spacing: .05em; }
+.hs-lang button.is-active { color: #fff; background: rgba(255,255,255,.14); }
+
+/* ---------- CENTER · content (scrolls) ---------- */
+.hs-main { position: relative; overflow-y: auto; overflow-x: hidden; background: var(--mist); }
+.shell-content { min-height: 100%; }
+/* neutralise old full-page chrome offsets inside the scroll region */
+.shell-content .tabs-bar { top: 0 !important; }
+.shell-content .evd-card { top: 18px !important; }
+
+/* ---------- RIGHT · menu rail ---------- */
+.hs-rail { background: #fff; border-left: 1px solid var(--slate-200); display: flex; flex-direction: column; padding: 22px 18px; }
+.hs-rail__title { font-family: var(--font-mono); font-size: 10.5px; letter-spacing: .16em; text-transform: uppercase; color: var(--slate-400); padding: 0 12px 12px; }
+.hs-nav { display: flex; flex-direction: column; gap: 3px; flex: 1; }
+.hs-nav a { display: flex; align-items: center; gap: 13px; width: 100%; text-align: left; color: var(--slate-700); font-family: var(--font-body); font-size: 14.5px; font-weight: 500; padding: 12px 14px; border-radius: var(--r-sm); transition: background .16s, color .16s; }
+.hs-nav a .ico { width: 20px; height: 20px; flex: none; display: grid; place-items: center; color: var(--slate-400); transition: color .16s; }
+.hs-nav a .ico svg { width: 19px; height: 19px; }
+.hs-nav a .lbl { flex: 1; }
+.hs-nav a:hover { background: var(--mist); color: var(--blue-700); }
+.hs-nav a:hover .ico { color: var(--blue-700); }
+.hs-nav a.is-active { background: var(--brand-grad); color: #fff; box-shadow: var(--shadow-sm); }
+.hs-nav a.is-active .ico { color: #fff; }
+.hs-rail__foot { margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--slate-200); display: grid; gap: 12px; }
+.hs-rail__foot .btn { width: 100%; justify-content: center; }
+.hs-rail__foot a.reserved { font-size: 12.5px; color: var(--slate-500); text-align: center; }
+.hs-rail__foot a.reserved:hover { color: var(--blue-700); }
+
+/* mobile top bar */
+.hs-topbar { display: none; }
+.hs-mtoggle { cursor: pointer; }
+
+/* ---------- RESPONSIVE ---------- */
+@media (max-width: 1180px) { .hs-app { grid-template-columns: minmax(260px, 28%) 1fr 250px; } }
+@media (max-width: 960px) {
+  body.shell-page { overflow: auto; }
+  .hs-app { position: static; display: block; min-height: 100vh; }
+  .hs-topbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; position: sticky; top: 0; z-index: 60; background: var(--ink); padding: 12px 18px; }
+  .hs-topbar img.iniq { height: 36px; }
+  .hs-topbar .hs-mtoggle { display: grid; width: 42px; height: 42px; place-items: center; border-radius: var(--r-sm); border: 1px solid rgba(255,255,255,.2); background: rgba(255,255,255,.06); color: #fff; }
+  .hs-topbar .hs-mtoggle svg { width: 22px; height: 22px; }
+  .hs-info { padding: 28px 22px 32px; }
+  .hs-info__brand { display: none; }
+  .hs-info__body { margin-top: 0; padding-top: 0; }
+  .hs-info__foot { margin-top: 22px; }
+  .hs-rail { position: fixed; top: 0; right: 0; bottom: 0; width: min(82vw, 320px); z-index: 70; transform: translateX(100%); transition: transform .25s; box-shadow: var(--shadow-lg); overflow-y: auto; }
+  .hs-rail.open { transform: none; }
+  .hs-rail__title { display: none; }
+  .hs-nav a { font-size: 16px; padding: 14px 15px; }
+  .hs-main { position: static; overflow: visible; }
+}

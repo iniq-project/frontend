@@ -1,5 +1,17 @@
 @import "tailwindcss";
 @import "@nuxt/ui";
+@import "./styles.css";
+@import "./shell.css";
+@import "./servicos.css";
+@import "./normas.css";
+@import "./metrologia.css";
+@import "./formacao.css";
+@import "./eventos.css";
+@import "./noticias.css";
+@import "./contactos.css";
+@import "./quem.css";
+@import "./admin.css";
+@import "./home-single.css";
 
 @theme static {
   --font-sans: 'Public Sans', sans-serif;
