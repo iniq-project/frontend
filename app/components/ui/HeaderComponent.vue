@@ -19,9 +19,13 @@ const pageTitles = {
   '/': 'Instituto Nacional das Infra-Estruturas da Qualidade',
   '/normas-tecnicas': 'Normas Técnicas & Normalização',
   '/metrologia': 'Metrologia',
+  '/acreditacao': 'Registo, Cadastro e Acreditação',
   '/importacao': 'Validação, Verificação e Certificação de Produtos a Importar',
   '/formacao': 'Formação e Qualificação em Qualidade',
-  '/quem-somos': 'Quem Somos'
+  '/rotulos': 'Conformidade de Rótulos e Embalagens',
+  '/regulamentos': 'Regulamentos Técnicos',
+  '/premio-qualidade': 'Prémio Nacional da Qualidade',
+  '/contactos': 'Contactos',
 }
 
 const pageTitle = computed(() => pageTitles[route.path as keyof typeof pageTitles] || 'Instituto Nacional das Infra-Estruturas da Qualidade')
@@ -58,9 +62,9 @@ const pageTitle = computed(() => pageTitles[route.path as keyof typeof pageTitle
 }
 
 .logo-right img {
-  height: 48px;
+  height: 64px;
   width: auto;
-  max-height: 48px;
+  max-height: 64px;
   object-fit: contain;
 }
 

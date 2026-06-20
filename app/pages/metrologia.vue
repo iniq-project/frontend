@@ -85,7 +85,6 @@ definePageMeta({
             </div>
             <div class="cta-band__actions">
               <NuxtLink to="/contactos" class="btn btn--ghost">Solicitar calibração</NuxtLink>
-              <NuxtLink to="/servicos" class="btn btn--light">Outros serviços</NuxtLink>
             </div>
           </div>
         </div>
