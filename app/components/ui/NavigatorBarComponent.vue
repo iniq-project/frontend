@@ -1,6 +1,6 @@
 <template>
   <aside class="sidebar-right">
-    <NuxtLink to="/" class="back-btn">← Voltar à Página Inicial</NuxtLink>
+    <NuxtLink v-if="!isHomePage" to="/" class="back-btn">← Voltar à Página Inicial</NuxtLink>
     <h2>Serviços</h2>
     <nav class="services-list">
       <NuxtLink to="/normas-tecnicas" class="service-item" :class="{ active: isActive('/normas-tecnicas') }">
@@ -11,10 +11,10 @@
         <span class="n">02</span>
         <span>Metrologia</span>
       </NuxtLink>
-      <a href="#" class="service-item">
+      <NuxtLink to="/acreditacao" class="service-item" :class="{ active: isActive('/acreditacao') }">
         <span class="n">03</span>
         <span>Registo, Cadastro e Acreditação</span>
-      </a>
+      </NuxtLink>
       <NuxtLink to="/importacao" class="service-item" :class="{ active: isActive('/importacao') }">
         <span class="n">04</span>
         <span>Validação, Verificação e Certificação de Produtos a Importar</span>
@@ -23,24 +23,26 @@
         <span class="n">05</span>
         <span>Formação e Qualificação em Qualidade</span>
       </NuxtLink>
-      <a href="#" class="service-item">
+      <NuxtLink to="/rotulos" class="service-item" :class="{ active: isActive('/rotulos') }">
         <span class="n">06</span>
         <span>Conformidade de Rótulos e Embalagens</span>
-      </a>
-      <a href="#" class="service-item">
+      </NuxtLink>
+      <NuxtLink to="/regulamentos" class="service-item" :class="{ active: isActive('/regulamentos') }">
         <span class="n">07</span>
         <span>Regulamentos Técnicos</span>
-      </a>
-      <a href="#" class="service-item">
+      </NuxtLink>
+      <NuxtLink to="/premio-qualidade" class="service-item" :class="{ active: isActive('/premio-qualidade') }">
         <span class="n">08</span>
         <span>Prémio Nacional da Qualidade</span>
-      </a>
+      </NuxtLink>
     </nav>
   </aside>
 </template>
 
 <script setup lang="ts">
 const route = useRoute()
+
+const isHomePage = computed(() => route.path === '/')
 
 const isActive = (path: string) => {
   return route.path === path
@@ -98,6 +100,12 @@ const isActive = (path: string) => {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+  margin-bottom: 2rem;
+}
+
+.additional-links {
+  margin-top: auto;
+  padding-bottom: 1.5rem;
 }
 
 .service-item {

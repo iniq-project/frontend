@@ -1,12 +1,14 @@
+<script setup lang="ts">
+definePageMeta({
+  layout: 'default',
+})
+</script>
+
 <template>
     <div class="combined-card">
       <div class="dg-top">
         <div class="dg-photo-wrapper">
-          <img
-            class="dg-photo"
-            src="/director-geral.png"
-            alt="Director-Geral"
-          />
+          <img class="dg-photo" src="/director-geral.png" alt="Director-Geral" />
           <div class="dg-details">
             <h3>Carmo Adriana dos Santos</h3>
             <p class="role">Direcção-Geral</p>
@@ -28,20 +30,14 @@
         <p>
           O INIQ compromete-se a coordenar e desenvolver o Sistema Nacional da
           Qualidade de Angola, garantindo a conformidade com normas
-          internacionais, promovendo a inovação, a competitividade empresarial e
-          a proteção do consumidor, através de serviços de normalização,
-          metrologia, acreditação e avaliação da conformidade, com foco na
-          melhoria contínua e excelência.
+          internacionais, promovendo a inovação, a competitividade empresarial e a
+          proteção do consumidor, através de serviços de normalização, metrologia,
+          acreditação e avaliação da conformidade, com foco na melhoria contínua e
+          excelência.
         </p>
       </div>
     </div>
 </template>
-
-<script setup lang="ts">
-definePageMeta({
-  layout: "default"
-})
-</script>
 
 <style scoped>
 .combined-card {
