@@ -1,3 +1,137 @@
+
+<script setup>
+useHead({
+  title: "INIQ » Normas Técnicas & Normalização",
+})
+
+const activeTab = ref("venda")
+const modalOpen = ref(false)
+const modalMode = ref("venda")
+const modalEyebrow = ref("Venda de Normas")
+const modalTitle = ref("Solicitar Norma")
+const modalRef = ref("")
+const formSubmitted = ref(false)
+const successTitle = ref("Pedido submetido com sucesso")
+const successMsg = ref(
+  "Receberá por e-mail os dados de pagamento (Referência Multicaixa). Após confirmação, a norma fica imediatamente disponível na sua área reservada.",
+)
+const orderRef = ref("")
+
+const normas = ref([
+  {
+    code: "NA 0042:2025",
+    title: "Águas de consumo humano — Requisitos de qualidade",
+    sector: "Ambiente",
+    price: 12500,
+  },
+  {
+    code: "NA 0309:2024",
+    title: "Cimento Portland — Especificações e ensaios",
+    sector: "Construção",
+    price: 15000,
+  },
+  {
+    code: "NA 0756:2023",
+    title: "Segurança de brinquedos — Requisitos gerais",
+    sector: "Gestão",
+    price: 9800,
+  },
+])
+
+const projetosConsulta = ref([
+  {
+    code: "prNA 1187:2026",
+    title: "Rotulagem de produtos alimentares pré-embalados",
+    sector: "Alimentar",
+    description:
+      "Requisitos de informação obrigatória, declaração nutricional e alergénios na rotulagem de géneros alimentícios.",
+    deadline: "30 Jun 2026",
+    progress: 62,
+    urgent: false,
+  },
+  {
+    code: "prNA 1402:2026",
+    title: "Sistemas de gestão da qualidade — Fundamentos e vocabulário",
+    sector: "Gestão",
+    description:
+      "Princípios, conceitos e terminologia de base para os sistemas de gestão da qualidade.",
+    deadline: "15 Jul 2026",
+    progress: 38,
+    urgent: false,
+  },
+  {
+    code: "prNA 0991:2026",
+    title: "Blocos de betão para alvenaria — Requisitos",
+    sector: "Construção",
+    description:
+      "Especificações dimensionais, resistência mecânica e métodos de ensaio para blocos de betão.",
+    deadline: "12 Jun 2026",
+    progress: 88,
+    urgent: true,
+  },
+])
+
+const formData = ref({
+  nome: "",
+  entidade: "",
+  email: "",
+  telefone: "",
+  nif: "",
+  formato: "PDF (digital)",
+  contribuicao: "",
+  pagamento: "Referência Multicaixa",
+  observacoes: "",
+})
+
+const formatPrice = (price) => {
+  return price.toLocaleString("pt-PT")
+}
+
+const openModal = (mode, item) => {
+  modalMode.value = mode
+  formSubmitted.value = false
+
+  if (mode === "venda") {
+    modalEyebrow.value = "Venda de Normas"
+    modalTitle.value = "Solicitar Norma"
+    modalRef.value = `${item.code} — ${item.title}`
+    successTitle.value = "Pedido submetido com sucesso"
+    successMsg.value = `Receberá por e-mail os dados de pagamento (${formData.value.pagamento}). Após confirmação, a norma fica imediatamente disponível na sua área reservada.`
+  } else {
+    modalEyebrow.value = "Consulta Pública"
+    modalTitle.value = "Submeter Contribuição"
+    modalRef.value = `${item.code} — ${item.title}`
+    successTitle.value = "Contribuição enviada com sucesso"
+    successMsg.value =
+      "A sua contribuição foi registada e será analisada pela Comissão Técnica responsável. Receberá por e-mail o resultado do tratamento."
+  }
+
+  formData.value = {
+    nome: "",
+    entidade: "",
+    email: "",
+    telefone: "",
+    nif: "",
+    formato: "PDF (digital)",
+    contribuicao: "",
+    pagamento: "Referência Multicaixa",
+    observacoes: "",
+  }
+
+  modalOpen.value = true
+}
+
+const closeModal = () => {
+  modalOpen.value = false
+}
+
+const handleSubmit = () => {
+  // Generate reference
+  const refNumber = Math.floor(10000 + Math.random() * 89999)
+  orderRef.value = `REF: INIQ-2026-${refNumber}`
+  formSubmitted.value = true
+}
+</script>
 <template>
   <div class="combined-card">
     <div class="dg-top">
@@ -152,7 +286,6 @@
     </div>
   </div>
 
-  <!-- Modal -->
   <div
     v-if="modalOpen"
     class="modal"
@@ -371,140 +504,7 @@
   </div>
 </template>
 
-<script setup lang="ts">
-useHead({
-  title: 'INIQ » Normas Técnicas & Normalização',
-})
 
-const activeTab = ref("venda")
-const modalOpen = ref(false)
-const modalMode = ref("venda")
-const modalEyebrow = ref("Venda de Normas")
-const modalTitle = ref("Solicitar Norma")
-const modalRef = ref("")
-const formSubmitted = ref(false)
-const successTitle = ref("Pedido submetido com sucesso")
-const successMsg = ref(
-  "Receberá por e-mail os dados de pagamento (Referência Multicaixa). Após confirmação, a norma fica imediatamente disponível na sua área reservada.",
-)
-const orderRef = ref("")
-
-const normas = ref([
-  {
-    code: "NA 0042:2025",
-    title: "Águas de consumo humano — Requisitos de qualidade",
-    sector: "Ambiente",
-    price: 12500,
-  },
-  {
-    code: "NA 0309:2024",
-    title: "Cimento Portland — Especificações e ensaios",
-    sector: "Construção",
-    price: 15000,
-  },
-  {
-    code: "NA 0756:2023",
-    title: "Segurança de brinquedos — Requisitos gerais",
-    sector: "Gestão",
-    price: 9800,
-  },
-])
-
-const projetosConsulta = ref([
-  {
-    code: "prNA 1187:2026",
-    title: "Rotulagem de produtos alimentares pré-embalados",
-    sector: "Alimentar",
-    description:
-      "Requisitos de informação obrigatória, declaração nutricional e alergénios na rotulagem de géneros alimentícios.",
-    deadline: "30 Jun 2026",
-    progress: 62,
-    urgent: false,
-  },
-  {
-    code: "prNA 1402:2026",
-    title: "Sistemas de gestão da qualidade — Fundamentos e vocabulário",
-    sector: "Gestão",
-    description:
-      "Princípios, conceitos e terminologia de base para os sistemas de gestão da qualidade.",
-    deadline: "15 Jul 2026",
-    progress: 38,
-    urgent: false,
-  },
-  {
-    code: "prNA 0991:2026",
-    title: "Blocos de betão para alvenaria — Requisitos",
-    sector: "Construção",
-    description:
-      "Especificações dimensionais, resistência mecânica e métodos de ensaio para blocos de betão.",
-    deadline: "12 Jun 2026",
-    progress: 88,
-    urgent: true,
-  },
-])
-
-const formData = ref({
-  nome: "",
-  entidade: "",
-  email: "",
-  telefone: "",
-  nif: "",
-  formato: "PDF (digital)",
-  contribuicao: "",
-  pagamento: "Referência Multicaixa",
-  observacoes: "",
-})
-
-const formatPrice = (price: number) => {
-  return price.toLocaleString("pt-PT")
-}
-
-const openModal = (mode: string, item: any) => {
-  modalMode.value = mode
-  formSubmitted.value = false
-
-  if (mode === "venda") {
-    modalEyebrow.value = "Venda de Normas"
-    modalTitle.value = "Solicitar Norma"
-    modalRef.value = `${item.code} — ${item.title}`
-    successTitle.value = "Pedido submetido com sucesso"
-    successMsg.value = `Receberá por e-mail os dados de pagamento (${formData.value.pagamento}). Após confirmação, a norma fica imediatamente disponível na sua área reservada.`
-  } else {
-    modalEyebrow.value = "Consulta Pública"
-    modalTitle.value = "Submeter Contribuição"
-    modalRef.value = `${item.code} — ${item.title}`
-    successTitle.value = "Contribuição enviada com sucesso"
-    successMsg.value =
-      "A sua contribuição foi registada e será analisada pela Comissão Técnica responsável. Receberá por e-mail o resultado do tratamento."
-  }
-
-  // Reset form
-  formData.value = {
-    nome: "",
-    entidade: "",
-    email: "",
-    telefone: "",
-    nif: "",
-    formato: "PDF (digital)",
-    contribuicao: "",
-    pagamento: "Referência Multicaixa",
-    observacoes: "",
-  }
-
-  modalOpen.value = true
-}
-
-const closeModal = () => {
-  modalOpen.value = false
-}
-
-const handleSubmit = () => {
-  // Generate reference
-  const refNumber = Math.floor(10000 + Math.random() * 89999)
-  orderRef.value = `REF: INIQ-2026-${refNumber}`
-  formSubmitted.value = true
-}
-</script>
 
 <style scoped>
 .tab-panel {
