@@ -13,10 +13,10 @@ useHead({
       <div class="dg-top">
         <div class="dg-photo-wrapper">
           <img
-            class="dg-photo"
-            src="/chefe-metrologia.png"
-            alt="Chefe do Departamento de Metrologia"
-          />
+          class="dg-photo"
+          src="/perfis/03.jpg"
+          alt="Chefe do Departamento de Metrologia"
+        />
           <div class="dg-details">
             <h3>Eng.º António Bengui</h3>
             <p class="role">Chefe do Departamento de Metrologia</p>

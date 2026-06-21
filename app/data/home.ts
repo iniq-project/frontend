@@ -12,6 +12,6 @@ export const homeData = {
   politicaQualidade: {
     titulo: "Política de Qualidade",
     descricao:
-      "O INIQ compromete-se a coordenar e desenvolver o Sistema Nacional da Qualidade de Angola...",
+      "O INIQ compromete-se a coordenar e desenvolver o Sistema Nacional da Qualidade de Angola, garantindo a conformidade com as melhores práticas internacionais, promovendo a participação transparente de todas as partes interessadas, e garantindo que as normas angolanas apoiem a inovação, a competitividade empresarial e a proteção do consumidor, com foco na melhoria contínua e excelência. Estamos empenhados em fornecer serviços de qualidade que atendam às expectativas dos nossos clientes e da sociedade angolana, através de metrologia, normalização, ensaios, certificação e acreditação.",
   },
 }

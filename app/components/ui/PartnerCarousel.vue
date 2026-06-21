@@ -1,40 +1,19 @@
-<template>
-  <div class="partner-carousel">
-    <button class="carousel-btn prev" @click="scrollLeft">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M15 18l-6-6 6-6"></path>
-      </svg>
-    </button>
-    <div class="carousel-container">
-      <div class="carousel-track" :style="{ transform: `translateX(-${currentPosition}px)` }">
-        <div class="partner-slide" v-for="(partner, index) in allPartners" :key="index">
-          <img :src="partner.img" :alt="partner.name" />
-        </div>
-      </div>
-    </div>
-    <button class="carousel-btn next" @click="scrollRight">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M9 18l6-6-6-6"></path>
-      </svg>
-    </button>
-  </div>
-</template>
 
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue'
 
 const partners = [
-  { img: '/parceiros/abnt-logot.png', name: 'ABNT' },
-  { img: '/parceiros/astmlogot.png', name: 'ASTM' },
-  { img: '/parceiros/codex-logot.jpg', name: 'Codex' },
-  { img: '/parceiros/iec-logot.jpg', name: 'IEC' },
-  { img: '/parceiros/intilogot.png', name: 'INIL' },
-  { img: '/parceiros/ipqlogot.png', name: 'IPQ' },
-  { img: '/parceiros/iso-logot.png', name: 'ISO' },
-  { img: '/parceiros/logo_sadcas.png', name: 'SADCAS' },
-  { img: '/parceiros/oilmlogote.jpg', name: 'OIML' },
-  { img: '/parceiros/sadclogot.png', name: 'SADC' },
-  { img: '/parceiros/sadecstanlogot.png', name: 'SADCESTAN' }
+  { img: '/parceiros/abnt-logot.png', name: 'ABNT', url: 'https://abnt.org.br' },
+  { img: '/parceiros/astmlogot.png', name: 'ASTM', url: 'https://www.astm.org' },
+  { img: '/parceiros/codex-logot.jpg', name: 'Codex', url: 'https://www.fao.org/fao-who-codexalimentarius/home/en/' },
+  { img: '/parceiros/iec-logot.jpg', name: 'IEC', url: 'https://www.iec.ch' },
+  { img: '/parceiros/intilogot.png', name: 'INTI', url: 'https://www.inti.gob.ar' },
+  { img: '/parceiros/ipqlogot.png', name: 'IPQ', url: 'https://www.ipq.pt' },
+  { img: '/parceiros/iso-logot.png', name: 'ISO', url: 'https://www.iso.org' },
+  { img: '/parceiros/logo_sadcas.png', name: 'SADCAS', url: 'https://www.sadcas.org' },
+  { img: '/parceiros/oilmlogote.jpg', name: 'OIML', url: 'https://www.oiml.org' },
+  { img: '/parceiros/sadclogot.png', name: 'SADC', url: 'https://www.sadc.int' },
+  { img: '/parceiros/sadecstanlogot.png', name: 'SADCESTAN', url: 'https://www.sadc.int/pillars/standards-quality-infrastructure' }
 ]
 
 const allPartners = ref([...partners, ...partners])
@@ -77,12 +56,34 @@ onUnmounted(() => {
 })
 </script>
 
+<template>
+  <div class="partner-carousel">
+    <button class="carousel-btn prev" @click="scrollLeft">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M15 18l-6-6 6-6"></path>
+      </svg>
+    </button>
+    <div class="carousel-container">
+      <div class="carousel-track" :style="{ transform: `translateX(-${currentPosition}px)` }">
+        <a class="partner-slide" v-for="(partner, index) in allPartners" :key="index" :href="partner.url" target="_blank" rel="noopener noreferrer">
+          <img :src="partner.img" :alt="partner.name" />
+        </a>
+      </div>
+    </div>
+    <button class="carousel-btn next" @click="scrollRight">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M9 18l6-6-6-6"></path>
+      </svg>
+    </button>
+  </div>
+</template>
+
 <style scoped>
 .partner-carousel {
   width: 100%;
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: 0.90rem;
   background: transparent;
   padding: 2rem 0;
   margin-top: 3rem;
@@ -96,13 +97,13 @@ onUnmounted(() => {
 
 .carousel-track {
   display: flex;
-  gap: 2rem;
+  gap: 0.10rem;
   transition: transform 0.5s ease;
   width: fit-content;
 }
 
 .partner-carousel:hover {
-  gap: 1rem;
+  gap: 0.90rem;
 }
 
 .carousel-btn {
@@ -129,7 +130,7 @@ onUnmounted(() => {
   height: 32px;
 }
 
-.partner-slide {
+a.partner-slide {
   flex-shrink: 0;
   display: flex;
   align-items: center;
@@ -138,9 +139,10 @@ onUnmounted(() => {
   width: 200px;
   opacity: 0.7;
   transition: opacity 0.3s;
+  text-decoration: none;
 }
 
-.partner-slide:hover {
+a.partner-slide:hover {
   opacity: 1;
 }
 

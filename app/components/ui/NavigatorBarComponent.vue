@@ -1,3 +1,13 @@
+<script setup lang="ts">
+const route = useRoute()
+
+const isHomePage = computed(() => route.path === '/')
+
+const isActive = (path: string) => {
+  return route.path === path
+}
+</script>
+
 <template>
   <aside class="sidebar-right">
     <NuxtLink v-if="!isHomePage" to="/" class="back-btn">← Voltar à Página Inicial</NuxtLink>
@@ -39,15 +49,6 @@
   </aside>
 </template>
 
-<script setup lang="ts">
-const route = useRoute()
-
-const isHomePage = computed(() => route.path === '/')
-
-const isActive = (path: string) => {
-  return route.path === path
-}
-</script>
 
 <style scoped>
 .sidebar-right {

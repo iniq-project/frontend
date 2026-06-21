@@ -14,7 +14,7 @@ useHead({
       <div class="dg-photo-wrapper">
         <img
           class="dg-photo"
-          src="/chefe-acreditacao.png"
+          src="/perfis/02.jpg"
           alt="Chefe do Departamento de Acreditação"
         />
         <div class="dg-details">

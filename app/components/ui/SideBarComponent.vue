@@ -1,3 +1,8 @@
+
+<script setup lang="ts">
+</script>
+
+
 <template>
   <aside class="sidebar-left">
     <div class="sidebar-content">
@@ -26,9 +31,6 @@
     </div>
   </aside>
 </template>
-
-<script setup lang="ts">
-</script>
 
 <style scoped>
 .sidebar-left {

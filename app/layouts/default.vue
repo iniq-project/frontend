@@ -1,9 +1,12 @@
+<script setup>
+</script>
+
 <template>
   <div class="new-layout">
-    <HeaderComponent />
+    <UiHeaderComponent />
 
     <div class="main-container">
-      <SideBarComponent>
+      <UiSideBarComponent>
         <template #eyebrow>
           <slot name="sidebar-eyebrow" />
         </template>
@@ -11,24 +14,15 @@
           <slot name="sidebar-title" />
         </template>
         <slot name="sidebar-content" />
-      </SideBarComponent>
-
+      </UiSideBarComponent>
       <main class="center-content">
         <slot />
-        <PartnerCarousel />
+        <UiPartnerCarousel />
       </main>
-
-      <NavigatorBarComponent />
+      <UiNavigatorBarComponent />
     </div>
   </div>
 </template>
-
-<script setup>
-import HeaderComponent from "~/Components/ui/HeaderComponent.vue"
-import SideBarComponent from "~/Components/ui/SideBarComponent.vue"
-import NavigatorBarComponent from "~/Components/ui/NavigatorBarComponent.vue"
-import PartnerCarousel from "~/Components/ui/PartnerCarousel.vue"
-</script>
 
 <style scoped>
 .new-layout {

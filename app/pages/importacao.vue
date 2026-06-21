@@ -14,7 +14,7 @@ useHead({
       <div class="dg-photo-wrapper">
         <img
           class="dg-photo"
-          src="/chefe-importacao.png"
+          src="/perfis/01.jpeg"
           alt="Chefe do Departamento de Avaliação da Conformidade"
         />
         <div class="dg-details">

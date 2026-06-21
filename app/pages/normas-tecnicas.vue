@@ -138,7 +138,7 @@ const handleSubmit = () => {
       <div class="dg-photo-wrapper">
         <img
           class="dg-photo"
-          src="/chefe-normalizacao.png"
+          src="/perfis/04.jpg"
           alt="Chefe do Departamento de Normalização"
         />
         <div class="dg-details">

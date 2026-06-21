@@ -1,17 +1,3 @@
-<template>
-  <header class="new-header">
-    <div class="logo-left">
-      <img src="/iniq-logo.png" alt="INIQ" />
-    </div>
-    <div class="header-center">
-      <h1>{{ pageTitle }}</h1>
-    </div>
-    <div class="logo-right">
-      <img src="/gov-mindcom-t.png" alt="Governo de Angola" />
-    </div>
-  </header>
-</template>
-
 <script setup lang="ts">
 const route = useRoute()
 
@@ -30,6 +16,22 @@ const pageTitles = {
 
 const pageTitle = computed(() => pageTitles[route.path as keyof typeof pageTitles] || 'Instituto Nacional das Infra-Estruturas da Qualidade')
 </script>
+
+<template>
+  <header class="new-header">
+    <div class="logo-left">
+      <img src="/iniq-logo.png" alt="INIQ" />
+    </div>
+    <div class="header-center">
+      <h1>{{ pageTitle }}</h1>
+    </div>
+    <div class="logo-right">
+      <img src="/gov-mindcom-t.png" alt="Governo de Angola" />
+    </div>
+  </header>
+</template>
+
+
 
 <style scoped>
 .new-header {
@@ -55,16 +57,16 @@ const pageTitle = computed(() => pageTitles[route.path as keyof typeof pageTitle
 }
 
 .logo-left img {
-  height: 70px;
+  height: 75px;
   width: auto;
-  max-height: 70px;
+  max-height: 75px;
   object-fit: contain;
 }
 
 .logo-right img {
-  height: 64px;
+  height: 48px;
   width: auto;
-  max-height: 64px;
+  max-height: 48px;
   object-fit: contain;
 }
 
