@@ -88,6 +88,8 @@ onUnmounted(() => {
   padding: 2rem 0;
   margin-top: 3rem;
   border-radius: 12px;
+  position: relative;
+  z-index: 1;
 }
 
 .carousel-container {

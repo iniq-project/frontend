@@ -213,6 +213,7 @@ useHead({
   background: white;
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(10, 58, 99, 0.08);
+
 }
 
 .dg-top {
@@ -517,6 +518,8 @@ useHead({
 .cta-band__actions {
   display: flex;
   gap: 1rem;
+  position: relative;
+  z-index: 3;
 }
 
 .btn {

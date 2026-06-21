@@ -4,7 +4,6 @@
 <template>
   <div class="new-layout">
     <UiHeaderComponent />
-
     <div class="main-container">
       <UiSideBarComponent>
         <template #eyebrow>

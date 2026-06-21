@@ -140,7 +140,7 @@ useHead({
               candidatura e os critérios de avaliação.
             </p>
           </div>
-          <div>
+          <div class="cta-band__actions">
             <NuxtLink to="/contactos" class="btn btn--ghost"
               >Pedir informação</NuxtLink
             >
@@ -156,6 +156,14 @@ useHead({
   background: white;
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(10, 58, 99, 0.08);
+}
+
+
+.cta-band__actions {
+  display: flex;
+  gap: 1rem;
+  position: relative;
+  z-index: 3;
 }
 
 .dg-top {

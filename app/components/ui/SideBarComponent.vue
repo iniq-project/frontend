@@ -111,7 +111,7 @@
 }
 
 .gov-info {
-  font-family: monospace;
+  /* font-family: monospace; */
   font-size: 0.85rem;
   color: #94a3b8;
   line-height: 1.5;

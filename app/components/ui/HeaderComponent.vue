@@ -20,13 +20,17 @@ const pageTitle = computed(() => pageTitles[route.path as keyof typeof pageTitle
 <template>
   <header class="new-header">
     <div class="logo-left">
-      <img src="/iniq-logo.png" alt="INIQ" />
+      <NuxtLink to="/">
+        <img src="/iniq-logo.png" alt="INIQ" />
+      </NuxtLink>
     </div>
     <div class="header-center">
       <h1>{{ pageTitle }}</h1>
     </div>
     <div class="logo-right">
-      <img src="/gov-mindcom-t.png" alt="Governo de Angola" />
+      <a href="https://mindcom.gov.ao/home" target="_blank" rel="noopener noreferrer">
+        <img src="/gov-mindcom-t.png" alt="Governo de Angola" />
+      </a>
     </div>
   </header>
 </template>
@@ -54,6 +58,13 @@ const pageTitle = computed(() => pageTitles[route.path as keyof typeof pageTitle
   align-items: center;
   height: 80px;
   width: 100%;
+}
+
+.logo-left a,
+.logo-right a {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
 }
 
 .logo-left img {

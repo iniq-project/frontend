@@ -162,14 +162,6 @@ function handleSubmit() {
                 <div><div class="k">Horário</div><div class="v">Segunda a Sexta · 08h00 — 15h30</div></div>
               </div>
             </div>
-
-            <div class="ct-hours">
-              <h3>Horário de atendimento</h3>
-              <div class="ct-hours__row"><span class="d">Segunda – Quinta</span><span class="h">08h00 — 15h30</span></div>
-              <div class="ct-hours__row"><span class="d">Sexta-feira</span><span class="h">08h00 — 14h00</span></div>
-              <div class="ct-hours__row"><span class="d">Sábado – Domingo</span><span class="closed">Encerrado</span></div>
-              <div class="ct-hours__row"><span class="d">Feriados nacionais</span><span class="closed">Encerrado</span></div>
-            </div>
           </div>
         </div>
 
