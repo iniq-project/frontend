@@ -18,7 +18,7 @@ const partners = [
 
 const allPartners = ref([...partners, ...partners])
 const currentPosition = ref(0)
-const slideWidth = 280
+const slideWidth = 200
 const maxPosition = ref(0)
 let autoScrollInterval: any = null
 
@@ -85,11 +85,14 @@ onUnmounted(() => {
   align-items: center;
   gap: 0.90rem;
   background: transparent;
-  padding: 2rem 0;
-  margin-top: 3rem;
+  padding: 3rem 2rem;
+  margin-top: 0;
   border-radius: 12px;
   position: relative;
-  z-index: 1;
+  z-index: 10;
+  min-height: 200px;
+  flex: 1;
+  height: 100%;
 }
 
 .carousel-container {
@@ -137,7 +140,7 @@ a.partner-slide {
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 80px;
+  height: 90px;
   width: 200px;
   opacity: 0.7;
   transition: opacity 0.3s;
@@ -149,9 +152,9 @@ a.partner-slide:hover {
 }
 
 .partner-slide img {
-  height: 100%;
+  max-height: 75px;
   width: auto;
-  max-width: 200px;
+  max-width: 180px;
   object-fit: contain;
 }
 </style>
