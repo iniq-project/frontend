@@ -2,7 +2,6 @@
 <script setup lang="ts">
 </script>
 
-
 <template>
   <aside class="sidebar-left">
     <div class="sidebar-content">
@@ -30,6 +29,10 @@
           </p>
         </slot>
       </div>
+    </div>
+
+    <div class="sidebar-footer">
+      <div class="gov-info">Palácio de Vidro, Largo 17 de Setembro, Luanda</div>
     </div>
   </aside>
 </template>
