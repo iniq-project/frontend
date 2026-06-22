@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { inject, watch, ref } from 'vue'
+
 definePageMeta({
   layout: 'default',
 })
@@ -6,206 +8,225 @@ definePageMeta({
 useHead({
   title: 'INIQ » Validação, Verificação e Certificação de Produtos a Importar',
 })
+
+// Inject active sub-item from layout
+const activeSubItemId = inject('activeSubItemId')
+
+// Track if sub-item is selected
+const isSubItemSelected = ref(false)
+
+// Sync with layout
+if (activeSubItemId) {
+  watch(activeSubItemId, (newId) => {
+    isSubItemSelected.value = !!newId
+  }, { immediate: true })
+}
 </script>
 
 <template>
   <div class="combined-card">
-    <div class="dg-top">
-      <div class="dg-photo-wrapper">
-        <img
-          class="dg-photo"
-          src="/perfis/01.jpeg"
-          alt="Chefe do Departamento de Avaliação da Conformidade"
-        />
-        <div class="dg-details">
-          <h3>Dra. Luísa Ferraz</h3>
-          <p class="role">Chefe do Departamento de Avaliação da Conformidade</p>
+    <!-- Top info - only show when no sub-item is selected -->
+    <template v-if="!isSubItemSelected">
+      <div class="dg-top">
+        <div class="dg-photo-wrapper">
+          <img
+            class="dg-photo"
+            src="/perfis/01.jpeg"
+            alt="Chefe do Departamento de Avaliação da Conformidade"
+          />
+          <div class="dg-details">
+            <h3>Dra. Luísa Ferraz</h3>
+            <p class="role">Chefe do Departamento de Avaliação da Conformidade</p>
+          </div>
+        </div>
+        <div class="dg-message">
+          <h4>Mensagem do Responsável</h4>
+          <p>
+            “Verificamos a conformidade dos produtos antes de entrarem no mercado,
+            protegendo o consumidor e garantindo concorrência leal.”
+          </p>
         </div>
       </div>
-      <div class="dg-message">
-        <h4>Mensagem do Responsável</h4>
+
+      <div class="quality-policy-section mb-10">
+        <h4>Política de Avaliação da Conformidade</h4>
         <p>
-          “Verificamos a conformidade dos produtos antes de entrarem no mercado,
-          protegendo o consumidor e garantindo concorrência leal.”
+          O INIQ compromete-se a garantir que os produtos importados cumpram os
+          requisitos técnicos e regulamentares aplicáveis, protegendo a saúde e
+          segurança dos consumidores, o meio ambiente e promovendo a concorrência leal
+          no mercado angolano.
         </p>
       </div>
-    </div>
+    </template>
 
-    <div class="quality-policy-section">
-      <h4>Política de Avaliação da Conformidade</h4>
-      <p>
-        O INIQ compromete-se a garantir que os produtos importados cumpram os
-        requisitos técnicos e regulamentares aplicáveis, protegendo a saúde e
-        segurança dos consumidores, o meio ambiente e promovendo a concorrência leal
-        no mercado angolano.
-      </p>
-    </div>
+    <!-- Sub-item content - only show when "Solicitar Serviço" is selected -->
+    <template v-if="isSubItemSelected">
+      <section class="mt-12">
+        <div class="container">
+          <div class="panel-head">
+            <span class="eyebrow">Informações Gerais</span>
+            <h2>Certificação de produtos a importar</h2>
+            <p>
+              O INIQ avalia a conformidade dos produtos destinados à importação face
+              aos regulamentos técnicos e às normas aplicáveis. Este controlo protege o
+              mercado nacional e o consumidor, impedindo a entrada de produtos não
+              conformes e assegurando concorrência leal entre operadores.
+            </p>
+          </div>
 
-    <section class="mt-12">
-      <div class="container">
-        <div class="panel-head">
-          <span class="eyebrow">Informações Gerais</span>
-          <h2>Certificação de produtos a importar</h2>
-          <p>
-            O INIQ avalia a conformidade dos produtos destinados à importação face
-            aos regulamentos técnicos e às normas aplicáveis. Este controlo protege o
-            mercado nacional e o consumidor, impedindo a entrada de produtos não
-            conformes e assegurando concorrência leal entre operadores.
-          </p>
+          <div class="mdomains">
+            <article class="mdomain">
+              <div class="ico">
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="M9 11l3 3 6-6"></path>
+                  <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+                </svg>
+              </div>
+              <h3>Validação</h3>
+              <p>
+                Análise documental do produto, da sua classificação e dos requisitos
+                técnicos aplicáveis antes do embarque ou do desalfandegamento.
+              </p>
+              <ul>
+                <li>Análise de documentação técnica</li>
+                <li>Enquadramento regulamentar</li>
+                <li>Requisitos de rotulagem</li>
+              </ul>
+            </article>
+            <article class="mdomain">
+              <div class="ico">
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <circle cx="11" cy="11" r="7"></circle>
+                  <path d="m21 21-4.3-4.3"></path>
+                </svg>
+              </div>
+              <h3>Verificação</h3>
+              <p>
+                Inspecção e ensaio de amostras para confirmar que o produto cumpre as
+                especificações declaradas e os regulamentos em vigor.
+              </p>
+              <ul>
+                <li>Inspecção física</li>
+                <li>Recolha e ensaio de amostras</li>
+                <li>Verificação de conformidade</li>
+              </ul>
+            </article>
+            <article class="mdomain">
+              <div class="ico">
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path
+                    d="M12 2l3 3 4 .5.5 4 3 3-3 3-.5 4-4 .5-3 3-3-3-4-.5-.5-4-3-3 3-3 .5-4 4-.5Z"
+                  ></path>
+                  <path d="m9 12 2 2 4-4"></path>
+                </svg>
+              </div>
+              <h3>Certificação</h3>
+              <p>
+                Emissão do certificado de conformidade que autoriza a entrada e a
+                comercialização do produto no mercado nacional.
+              </p>
+              <ul>
+                <li>Certificado de conformidade</li>
+                <li>Autorização de comercialização</li>
+                <li>Rastreabilidade do processo</li>
+              </ul>
+            </article>
+          </div>
         </div>
+      </section>
 
-        <div class="mdomains">
-          <article class="mdomain">
-            <div class="ico">
-              <svg
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
+      <section class="mt-12">
+        <div class="container">
+          <div class="panel-head">
+            <span class="eyebrow">Processo</span>
+            <h2>Da solicitação ao certificado</h2>
+            <p>
+              Um circuito claro que acompanha o produto desde o pedido até à
+              autorização de entrada no mercado.
+            </p>
+          </div>
+          <div class="trace">
+            <div class="trace__step">
+              <span class="lvl"
+                ><span class="dot">1</span> Pedido</span
               >
-                <path d="M9 11l3 3 6-6"></path>
-                <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
-              </svg>
+              <h4>Submissão do processo</h4>
+              <p>
+                O importador submete o pedido com a documentação técnica do produto.
+              </p>
             </div>
-            <h3>Validação</h3>
-            <p>
-              Análise documental do produto, da sua classificação e dos requisitos
-              técnicos aplicáveis antes do embarque ou do desalfandegamento.
-            </p>
-            <ul>
-              <li>Análise de documentação técnica</li>
-              <li>Enquadramento regulamentar</li>
-              <li>Requisitos de rotulagem</li>
-            </ul>
-          </article>
-          <article class="mdomain">
-            <div class="ico">
-              <svg
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
+            <div class="trace__step">
+              <span class="lvl"
+                ><span class="dot">2</span> Avaliação</span
               >
-                <circle cx="11" cy="11" r="7"></circle>
-                <path d="m21 21-4.3-4.3"></path>
-              </svg>
+              <h4>Validação e verificação</h4>
+              <p>
+                Análise documental, inspecção e, quando aplicável, ensaio de amostras.
+              </p>
             </div>
-            <h3>Verificação</h3>
-            <p>
-              Inspecção e ensaio de amostras para confirmar que o produto cumpre as
-              especificações declaradas e os regulamentos em vigor.
-            </p>
-            <ul>
-              <li>Inspecção física</li>
-              <li>Recolha e ensaio de amostras</li>
-              <li>Verificação de conformidade</li>
-            </ul>
-          </article>
-          <article class="mdomain">
-            <div class="ico">
-              <svg
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
+            <div class="trace__step">
+              <span class="lvl"
+                ><span class="dot">3</span> Decisão</span
               >
-                <path
-                  d="M12 2l3 3 4 .5.5 4 3 3-3 3-.5 4-4 .5-3 3-3-3-4-.5-.5-4-3-3 3-3 .5-4 4-.5Z"
-                ></path>
-                <path d="m9 12 2 2 4-4"></path>
-              </svg>
+              <h4>Emissão do certificado</h4>
+              <p>
+                Certificado de conformidade ou notificação de não-conformidade.
+              </p>
             </div>
-            <h3>Certificação</h3>
-            <p>
-              Emissão do certificado de conformidade que autoriza a entrada e a
-              comercialização do produto no mercado nacional.
-            </p>
-            <ul>
-              <li>Certificado de conformidade</li>
-              <li>Autorização de comercialização</li>
-              <li>Rastreabilidade do processo</li>
-            </ul>
-          </article>
+            <div class="trace__step">
+              <span class="lvl"
+                ><span class="dot">4</span> Mercado</span
+              >
+              <h4>Entrada autorizada</h4>
+              <p>
+                O produto conforme é libertado para comercialização no país.
+              </p>
+            </div>
+          </div>
         </div>
-      </div>
-    </section>
+      </section>
 
-    <section class="mt-12">
-      <div class="container">
-        <div class="panel-head">
-          <span class="eyebrow">Processo</span>
-          <h2>Da solicitação ao certificado</h2>
-          <p>
-            Um circuito claro que acompanha o produto desde o pedido até à
-            autorização de entrada no mercado.
-          </p>
-        </div>
-        <div class="trace">
-          <div class="trace__step">
-            <span class="lvl"
-              ><span class="dot">1</span> Pedido</span
-            >
-            <h4>Submissão do processo</h4>
-            <p>
-              O importador submete o pedido com a documentação técnica do produto.
-            </p>
-          </div>
-          <div class="trace__step">
-            <span class="lvl"
-              ><span class="dot">2</span> Avaliação</span
-            >
-            <h4>Validação e verificação</h4>
-            <p>
-              Análise documental, inspecção e, quando aplicável, ensaio de amostras.
-            </p>
-          </div>
-          <div class="trace__step">
-            <span class="lvl"
-              ><span class="dot">3</span> Decisão</span
-            >
-            <h4>Emissão do certificado</h4>
-            <p>
-              Certificado de conformidade ou notificação de não-conformidade.
-            </p>
-          </div>
-          <div class="trace__step">
-            <span class="lvl"
-              ><span class="dot">4</span> Mercado</span
-            >
-            <h4>Entrada autorizada</h4>
-            <p>
-              O produto conforme é libertado para comercialização no país.
-            </p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section class="section">
-      <div class="container">
-        <div class="cta-band">
-          <div>
-            <h2>Vai importar produtos para Angola?</h2>
-            <p>
-              Contacte o Departamento de Avaliação da Conformidade do INIQ e conheça
-              os requisitos de certificação aplicáveis.
-            </p>
-          </div>
-          <div class="cta-band__actions">
-            <NuxtLink to="/contactos" class="btn btn--ghost"
-              >Pedir informação</NuxtLink
-            >
+      <section class="section">
+        <div class="container">
+          <div class="cta-band">
+            <div>
+              <h2>Vai importar produtos para Angola?</h2>
+              <p>
+                Contacte o Departamento de Avaliação da Conformidade do INIQ e conheça
+                os requisitos de certificação aplicáveis.
+              </p>
+            </div>
+            <div class="cta-band__actions">
+              <NuxtLink to="/contactos" class="btn btn--ghost"
+                >Pedir informação</NuxtLink
+              >
            
+            </div>
           </div>
         </div>
-      </div>
-    </section>
+      </section>
+    </template>
   </div>
 </template>
 

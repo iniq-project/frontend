@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { inject, watch, ref } from 'vue'
+
 definePageMeta({
   layout: 'default',
 })
@@ -6,153 +8,172 @@ definePageMeta({
 useHead({
   title: 'INIQ » Regulamentos Técnicos',
 })
+
+// Inject active sub-item from layout
+const activeSubItemId = inject('activeSubItemId')
+
+// Track if sub-item is selected
+const isSubItemSelected = ref(false)
+
+// Sync with layout
+if (activeSubItemId) {
+  watch(activeSubItemId, (newId) => {
+    isSubItemSelected.value = !!newId
+  }, { immediate: true })
+}
 </script>
 
 <template>
   <div class="combined-card">
-    <div class="dg-top">
-      <div class="dg-photo-wrapper">
-        <img
-          class="dg-photo"
-          src="/director-geral.png"
-          alt="Director-Geral"
-        />
-        <div class="dg-details">
-          <h3>Carmo Adriana dos Santos</h3>
-          <p class="role">Direcção-Geral</p>
+    <!-- Top info - only show when no sub-item is selected -->
+    <template v-if="!isSubItemSelected">
+      <div class="dg-top">
+        <div class="dg-photo-wrapper">
+          <img
+            class="dg-photo"
+            src="/director-geral.png"
+            alt="Director-Geral"
+          />
+          <div class="dg-details">
+            <h3>Carmo Adriana dos Santos</h3>
+            <p class="role">Direcção-Geral</p>
+          </div>
         </div>
-      </div>
-      <div class="dg-message">
-        <h4>Mensagem do Responsável</h4>
-        <p>
-          “Os regulamentos técnicos são essenciais para garantir a segurança, a
-          saúde e a proteção do meio ambiente, alinhando as práticas nacionais com
-          as melhores práticas internacionais.”
-        </p>
-      </div>
-    </div>
-
-    <div class="quality-policy-section">
-      <h4>Política de Regulamentos Técnicos</h4>
-      <p>
-        O INIQ compromete-se a definir e gerir os requisitos obrigatórios
-        aplicáveis a produtos, processos e serviços, em articulação com as
-        entidades sectoriais, garantindo a conformidade com as normas
-        internacionais e a proteção do mercado nacional.
-      </p>
-    </div>
-
-    <section class="mt-12">
-      <div class="container">
-        <div class="panel-head">
-          <span class="eyebrow">Informações Gerais</span>
-          <h2>Regulamentos Técnicos</h2>
+        <div class="dg-message">
+          <h4>Mensagem do Responsável</h4>
           <p>
-            Definição e gestão dos requisitos obrigatórios aplicáveis a produtos,
-            processos e serviços, em articulação com as entidades sectoriais.
+            “Os regulamentos técnicos são essenciais para garantir a segurança, a
+            saúde e a proteção do meio ambiente, alinhando as práticas nacionais com
+            as melhores práticas internacionais.”
           </p>
         </div>
-
-        <div class="mdomains">
-          <article class="mdomain">
-            <div class="ico">
-              <svg
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              >
-                <path d="M14 3v5h5"></path>
-                <path
-                  d="M7 3h8l5 5v11a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1Z"
-                ></path>
-                <path d="M9.5 13.5 11 15l3.5-3.5"></path>
-              </svg>
-            </div>
-            <h3>Definição de Requisitos</h3>
-            <p>
-              Elaboração e atualização de regulamentos técnicos que definem
-              requisitos obrigatórios para produtos, processos e serviços.
-            </p>
-            <ul>
-              <li>Requisitos obrigatórios</li>
-              <li>Enquadramento legal</li>
-              <li>Articulação com entidades sectoriais</li>
-            </ul>
-          </article>
-          <article class="mdomain">
-            <div class="ico">
-              <svg
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              >
-                <path d="M4 5h16M4 12h16M4 19h10"></path>
-              </svg>
-            </div>
-            <h3>Fiscalização Técnica</h3>
-            <p>
-              Acompanhamento e fiscalização da conformidade com os regulamentos
-              técnicos aplicáveis.
-            </p>
-            <ul>
-              <li>Verificação de conformidade</li>
-              <li>Auditorias</li>
-              <li>Monitorização contínua</li>
-            </ul>
-          </article>
-          <article class="mdomain">
-            <div class="ico">
-              <svg
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              >
-                <circle cx="12" cy="12" r="9"></circle>
-                <path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"></path>
-              </svg>
-            </div>
-            <h3>Harmonização Internacional</h3>
-            <p>
-              Alinhamento dos regulamentos técnicos com as normas e práticas
-              internacionais de referência.
-            </p>
-            <ul>
-              <li>Normas internacionais</li>
-              <li>Harmonização regional</li>
-              <li>Cooperação internacional</li>
-            </ul>
-          </article>
-        </div>
       </div>
-    </section>
 
-    <section class="section">
-      <div class="container">
-        <div class="cta-band">
-          <div>
-            <h2>Precisa de informações sobre regulamentos técnicos?</h2>
+      <div class="quality-policy-section mb-10">
+        <h4>Política de Regulamentos Técnicos</h4>
+        <p>
+          O INIQ compromete-se a definir e gerir os requisitos obrigatórios
+          aplicáveis a produtos, processos e serviços, em articulação com as
+          entidades sectoriais, garantindo a conformidade com as normas
+          internacionais e a proteção do mercado nacional.
+        </p>
+      </div>
+    </template>
+
+    <!-- Sub-item content - only show when "Solicitar Serviço" is selected -->
+    <template v-if="isSubItemSelected">
+      <section class="mt-12">
+        <div class="container">
+          <div class="panel-head">
+            <span class="eyebrow">Informações Gerais</span>
+            <h2>Regulamentos Técnicos</h2>
             <p>
-              Contacte o INIQ para obter mais informações sobre os regulamentos
-              técnicos aplicáveis ao seu sector.
+              Definição e gestão dos requisitos obrigatórios aplicáveis a produtos,
+              processos e serviços, em articulação com as entidades sectoriais.
             </p>
           </div>
-          <div class="cta-band__actions">
-            <NuxtLink to="/contactos" class="btn btn--ghost"
-              >Pedir informação</NuxtLink
-            >
+
+          <div class="mdomains">
+            <article class="mdomain">
+              <div class="ico">
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="M14 3v5h5"></path>
+                  <path
+                    d="M7 3h8l5 5v11a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1Z"
+                  ></path>
+                  <path d="M9.5 13.5 11 15l3.5-3.5"></path>
+                </svg>
+              </div>
+              <h3>Definição de Requisitos</h3>
+              <p>
+                Elaboração e atualização de regulamentos técnicos que definem
+                requisitos obrigatórios para produtos, processos e serviços.
+              </p>
+              <ul>
+                <li>Requisitos obrigatórios</li>
+                <li>Enquadramento legal</li>
+                <li>Articulação com entidades sectoriais</li>
+              </ul>
+            </article>
+            <article class="mdomain">
+              <div class="ico">
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="M4 5h16M4 12h16M4 19h10"></path>
+                </svg>
+              </div>
+              <h3>Fiscalização Técnica</h3>
+              <p>
+                Acompanhamento e fiscalização da conformidade com os regulamentos
+                técnicos aplicáveis.
+              </p>
+              <ul>
+                <li>Verificação de conformidade</li>
+                <li>Auditorias</li>
+                <li>Monitorização contínua</li>
+              </ul>
+            </article>
+            <article class="mdomain">
+              <div class="ico">
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <circle cx="12" cy="12" r="9"></circle>
+                  <path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"></path>
+                </svg>
+              </div>
+              <h3>Harmonização Internacional</h3>
+              <p>
+                Alinhamento dos regulamentos técnicos com as normas e práticas
+                internacionais de referência.
+              </p>
+              <ul>
+                <li>Normas internacionais</li>
+                <li>Harmonização regional</li>
+                <li>Cooperação internacional</li>
+              </ul>
+            </article>
           </div>
         </div>
-      </div>
-    </section>
+      </section>
+
+      <section class="section">
+        <div class="container">
+          <div class="cta-band">
+            <div>
+              <h2>Precisa de informações sobre regulamentos técnicos?</h2>
+              <p>
+                Contacte o INIQ para obter mais informações sobre os regulamentos
+                técnicos aplicáveis ao seu sector.
+              </p>
+            </div>
+            <div class="cta-band__actions">
+              <NuxtLink to="/contactos" class="btn btn--ghost"
+                >Pedir informação</NuxtLink
+              >
+            </div>
+          </div>
+        </div>
+      </section>
+    </template>
   </div>
 </template>
 

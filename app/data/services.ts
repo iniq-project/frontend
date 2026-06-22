@@ -64,36 +64,48 @@ export const services: Service[] = [
     id: "acreditacao",
     number: "03",
     title: "Registo, Cadastro e Acreditação",
-    subItems: []
+    subItems: [
+      { id: "solicitar-servico", number: "01", title: "Solicitar Serviço" }
+    ]
   },
   {
     id: "importacao",
     number: "04",
     title: "Validação, Verificação e Certificação de Produtos a Importar",
-    subItems: []
+    subItems: [
+      { id: "solicitar-servico", number: "01", title: "Solicitar Serviço" }
+    ]
   },
   {
     id: "formacao",
     number: "05",
     title: "Formação e Qualificação em Qualidade",
-    subItems: []
+    subItems: [
+      { id: "solicitar-servico", number: "01", title: "Solicitar Serviço" }
+    ]
   },
   {
     id: "rotulos",
     number: "06",
     title: "Conformidade de Rótulos e Embalagens",
-    subItems: []
+    subItems: [
+      { id: "solicitar-servico", number: "01", title: "Solicitar Serviço" }
+    ]
   },
   {
     id: "regulamentos",
     number: "07",
     title: "Regulamentos Técnicos",
-    subItems: []
+    subItems: [
+      { id: "solicitar-servico", number: "01", title: "Solicitar Serviço" }
+    ]
   },
   {
     id: "premio-qualidade",
     number: "08",
     title: "Prémio Nacional da Qualidade",
-    subItems: []
+    subItems: [
+      { id: "solicitar-servico", number: "01", title: "Solicitar Serviço" }
+    ]
   }
 ]

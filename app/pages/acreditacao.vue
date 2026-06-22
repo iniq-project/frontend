@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { inject, watch, ref } from 'vue'
+
 definePageMeta({
   layout: 'default',
 })
@@ -6,205 +8,224 @@ definePageMeta({
 useHead({
   title: 'INIQ » Registo, Cadastro e Acreditação',
 })
+
+// Inject active sub-item from layout
+const activeSubItemId = inject('activeSubItemId')
+
+// Track if sub-item is selected
+const isSubItemSelected = ref(false)
+
+// Sync with layout
+if (activeSubItemId) {
+  watch(activeSubItemId, (newId) => {
+    isSubItemSelected.value = !!newId
+  }, { immediate: true })
+}
 </script>
 
 <template>
   <div class="combined-card">
-    <div class="dg-top">
-      <div class="dg-photo-wrapper">
-        <img
-          class="dg-photo"
-          src="/perfis/02.jpg"
-          alt="Chefe do Departamento de Acreditação"
-        />
-        <div class="dg-details">
-          <h3>Dr. Joaquim Mateus</h3>
-          <p class="role">Chefe do Departamento de Acreditação</p>
+    <!-- Top info - only show when no sub-item is selected -->
+    <template v-if="!isSubItemSelected">
+      <div class="dg-top">
+        <div class="dg-photo-wrapper">
+          <img
+            class="dg-photo"
+            src="/perfis/02.jpg"
+            alt="Chefe do Departamento de Acreditação"
+          />
+          <div class="dg-details">
+            <h3>Dr. Joaquim Mateus</h3>
+            <p class="role">Chefe do Departamento de Acreditação</p>
+          </div>
+        </div>
+        <div class="dg-message">
+          <h4>Mensagem do Responsável</h4>
+          <p>
+            “A acreditação dá confiança ao mercado: reconhece formalmente quem tem
+            competência técnica para avaliar a conformidade.”
+          </p>
         </div>
       </div>
-      <div class="dg-message">
-        <h4>Mensagem do Responsável</h4>
+
+      <div class="quality-policy-section mb-10">
+        <h4>Política de Acreditação</h4>
         <p>
-          “A acreditação dá confiança ao mercado: reconhece formalmente quem tem
-          competência técnica para avaliar a conformidade.”
+          A acreditação é o nível mais elevado de garantia da qualidade: avalia quem
+          avalia. Ao reconhecer a competência dos organismos, o INIQ assegura que
+          ensaios, certificados e relatórios emitidos em Angola merecem confiança no
+          mercado nacional e internacional.
         </p>
       </div>
-    </div>
+    </template>
 
-    <div class="quality-policy-section">
-      <h4>Política de Acreditação</h4>
-      <p>
-        A acreditação é o nível mais elevado de garantia da qualidade: avalia quem
-        avalia. Ao reconhecer a competência dos organismos, o INIQ assegura que
-        ensaios, certificados e relatórios emitidos em Angola merecem confiança no
-        mercado nacional e internacional.
-      </p>
-    </div>
+    <!-- Sub-item content - only show when "Solicitar Serviço" is selected -->
+    <template v-if="isSubItemSelected">
+      <section class="mt-12">
+        <div class="container">
+          <div class="panel-head">
+            <span class="eyebrow">Informações Gerais</span>
+            <h2>Registo, Cadastro e Acreditação</h2>
+            <p>
+              O INIQ assegura o registo e o cadastro dos operadores económicos no
+              âmbito do Sistema Nacional da Qualidade e procede à acreditação de
+              laboratórios e organismos de avaliação da conformidade — o reconhecimento
+              formal da sua competência técnica para realizar ensaios, calibrações,
+              inspecções e certificações.
+            </p>
+          </div>
 
-    <section class="mt-12">
-      <div class="container">
-        <div class="panel-head">
-          <span class="eyebrow">Informações Gerais</span>
-          <h2>Registo, Cadastro e Acreditação</h2>
-          <p>
-            O INIQ assegura o registo e o cadastro dos operadores económicos no
-            âmbito do Sistema Nacional da Qualidade e procede à acreditação de
-            laboratórios e organismos de avaliação da conformidade — o reconhecimento
-            formal da sua competência técnica para realizar ensaios, calibrações,
-            inspecções e certificações.
-          </p>
+          <div class="mdomains">
+            <article class="mdomain">
+              <div class="ico">
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="M9 12h6M9 16h6M9 8h2"></path>
+                  <rect x="4" y="3" width="16" height="18" rx="2"></rect>
+                </svg>
+              </div>
+              <h3>Registo e Cadastro</h3>
+              <p>
+                Inscrição e manutenção do cadastro de operadores económicos e
+                entidades que actuam no Sistema Nacional da Qualidade.
+              </p>
+              <ul>
+                <li>Registo de operadores económicos</li>
+                <li>Cadastro de entidades técnicas</li>
+                <li>Actualização e renovação</li>
+              </ul>
+            </article>
+            <article class="mdomain">
+              <div class="ico">
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="m9 12 2 2 4-4"></path>
+                  <circle cx="12" cy="12" r="9"></circle>
+                </svg>
+              </div>
+              <h3>Acreditação de Laboratórios</h3>
+              <p>
+                Reconhecimento da competência de laboratórios de ensaio e de calibração
+                segundo as normas internacionais aplicáveis.
+              </p>
+              <ul>
+                <li>Laboratórios de ensaio</li>
+                <li>Laboratórios de calibração</li>
+                <li>ISO/IEC 17025</li>
+              </ul>
+            </article>
+            <article class="mdomain">
+              <div class="ico">
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="M16 11V7a4 4 0 0 0-8 0v4"></path>
+                  <rect x="5" y="11" width="14" height="10" rx="2"></rect>
+                </svg>
+              </div>
+              <h3>Organismos de Conformidade</h3>
+              <p>
+                Acreditação de organismos de inspecção e de certificação de produtos,
+                processos, sistemas e pessoas.
+              </p>
+              <ul>
+                <li>Organismos de inspecção</li>
+                <li>Organismos de certificação</li>
+                <li>ISO/IEC 17020 · 17065</li>
+              </ul>
+            </article>
+          </div>
         </div>
+      </section>
 
-        <div class="mdomains">
-          <article class="mdomain">
-            <div class="ico">
-              <svg
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
+      <section class="mt-12">
+        <div class="container">
+          <div class="panel-head">
+            <span class="eyebrow">Processo</span>
+            <h2>Como decorre a acreditação</h2>
+            <p>
+              Um processo transparente e por etapas, da candidatura à decisão, com
+              vigilância periódica que assegura a manutenção da competência.
+            </p>
+          </div>
+          <div class="trace">
+            <div class="trace__step">
+              <span class="lvl"
+                ><span class="dot">1</span> Candidatura</span
               >
-                <path d="M9 12h6M9 16h6M9 8h2"></path>
-                <rect x="4" y="3" width="16" height="18" rx="2"></rect>
-              </svg>
+              <h4>Submissão do pedido</h4>
+              <p>
+                A entidade submete o pedido e a documentação do seu sistema de gestão
+                e âmbito.
+              </p>
             </div>
-            <h3>Registo e Cadastro</h3>
-            <p>
-              Inscrição e manutenção do cadastro de operadores económicos e
-              entidades que actuam no Sistema Nacional da Qualidade.
-            </p>
-            <ul>
-              <li>Registo de operadores económicos</li>
-              <li>Cadastro de entidades técnicas</li>
-              <li>Actualização e renovação</li>
-            </ul>
-          </article>
-          <article class="mdomain">
-            <div class="ico">
-              <svg
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
+            <div class="trace__step">
+              <span class="lvl"
+                ><span class="dot">2</span> Avaliação</span
               >
-                <path d="m9 12 2 2 4-4"></path>
-                <circle cx="12" cy="12" r="9"></circle>
-              </svg>
+              <h4>Avaliação documental e no local</h4>
+              <p>
+                Equipa avaliadora analisa a competência técnica e audita as
+                instalações.
+              </p>
             </div>
-            <h3>Acreditação de Laboratórios</h3>
-            <p>
-              Reconhecimento da competência de laboratórios de ensaio e de calibração
-              segundo as normas internacionais aplicáveis.
-            </p>
-            <ul>
-              <li>Laboratórios de ensaio</li>
-              <li>Laboratórios de calibração</li>
-              <li>ISO/IEC 17025</li>
-            </ul>
-          </article>
-          <article class="mdomain">
-            <div class="ico">
-              <svg
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
+            <div class="trace__step">
+              <span class="lvl"
+                ><span class="dot">3</span> Decisão</span
               >
-                <path d="M16 11V7a4 4 0 0 0-8 0v4"></path>
-                <rect x="5" y="11" width="14" height="10" rx="2"></rect>
-              </svg>
+              <h4>Concessão da acreditação</h4>
+              <p>
+                Emissão do certificado de acreditação com o âmbito reconhecido.
+              </p>
             </div>
-            <h3>Organismos de Conformidade</h3>
-            <p>
-              Acreditação de organismos de inspecção e de certificação de produtos,
-              processos, sistemas e pessoas.
-            </p>
-            <ul>
-              <li>Organismos de inspecção</li>
-              <li>Organismos de certificação</li>
-              <li>ISO/IEC 17020 · 17065</li>
-            </ul>
-          </article>
-        </div>
-      </div>
-    </section>
-
-    <section class="mt-12">
-      <div class="container">
-        <div class="panel-head">
-          <span class="eyebrow">Processo</span>
-          <h2>Como decorre a acreditação</h2>
-          <p>
-            Um processo transparente e por etapas, da candidatura à decisão, com
-            vigilância periódica que assegura a manutenção da competência.
-          </p>
-        </div>
-        <div class="trace">
-          <div class="trace__step">
-            <span class="lvl"
-              ><span class="dot">1</span> Candidatura</span
-            >
-            <h4>Submissão do pedido</h4>
-            <p>
-              A entidade submete o pedido e a documentação do seu sistema de gestão
-              e âmbito.
-            </p>
-          </div>
-          <div class="trace__step">
-            <span class="lvl"
-              ><span class="dot">2</span> Avaliação</span
-            >
-            <h4>Avaliação documental e no local</h4>
-            <p>
-              Equipa avaliadora analisa a competência técnica e audita as
-              instalações.
-            </p>
-          </div>
-          <div class="trace__step">
-            <span class="lvl"
-              ><span class="dot">3</span> Decisão</span
-            >
-            <h4>Concessão da acreditação</h4>
-            <p>
-              Emissão do certificado de acreditação com o âmbito reconhecido.
-            </p>
-          </div>
-          <div class="trace__step">
-            <span class="lvl"
-              ><span class="dot">4</span> Vigilância</span
-            >
-            <h4>Manutenção e renovação</h4>
-            <p>
-              Auditorias de acompanhamento periódicas e renovação do ciclo.
-            </p>
+            <div class="trace__step">
+              <span class="lvl"
+                ><span class="dot">4</span> Vigilância</span
+              >
+              <h4>Manutenção e renovação</h4>
+              <p>
+                Auditorias de acompanhamento periódicas e renovação do ciclo.
+              </p>
+            </div>
           </div>
         </div>
-      </div>
-    </section>
-    <section class="mt-12">
-      <div class="container">
-        <div class="cta-band">
-          <div>
-            <h2>Pretende acreditar o seu laboratório ou organismo?</h2>
-            <p>
-              Fale com o Departamento de Acreditação do INIQ e conheça os requisitos
-              e as etapas do processo.
-            </p>
-          </div>
-          <div class="cta-band__actions">
-            <NuxtLink to="/contactos" class="btn btn--ghost"
-              >Pedir informação</NuxtLink
-            >
+      </section>
+      <section class="mt-12">
+        <div class="container">
+          <div class="cta-band">
+            <div>
+              <h2>Pretende acreditar o seu laboratório ou organismo?</h2>
+              <p>
+                Fale com o Departamento de Acreditação do INIQ e conheça os requisitos
+                e as etapas do processo.
+              </p>
+            </div>
+            <div class="cta-band__actions">
+              <NuxtLink to="/contactos" class="btn btn--ghost"
+                >Pedir informação</NuxtLink
+              >
+            </div>
           </div>
         </div>
-      </div>
-    </section>
+      </section>
+    </template>
   </div>
 </template>
 

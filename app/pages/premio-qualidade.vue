@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { inject, watch, ref } from 'vue'
+
 definePageMeta({
   layout: 'default',
 })
@@ -6,148 +8,167 @@ definePageMeta({
 useHead({
   title: 'INIQ » Prémio Nacional da Qualidade',
 })
+
+// Inject active sub-item from layout
+const activeSubItemId = inject('activeSubItemId')
+
+// Track if sub-item is selected
+const isSubItemSelected = ref(false)
+
+// Sync with layout
+if (activeSubItemId) {
+  watch(activeSubItemId, (newId) => {
+    isSubItemSelected.value = !!newId
+  }, { immediate: true })
+}
 </script>
 
 <template>
   <div class="combined-card">
-    <div class="dg-top">
-      <div class="dg-photo-wrapper">
-        <img
-          class="dg-photo"
-          src="/director-geral.png"
-          alt="Director-Geral"
-        />
-        <div class="dg-details">
-          <h3>Carmo Adriana dos Santos</h3>
-          <p class="role">Direcção-Geral</p>
+    <!-- Top info - only show when no sub-item is selected -->
+    <template v-if="!isSubItemSelected">
+      <div class="dg-top">
+        <div class="dg-photo-wrapper">
+          <img
+            class="dg-photo"
+            src="/director-geral.png"
+            alt="Director-Geral"
+          />
+          <div class="dg-details">
+            <h3>Carmo Adriana dos Santos</h3>
+            <p class="role">Direcção-Geral</p>
+          </div>
         </div>
-      </div>
-      <div class="dg-message">
-        <h4>Mensagem do Responsável</h4>
-        <p>
-          “O Prémio Nacional da Qualidade reconhece e celebra a excelência nas
-          organizações angolanas, incentivando a adoção de boas práticas de gestão
-          da qualidade.”
-        </p>
-      </div>
-    </div>
-
-    <div class="quality-policy-section">
-      <h4>Política do Prémio Nacional da Qualidade</h4>
-      <p>
-        O INIQ compromete-se a promover a excelência nas organizações nacionais
-        através do Prémio Nacional da Qualidade, reconhecendo as boas práticas de
-        gestão da qualidade e incentivando a melhoria contínua.
-      </p>
-    </div>
-
-    <section class="mt-12">
-      <div class="container">
-        <div class="panel-head">
-          <span class="eyebrow">Informações Gerais</span>
-          <h2>Prémio Nacional da Qualidade</h2>
+        <div class="dg-message">
+          <h4>Mensagem do Responsável</h4>
           <p>
-            Reconhecimento da excelência e das boas práticas de gestão da qualidade
-            nas organizações nacionais, segundo modelos de excelência reconhecidos.
+            “O Prémio Nacional da Qualidade reconhece e celebra a excelência nas
+            organizações angolanas, incentivando a adoção de boas práticas de gestão
+            da qualidade.”
           </p>
         </div>
-
-        <div class="mdomains">
-          <article class="mdomain">
-            <div class="ico">
-              <svg
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              >
-                <circle cx="12" cy="9" r="6"></circle>
-                <path d="m9 14-1.5 7L12 18l4.5 3L15 14"></path>
-              </svg>
-            </div>
-            <h3>Candidaturas</h3>
-            <p>
-              Processo de candidatura ao Prémio Nacional da Qualidade, aberto a
-              organizações de todos os sectores da economia angolana.
-            </p>
-            <ul>
-              <li>Aberto a todas as organizações</li>
-              <li>Processo de candidatura</li>
-              <li>Critérios de avaliação</li>
-            </ul>
-          </article>
-          <article class="mdomain">
-            <div class="ico">
-              <svg
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              >
-                <path d="M20 6 9 17l-5-5"></path>
-              </svg>
-            </div>
-            <h3>Modelo de Excelência</h3>
-            <p>
-              Aplicação de modelos de excelência reconhecidos internacionalmente
-              para avaliação das organizações candidatas.
-            </p>
-            <ul>
-              <li>Critérios de excelência</li>
-              <li>Avaliação independente</li>
-              <li>Feedback qualitativo</li>
-            </ul>
-          </article>
-          <article class="mdomain">
-            <div class="ico">
-              <svg
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              >
-                <path d="M12 2l3 3 4 .5.5 4 3 3-3 3-.5 4-4 .5-3 3-3-3-4-.5-.5-4-3-3 3-3 .5-4 4-.5Z"></path>
-              </svg>
-            </div>
-            <h3>Reconhecimento</h3>
-            <p>
-              Cerimónia de entrega do prémio e divulgação das boas práticas das
-              organizações premiadas.
-            </p>
-            <ul>
-              <li>Cerimónia de entrega</li>
-              <li>Divulgação de boas práticas</li>
-              <li>Visibilidade nacional</li>
-            </ul>
-          </article>
-        </div>
       </div>
-    </section>
 
-    <section class="section">
-      <div class="container">
-        <div class="cta-band">
-          <div>
-            <h2>Quer candidatar-se ao Prémio Nacional da Qualidade?</h2>
+      <div class="quality-policy-section mb-10">
+        <h4>Política do Prémio Nacional da Qualidade</h4>
+        <p>
+          O INIQ compromete-se a promover a excelência nas organizações nacionais
+          através do Prémio Nacional da Qualidade, reconhecendo as boas práticas de
+          gestão da qualidade e incentivando a melhoria contínua.
+        </p>
+      </div>
+    </template>
+
+    <!-- Sub-item content - only show when "Solicitar Serviço" is selected -->
+    <template v-if="isSubItemSelected">
+      <section class="mt-12">
+        <div class="container">
+          <div class="panel-head">
+            <span class="eyebrow">Informações Gerais</span>
+            <h2>Prémio Nacional da Qualidade</h2>
             <p>
-              Contacte o INIQ para obter mais informações sobre o processo de
-              candidatura e os critérios de avaliação.
+              Reconhecimento da excelência e das boas práticas de gestão da qualidade
+              nas organizações nacionais, segundo modelos de excelência reconhecidos.
             </p>
           </div>
-          <div class="cta-band__actions">
-            <NuxtLink to="/contactos" class="btn btn--ghost"
-              >Pedir informação</NuxtLink
-            >
+
+          <div class="mdomains">
+            <article class="mdomain">
+              <div class="ico">
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <circle cx="12" cy="9" r="6"></circle>
+                  <path d="m9 14-1.5 7L12 18l4.5 3L15 14"></path>
+                </svg>
+              </div>
+              <h3>Candidaturas</h3>
+              <p>
+                Processo de candidatura ao Prémio Nacional da Qualidade, aberto a
+                organizações de todos os sectores da economia angolana.
+              </p>
+              <ul>
+                <li>Aberto a todas as organizações</li>
+                <li>Processo de candidatura</li>
+                <li>Critérios de avaliação</li>
+              </ul>
+            </article>
+            <article class="mdomain">
+              <div class="ico">
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="M20 6 9 17l-5-5"></path>
+                </svg>
+              </div>
+              <h3>Modelo de Excelência</h3>
+              <p>
+                Aplicação de modelos de excelência reconhecidos internacionalmente
+                para avaliação das organizações candidatas.
+              </p>
+              <ul>
+                <li>Critérios de excelência</li>
+                <li>Avaliação independente</li>
+                <li>Feedback qualitativo</li>
+              </ul>
+            </article>
+            <article class="mdomain">
+              <div class="ico">
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="M12 2l3 3 4 .5.5 4 3 3-3 3-.5 4-4 .5-3 3-3-3-4-.5-.5-4-3-3 3-3 .5-4 4-.5Z"></path>
+                </svg>
+              </div>
+              <h3>Reconhecimento</h3>
+              <p>
+                Cerimónia de entrega do prémio e divulgação das boas práticas das
+                organizações premiadas.
+              </p>
+              <ul>
+                <li>Cerimónia de entrega</li>
+                <li>Divulgação de boas práticas</li>
+                <li>Visibilidade nacional</li>
+              </ul>
+            </article>
           </div>
         </div>
-      </div>
-    </section>
+      </section>
+
+      <section class="section">
+        <div class="container">
+          <div class="cta-band">
+            <div>
+              <h2>Quer candidatar-se ao Prémio Nacional da Qualidade?</h2>
+              <p>
+                Contacte o INIQ para obter mais informações sobre o processo de
+                candidatura e os critérios de avaliação.
+              </p>
+            </div>
+            <div class="cta-band__actions">
+              <NuxtLink to="/contactos" class="btn btn--ghost"
+                >Pedir informação</NuxtLink
+              >
+            </div>
+          </div>
+        </div>
+      </section>
+    </template>
   </div>
 </template>
 
