@@ -1,4 +1,19 @@
 <script setup>
+import { provide, ref } from 'vue'
+
+const activeSubItemId = ref(null)
+
+const handleSelectService = (serviceId) => {
+  // Limpar sub-item quando selecionar um serviço
+  activeSubItemId.value = null
+}
+
+const handleSelectSubItem = (serviceId, subItemId) => {
+  activeSubItemId.value = subItemId
+}
+
+// Prover o activeSubItemId para as páginas filhas
+provide('activeSubItemId', activeSubItemId)
 </script>
 
 <template>
@@ -6,10 +21,10 @@
     <UiHeaderComponent />
     <div class="main-container">
       <UiSideBarComponent class="sidebar-left">
-        <template #eyebrow>
+        <template #eyebrow">
           <slot name="sidebar-eyebrow" />
         </template>
-        <template #title>
+        <template #title">
           <slot name="sidebar-title" />
         </template>
         <slot name="sidebar-content" />
@@ -17,7 +32,11 @@
       <main class="center-content">
         <slot />
       </main>
-      <UiNavigatorBarComponent class="sidebar-right" />
+      <UiNavigatorBarComponent 
+        class="sidebar-right" 
+        @select-service="handleSelectService"
+        @select-subitem="handleSelectSubItem"
+      />
       <div class="carousel-spacer"></div>
       <div class="partner-carousel-wrapper">
         <UiPartnerCarousel />

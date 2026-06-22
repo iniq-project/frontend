@@ -5,30 +5,22 @@ const route = useRoute()
 const router = useRouter()
 const isHomePage = computed(() => route.path === '/')
 
-// Active service state
 const activeServiceId = ref<string | null>(null)
 const activeSubItemId = ref<string | null>(null)
 
-// Emit events to parent
 const emit = defineEmits(['select-service', 'select-subitem'])
 
 const selectService = (service: Service) => {
   activeServiceId.value = service.id
-  // Navigate to the service page
   const path = `/${service.id}`
   router.push(path)
   
-  // Set first subitem as active if available
-  if (service.subItems && service.subItems.length > 0) {
-    activeSubItemId.value = service.subItems[0].id
-  } else {
-    activeSubItemId.value = null
-  }
+  // Não ativar automaticamente o primeiro sub-item
+  activeSubItemId.value = null
   emit('select-service', service.id)
 }
 
 const goBackToServices = () => {
-  // Just clear active service to show all services again
   activeServiceId.value = null
   activeSubItemId.value = null
   emit('select-service', null)
@@ -46,7 +38,6 @@ const goHome = () => {
 
 const activeService = computed(() => services.find(s => s.id === activeServiceId.value))
 
-// Set active service based on route when component mounts
 onMounted(() => {
   const pathToId: Record<string, string> = {
     '/normas-tecnicas': 'normas-tecnicas',
@@ -60,10 +51,8 @@ onMounted(() => {
   }
   if (pathToId[route.path]) {
     activeServiceId.value = pathToId[route.path]
-    const service = services.find(s => s.id === pathToId[route.path])
-    if (service?.subItems?.[0]) {
-      activeSubItemId.value = service.subItems[0].id
-    }
+    // Não ativar automaticamente o primeiro sub-item
+    activeSubItemId.value = null
   }
 })
 </script>
@@ -73,7 +62,6 @@ onMounted(() => {
     <NuxtLink v-if="!isHomePage && !activeService" to="/" class="back-btn" @click="goHome">← Voltar à Página Inicial</NuxtLink>
     <h2>Serviços</h2>
     <nav class="services-list">
-      <!-- If no active service, show all services -->
       <template v-if="!activeService">
         <button
           v-for="service in services"
@@ -85,7 +73,6 @@ onMounted(() => {
           <span>{{ service.title }}</span>
         </button>
       </template>
-      <!-- If active service, show back button and subitems -->
       <template v-else>
         <button class="back-to-services" @click="goBackToServices">
           ← Voltar para serviços
