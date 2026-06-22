@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { inject, watch, ref } from 'vue'
+
 definePageMeta({
   layout: 'default',
 })
@@ -6,93 +8,113 @@ definePageMeta({
 useHead({
   title: 'INIQ » Metrologia',
 })
+
+// Inject active sub-item from layout
+const activeSubItemId = inject('activeSubItemId')
+
+// Track if sub-item is selected
+const isSubItemSelected = ref(false)
+
+// Sync with layout
+if (activeSubItemId) {
+  watch(activeSubItemId, (newId) => {
+    isSubItemSelected.value = !!newId
+  }, { immediate: true })
+}
 </script>
 
 <template>
     <div class="combined-card">
-      <div class="dg-top">
-        <div class="dg-photo-wrapper">
-          <img
-          class="dg-photo"
-          src="/perfis/03.jpg"
-          alt="Chefe do Departamento de Metrologia"
-        />
-          <div class="dg-details">
-            <h3>Eng.º António Bengui</h3>
-            <p class="role">Chefe do Departamento de Metrologia</p>
+      <!-- Top info - only show when no sub-item is selected -->
+      <template v-if="!isSubItemSelected">
+        <div class="dg-top">
+          <div class="dg-photo-wrapper">
+            <img
+            class="dg-photo"
+            src="/perfis/03.jpg"
+            alt="Chefe do Departamento de Metrologia"
+          />
+            <div class="dg-details">
+              <h3>Eng.º António Bengui</h3>
+              <p class="role">Chefe do Departamento de Metrologia</p>
+            </div>
+          </div>
+          <div class="dg-message">
+            <h4>Mensagem do Responsável</h4>
+            <p>
+              “Medições fiáveis são a base do comércio justo e da indústria. Asseguramos a rastreabilidade de cada medição ao Sistema Internacional de Unidades.”
+            </p>
           </div>
         </div>
-        <div class="dg-message">
-          <h4>Mensagem do Responsável</h4>
+
+        <div class="quality-policy-section mb-10">
+          <h4>Política de Qualidade para Metrologia</h4>
           <p>
-            “Medições fiáveis são a base do comércio justo e da indústria. Asseguramos a rastreabilidade de cada medição ao Sistema Internacional de Unidades.”
+            O INIQ compromete-se a garantir a fiabilidade e rastreabilidade das medições em Angola, alinhando-se com os padrões internacionais (BIPM, OIML) e promovendo a confiança no mercado, a proteção do consumidor e a competitividade industrial, com foco na melhoria contínua e excelência.
           </p>
         </div>
-      </div>
+      </template>
 
-      <div class="quality-policy-section">
-        <h4>Política de Qualidade para Metrologia</h4>
-        <p>
-          O INIQ compromete-se a garantir a fiabilidade e rastreabilidade das medições em Angola, alinhando-se com os padrões internacionais (BIPM, OIML) e promovendo a confiança no mercado, a proteção do consumidor e a competitividade industrial, com foco na melhoria contínua e excelência.
-        </p>
-      </div>
-      <section class="mt-12">
-        <div class="container">
-          <div class="panel-head">
-            <span class="eyebrow">Serviços</span>
-            <h2>Serviços de metrologia ao seu dispor</h2>
-          </div>
-          <div class="mserv">
-            <div class="mserv__item">
-              <span class="chk">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M20 6 9 17l-5-5"></path>
-                </svg>
-              </span>
-              <div><b>Calibração de instrumentos</b><p>Massa, volume, temperatura, pressão, dimensional e mais.</p></div>
+      <!-- Sub-item content - only show when "Solicitar Serviço" is selected -->
+      <template v-if="isSubItemSelected">
+        <section class="mt-12">
+          <div class="container">
+            <div class="panel-head">
+              <span class="eyebrow">Serviços</span>
+              <h2>Serviços de metrologia ao seu dispor</h2>
             </div>
-            <div class="mserv__item">
-              <span class="chk">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M20 6 9 17l-5-5"></path>
-                </svg>
-              </span>
-              <div><b>Verificação metrológica legal</b><p>Verificação inicial e periódica de instrumentos sujeitos a controlo.</p></div>
+            <div class="mserv">
+              <div class="mserv__item">
+                <span class="chk">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M20 6 9 17l-5-5"></path>
+                  </svg>
+                </span>
+                <div><b>Calibração de instrumentos</b><p>Massa, volume, temperatura, pressão, dimensional e mais.</p></div>
+              </div>
+              <div class="mserv__item">
+                <span class="chk">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M20 6 9 17l-5-5"></path>
+                  </svg>
+                </span>
+                <div><b>Verificação metrológica legal</b><p>Verificação inicial e periódica de instrumentos sujeitos a controlo.</p></div>
+              </div>
+              <div class="mserv__item">
+                <span class="chk">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M20 6 9 17l-5-5"></path>
+                  </svg>
+                </span>
+                <div><b>Emissão de certificados</b><p>Certificados de calibração e de verificação com rastreabilidade ao SI.</p></div>
+              </div>
+              <div class="mserv__item">
+                <span class="chk">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M20 6 9 17l-5-5"></path>
+                  </svg>
+                </span>
+                <div><b>Aprovação de modelo</b><p>Avaliação e aprovação de modelos de instrumentos de medição.</p></div>
+              </div>
             </div>
-            <div class="mserv__item">
-              <span class="chk">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M20 6 9 17l-5-5"></path>
-                </svg>
-              </span>
-              <div><b>Emissão de certificados</b><p>Certificados de calibração e de verificação com rastreabilidade ao SI.</p></div>
-            </div>
-            <div class="mserv__item">
-              <span class="chk">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M20 6 9 17l-5-5"></path>
-                </svg>
-              </span>
-              <div><b>Aprovação de modelo</b><p>Avaliação e aprovação de modelos de instrumentos de medição.</p></div>
-            </div>
-          </div>
  
-        </div>
-      </section>
+          </div>
+        </section>
 
-      <section class="section">
-        <div class="container">
-          <div class="cta-band">
-            <div>
-              <h2>Precisa de calibrar ou verificar instrumentos?</h2>
-              <p>Contacte o Laboratório Nacional de Metrologia do INIQ e solicite um orçamento para os seus equipamentos.</p>
-            </div>
-            <div class="cta-band__actions">
-              <NuxtLink to="/contactos" class="btn btn--ghost">Solicitar calibração</NuxtLink>
+        <section class="section">
+          <div class="container">
+            <div class="cta-band">
+              <div>
+                <h2>Precisa de calibrar ou verificar instrumentos?</h2>
+                <p>Contacte o Laboratório Nacional de Metrologia do INIQ e solicite um orçamento para os seus equipamentos.</p>
+              </div>
+              <div class="cta-band__actions">
+                <NuxtLink to="/contactos" class="btn btn--ghost">Solicitar calibração</NuxtLink>
+              </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
+      </template>
     </div>
 </template>
 

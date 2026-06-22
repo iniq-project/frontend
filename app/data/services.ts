@@ -46,7 +46,19 @@ export const services: Service[] = [
     id: "metrologia",
     number: "02",
     title: "Metrologia",
-    subItems: []
+    subItems: [
+      { id: "solicitar-servico", number: "01", title: "Solicitar Serviço" }
+    ],
+    responsavel: {
+      nome: "Eng.º António Bengui",
+      cargo: "Chefe do Departamento de Metrologia",
+      foto: "/perfis/03.jpg",
+      mensagem: "“Medições fiáveis são a base do comércio justo e da indústria. Asseguramos a rastreabilidade de cada medição ao Sistema Internacional de Unidades.”"
+    },
+    politicaQualidade: {
+      titulo: "Política de Qualidade para Metrologia",
+      descricao: "O INIQ compromete-se a garantir a fiabilidade e rastreabilidade das medições em Angola, alinhando-se com os padrões internacionais (BIPM, OIML) e promovendo a confiança no mercado, a proteção do consumidor e a competitividade industrial, com foco na melhoria contínua e excelência."
+    }
   },
   {
     id: "acreditacao",
