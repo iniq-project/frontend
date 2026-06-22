@@ -36,7 +36,7 @@
 
 .main-container {
   display: grid;
-  grid-template-columns: 420px 1fr 380px;
+  grid-template-columns: 320px 1fr 530px;
   grid-template-rows: auto 1fr;
   gap: 0;
   padding: 0;

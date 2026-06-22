@@ -15,24 +15,25 @@
       </h2>
       <div class="about-text">
         <slot>
-          <p>
-            Criado pelo Decreto Presidencial n.º 95/21, de Abril de 2021, o
-            Instituto Nacional das Infra-Estruturas da Qualidade (INIQ) é um
-            instituto público dotado de personalidade jurídica e autonomia
-            administrativa, financeira e patrimonial, sob superintendência do
-            Ministério da Indústria e Comércio.
-          </p>
-          <p>
-            INIQ compete coordenar, supervisionar e desenvolver o Sistema
-            Nacional da Qualidade, integrando as componentes de normalização,
-            metrologia, ensaios, certificação e acreditação.
-          </p>
+          <ul>
+            <li>
+              Criado pelo Decreto Presidencial n.º 95/21, de Abril de 2021
+            </li>
+            <li>
+              Instituto público sob superintendência do Ministério da Indústria e Comércio
+            </li>
+            <li>
+              Compete coordenar o Sistema Nacional da Qualidade
+            </li>
+          </ul>
         </slot>
       </div>
     </div>
 
     <div class="sidebar-footer">
-      <div class="gov-info">Palácio de Vidro, Largo 17 de Setembro, Luanda</div>
+      <div class="gov-info">Edificio Palacio do vidro <br>
+        Largo 17 de Setembro n° 7 <br>
+        5° Andar, Ala Esquerda.</div>
     </div>
   </aside>
 </template>
@@ -96,12 +97,28 @@
   font-size: 0.95rem;
 }
 
-.about-text p {
-  margin-bottom: 1.25rem;
+.about-text ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
 }
 
-.about-text p:last-child {
+.about-text li {
+  position: relative;
+  padding-left: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.about-text li:last-child {
   margin-bottom: 0;
+}
+
+.about-text li::before {
+  content: "•";
+  position: absolute;
+  left: 0;
+  color: #5cb947;
+  font-weight: bold;
 }
 
 .sidebar-footer {
