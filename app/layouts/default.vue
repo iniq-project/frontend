@@ -5,7 +5,6 @@ const route = useRoute()
 const activeSubItemId = ref(null)
 
 const handleSelectService = (serviceId) => {
-  // Limpar sub-item quando selecionar um serviço
   activeSubItemId.value = null
 }
 
@@ -13,7 +12,6 @@ const handleSelectSubItem = (serviceId, subItemId) => {
   activeSubItemId.value = subItemId
 }
 
-// Watch route path to reset activeSubItemId on homepage
 watch(
   () => route.path,
   (newPath) => {
@@ -23,7 +21,6 @@ watch(
   }
 )
 
-// Prover o activeSubItemId para as páginas filhas
 provide('activeSubItemId', activeSubItemId)
 </script>
 

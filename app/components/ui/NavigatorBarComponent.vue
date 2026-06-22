@@ -8,21 +8,22 @@ const isHomePage = computed(() => route.path === '/')
 
 const activeServiceId = ref<string | null>(null)
 const activeSubItemId = ref<string | null>(null)
+const showSubItems = ref(false)
 
 const emit = defineEmits(['select-service', 'select-subitem'])
 
 const selectService = (service: Service) => {
   activeServiceId.value = service.id
+  showSubItems.value = true
   const path = `/${service.id}`
   router.push(path)
   
-  // Não ativar automaticamente o primeiro sub-item
   activeSubItemId.value = null
   emit('select-service', service.id)
 }
 
 const goBackToServices = () => {
-  activeServiceId.value = null
+  showSubItems.value = false
   activeSubItemId.value = null
   emit('select-service', null)
 }
@@ -52,19 +53,18 @@ onMounted(() => {
   }
   if (pathToId[route.path]) {
     activeServiceId.value = pathToId[route.path]
-    // Não ativar automaticamente o primeiro sub-item
+    showSubItems.value = true
     activeSubItemId.value = null
   }
 })
 
-// Watch route changes to reset states when going back to homepage or switching pages
 watch(
   () => route.path,
   (newPath) => {
     if (newPath === '/') {
-      // Reset everything when going to homepage
       activeServiceId.value = null
       activeSubItemId.value = null
+      showSubItems.value = false
       emit('select-service', null)
     } else {
       const pathToId: Record<string, string> = {
@@ -79,7 +79,7 @@ watch(
       }
       if (pathToId[newPath]) {
         activeServiceId.value = pathToId[newPath]
-        // Reset sub-item when switching service pages
+        showSubItems.value = true
         activeSubItemId.value = null
       }
     }
@@ -89,14 +89,15 @@ watch(
 
 <template>
   <aside class="sidebar-right">
-    <NuxtLink v-if="!isHomePage && !activeService" to="/" class="back-btn" @click="goHome">← Voltar à Página Inicial</NuxtLink>
+    <NuxtLink v-if="!isHomePage && !showSubItems" to="/" class="back-btn" @click="goHome">← Voltar à Página Inicial</NuxtLink>
     <h2>Serviços</h2>
     <nav class="services-list">
-      <template v-if="!activeService">
+      <template v-if="!showSubItems">
         <button
           v-for="service in services"
           :key="service.id"
           class="service-item"
+          :class="{ active: activeServiceId === service.id }"
           @click="selectService(service)"
         >
           <span class="n">{{ service.number }}</span>
@@ -168,7 +169,6 @@ watch(
   background: #b0bbc5;
 }
 
-/* Firefox scrollbar */
 .sidebar-right,
 .services-list {
   scrollbar-width: thin;
@@ -229,7 +229,8 @@ watch(
   width: 100%;
 }
 
-.service-item:hover {
+.service-item:hover,
+.service-item.active {
   background: linear-gradient(135deg, #f0f7f2 0%, #eff6fc 100%);
   border-color: #d0e8d6;
 }
