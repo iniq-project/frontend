@@ -1,6 +1,7 @@
 <script setup>
-import { provide, ref } from 'vue'
+import { provide, ref, watch } from 'vue'
 
+const route = useRoute()
 const activeSubItemId = ref(null)
 
 const handleSelectService = (serviceId) => {
@@ -11,6 +12,16 @@ const handleSelectService = (serviceId) => {
 const handleSelectSubItem = (serviceId, subItemId) => {
   activeSubItemId.value = subItemId
 }
+
+// Watch route path to reset activeSubItemId on homepage
+watch(
+  () => route.path,
+  (newPath) => {
+    if (newPath === '/') {
+      activeSubItemId.value = null
+    }
+  }
+)
 
 // Prover o activeSubItemId para as páginas filhas
 provide('activeSubItemId', activeSubItemId)

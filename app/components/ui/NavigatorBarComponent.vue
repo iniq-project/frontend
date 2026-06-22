@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { ref, computed, watch, onMounted } from 'vue'
 import { services, type Service } from '~/data/services'
 
 const route = useRoute()
@@ -55,6 +56,35 @@ onMounted(() => {
     activeSubItemId.value = null
   }
 })
+
+// Watch route changes to reset states when going back to homepage or switching pages
+watch(
+  () => route.path,
+  (newPath) => {
+    if (newPath === '/') {
+      // Reset everything when going to homepage
+      activeServiceId.value = null
+      activeSubItemId.value = null
+      emit('select-service', null)
+    } else {
+      const pathToId: Record<string, string> = {
+        '/normas-tecnicas': 'normas-tecnicas',
+        '/metrologia': 'metrologia',
+        '/acreditacao': 'acreditacao',
+        '/importacao': 'importacao',
+        '/formacao': 'formacao',
+        '/rotulos': 'rotulos',
+        '/regulamentos': 'regulamentos',
+        '/premio-qualidade': 'premio-qualidade'
+      }
+      if (pathToId[newPath]) {
+        activeServiceId.value = pathToId[newPath]
+        // Reset sub-item when switching service pages
+        activeSubItemId.value = null
+      }
+    }
+  }
+)
 </script>
 
 <template>
