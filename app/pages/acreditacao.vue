@@ -1,31 +1,31 @@
-<script setup lang="ts">
-import { inject, watch, ref } from 'vue'
+<script setup >
+import { inject, watch, ref } from "vue"
 
 definePageMeta({
-  layout: 'default',
+  layout: "default",
 })
 
 useHead({
-  title: 'INIQ » Registo, Cadastro e Acreditação',
+  title: "INIQ » Registo, Cadastro e Acreditação",
 })
 
-// Inject active sub-item from layout
-const activeSubItemId = inject('activeSubItemId')
+const activeSubItemId = inject("activeSubItemId")
 
-// Track if sub-item is selected
 const isSubItemSelected = ref(false)
 
-// Sync with layout
 if (activeSubItemId) {
-  watch(activeSubItemId, (newId) => {
-    isSubItemSelected.value = !!newId
-  }, { immediate: true })
+  watch(
+    activeSubItemId,
+    (newId) => {
+      isSubItemSelected.value = !!newId
+    },
+    { immediate: true },
+  )
 }
 </script>
 
 <template>
   <div class="combined-card">
-    <!-- Top info - only show when no sub-item is selected -->
     <template v-if="!isSubItemSelected">
       <div class="dg-top">
         <div class="dg-photo-wrapper">
@@ -42,8 +42,8 @@ if (activeSubItemId) {
         <div class="dg-message">
           <h4>Mensagem do Responsável</h4>
           <p>
-            “A acreditação dá confiança ao mercado: reconhece formalmente quem tem
-            competência técnica para avaliar a conformidade.”
+            “A acreditação dá confiança ao mercado: reconhece formalmente quem
+            tem competência técnica para avaliar a conformidade.”
           </p>
         </div>
       </div>
@@ -51,10 +51,10 @@ if (activeSubItemId) {
       <div class="quality-policy-section mb-10">
         <h4>Política de Acreditação</h4>
         <p>
-          A acreditação é o nível mais elevado de garantia da qualidade: avalia quem
-          avalia. Ao reconhecer a competência dos organismos, o INIQ assegura que
-          ensaios, certificados e relatórios emitidos em Angola merecem confiança no
-          mercado nacional e internacional.
+          A acreditação é o nível mais elevado de garantia da qualidade: avalia
+          quem avalia. Ao reconhecer a competência dos organismos, o INIQ
+          assegura que ensaios, certificados e relatórios emitidos em Angola
+          merecem confiança no mercado nacional e internacional.
         </p>
       </div>
     </template>
@@ -67,11 +67,11 @@ if (activeSubItemId) {
             <span class="eyebrow">Informações Gerais</span>
             <h2>Registo, Cadastro e Acreditação</h2>
             <p>
-              O INIQ assegura o registo e o cadastro dos operadores económicos no
-              âmbito do Sistema Nacional da Qualidade e procede à acreditação de
-              laboratórios e organismos de avaliação da conformidade — o reconhecimento
-              formal da sua competência técnica para realizar ensaios, calibrações,
-              inspecções e certificações.
+              O INIQ assegura o registo e o cadastro dos operadores económicos
+              no âmbito do Sistema Nacional da Qualidade e procede à acreditação
+              de laboratórios e organismos de avaliação da conformidade — o
+              reconhecimento formal da sua competência técnica para realizar
+              ensaios, calibrações, inspecções e certificações.
             </p>
           </div>
 
@@ -117,8 +117,8 @@ if (activeSubItemId) {
               </div>
               <h3>Acreditação de Laboratórios</h3>
               <p>
-                Reconhecimento da competência de laboratórios de ensaio e de calibração
-                segundo as normas internacionais aplicáveis.
+                Reconhecimento da competência de laboratórios de ensaio e de
+                calibração segundo as normas internacionais aplicáveis.
               </p>
               <ul>
                 <li>Laboratórios de ensaio</li>
@@ -142,8 +142,8 @@ if (activeSubItemId) {
               </div>
               <h3>Organismos de Conformidade</h3>
               <p>
-                Acreditação de organismos de inspecção e de certificação de produtos,
-                processos, sistemas e pessoas.
+                Acreditação de organismos de inspecção e de certificação de
+                produtos, processos, sistemas e pessoas.
               </p>
               <ul>
                 <li>Organismos de inspecção</li>
@@ -161,25 +161,21 @@ if (activeSubItemId) {
             <span class="eyebrow">Processo</span>
             <h2>Como decorre a acreditação</h2>
             <p>
-              Um processo transparente e por etapas, da candidatura à decisão, com
-              vigilância periódica que assegura a manutenção da competência.
+              Um processo transparente e por etapas, da candidatura à decisão,
+              com vigilância periódica que assegura a manutenção da competência.
             </p>
           </div>
           <div class="trace">
             <div class="trace__step">
-              <span class="lvl"
-                ><span class="dot">1</span> Candidatura</span
-              >
+              <span class="lvl"><span class="dot">1</span> Candidatura</span>
               <h4>Submissão do pedido</h4>
               <p>
-                A entidade submete o pedido e a documentação do seu sistema de gestão
-                e âmbito.
+                A entidade submete o pedido e a documentação do seu sistema de
+                gestão e âmbito.
               </p>
             </div>
             <div class="trace__step">
-              <span class="lvl"
-                ><span class="dot">2</span> Avaliação</span
-              >
+              <span class="lvl"><span class="dot">2</span> Avaliação</span>
               <h4>Avaliação documental e no local</h4>
               <p>
                 Equipa avaliadora analisa a competência técnica e audita as
@@ -187,18 +183,14 @@ if (activeSubItemId) {
               </p>
             </div>
             <div class="trace__step">
-              <span class="lvl"
-                ><span class="dot">3</span> Decisão</span
-              >
+              <span class="lvl"><span class="dot">3</span> Decisão</span>
               <h4>Concessão da acreditação</h4>
               <p>
                 Emissão do certificado de acreditação com o âmbito reconhecido.
               </p>
             </div>
             <div class="trace__step">
-              <span class="lvl"
-                ><span class="dot">4</span> Vigilância</span
-              >
+              <span class="lvl"><span class="dot">4</span> Vigilância</span>
               <h4>Manutenção e renovação</h4>
               <p>
                 Auditorias de acompanhamento periódicas e renovação do ciclo.
@@ -213,8 +205,8 @@ if (activeSubItemId) {
             <div>
               <h2>Pretende acreditar o seu laboratório ou organismo?</h2>
               <p>
-                Fale com o Departamento de Acreditação do INIQ e conheça os requisitos
-                e as etapas do processo.
+                Fale com o Departamento de Acreditação do INIQ e conheça os
+                requisitos e as etapas do processo.
               </p>
             </div>
             <div class="cta-band__actions">
@@ -234,7 +226,6 @@ if (activeSubItemId) {
   background: white;
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(10, 58, 99, 0.08);
-
 }
 
 .dg-top {
