@@ -1,50 +1,126 @@
 <script setup lang="ts">
-const route = useRoute()
+import { ref, computed, watch, onMounted } from 'vue'
+import { services, type Service } from '~/data/services'
 
+const route = useRoute()
+const router = useRouter()
 const isHomePage = computed(() => route.path === '/')
 
-const isActive = (path: string) => {
-  return route.path === path
+const activeServiceId = ref<string | null>(null)
+const activeSubItemId = ref<string | null>(null)
+const showSubItems = ref(false)
+
+const emit = defineEmits(['select-service', 'select-subitem'])
+
+const selectService = (service: Service) => {
+  activeServiceId.value = service.id
+  showSubItems.value = true
+  const path = `/${service.id}`
+  router.push(path)
+  
+  activeSubItemId.value = null
+  emit('select-service', service.id)
 }
+
+const goBackToServices = () => {
+  showSubItems.value = false
+  activeSubItemId.value = null
+  emit('select-service', null)
+}
+
+const selectSubItem = (serviceId: string, subItemId: string) => {
+  activeSubItemId.value = subItemId
+  emit('select-subitem', serviceId, subItemId)
+}
+
+const goHome = () => {
+  activeServiceId.value = null
+  activeSubItemId.value = null
+}
+
+const activeService = computed(() => services.find(s => s.id === activeServiceId.value))
+
+onMounted(() => {
+  const pathToId: Record<string, string> = {
+    '/normas-tecnicas': 'normas-tecnicas',
+    '/metrologia': 'metrologia',
+    '/acreditacao': 'acreditacao',
+    '/importacao': 'importacao',
+    '/formacao': 'formacao',
+    '/rotulos': 'rotulos',
+    '/regulamentos': 'regulamentos',
+    '/premio-qualidade': 'premio-qualidade'
+  }
+  if (pathToId[route.path]) {
+    activeServiceId.value = pathToId[route.path]
+    showSubItems.value = true
+    activeSubItemId.value = null
+  }
+})
+
+watch(
+  () => route.path,
+  (newPath) => {
+    if (newPath === '/') {
+      activeServiceId.value = null
+      activeSubItemId.value = null
+      showSubItems.value = false
+      emit('select-service', null)
+    } else {
+      const pathToId: Record<string, string> = {
+        '/normas-tecnicas': 'normas-tecnicas',
+        '/metrologia': 'metrologia',
+        '/acreditacao': 'acreditacao',
+        '/importacao': 'importacao',
+        '/formacao': 'formacao',
+        '/rotulos': 'rotulos',
+        '/regulamentos': 'regulamentos',
+        '/premio-qualidade': 'premio-qualidade'
+      }
+      if (pathToId[newPath]) {
+        activeServiceId.value = pathToId[newPath]
+        showSubItems.value = true
+        activeSubItemId.value = null
+      }
+    }
+  }
+)
 </script>
 
 <template>
   <aside class="sidebar-right">
-    <NuxtLink v-if="!isHomePage" to="/" class="back-btn">← Voltar à Página Inicial</NuxtLink>
+    <NuxtLink v-if="!isHomePage && !showSubItems" to="/" class="back-btn" @click="goHome">← Voltar à Página Inicial</NuxtLink>
     <h2>Serviços</h2>
     <nav class="services-list">
-      <NuxtLink to="/normas-tecnicas" class="service-item" :class="{ active: isActive('/normas-tecnicas') }">
-        <span class="n">01</span>
-        <span>Normas Técnicas & Normalização</span>
-      </NuxtLink>
-      <NuxtLink to="/metrologia" class="service-item" :class="{ active: isActive('/metrologia') }">
-        <span class="n">02</span>
-        <span>Metrologia</span>
-      </NuxtLink>
-      <NuxtLink to="/acreditacao" class="service-item" :class="{ active: isActive('/acreditacao') }">
-        <span class="n">03</span>
-        <span>Registo, Cadastro e Acreditação</span>
-      </NuxtLink>
-      <NuxtLink to="/importacao" class="service-item" :class="{ active: isActive('/importacao') }">
-        <span class="n">04</span>
-        <span>Validação, Verificação e Certificação de Produtos a Importar</span>
-      </NuxtLink>
-      <NuxtLink to="/formacao" class="service-item" :class="{ active: isActive('/formacao') }">
-        <span class="n">05</span>
-        <span>Formação e Qualificação em Qualidade</span>
-      </NuxtLink>
-      <NuxtLink to="/rotulos" class="service-item" :class="{ active: isActive('/rotulos') }">
-        <span class="n">06</span>
-        <span>Conformidade de Rótulos e Embalagens</span>
-      </NuxtLink>
-      <NuxtLink to="/regulamentos" class="service-item" :class="{ active: isActive('/regulamentos') }">
-        <span class="n">07</span>
-        <span>Regulamentos Técnicos</span>
-      </NuxtLink>
-      <NuxtLink to="/premio-qualidade" class="service-item" :class="{ active: isActive('/premio-qualidade') }">
-        <span class="n">08</span>
-        <span>Prémio Nacional da Qualidade</span>
-      </NuxtLink>
+      <template v-if="!showSubItems">
+        <button
+          v-for="service in services"
+          :key="service.id"
+          class="service-item"
+          :class="{ active: activeServiceId === service.id }"
+          @click="selectService(service)"
+        >
+          <span class="n">{{ service.number }}</span>
+          <span>{{ service.title }}</span>
+        </button>
+      </template>
+      <template v-else>
+        <button class="back-to-services" @click="goBackToServices">
+          ← Voltar para serviços
+        </button>
+        <div v-if="activeService.subItems?.length" class="subitems-list">
+          <button
+            v-for="subItem in activeService.subItems"
+            :key="subItem.id"
+            class="subitem"
+            :class="{ active: activeSubItemId === subItem.id }"
+            @click="selectSubItem(activeService.id, subItem.id)"
+          >
+            <span class="n">{{ subItem.number }}</span>
+            <span>{{ subItem.title }}</span>
+          </button>
+        </div>
+      </template>
     </nav>
     <div class="area-reservada-wrapper">
       <a href="https://reliable-haupia-87ded0.netlify.app/admin" target="_blank" rel="noopener noreferrer" class="area-reservada">
@@ -93,7 +169,6 @@ const isActive = (path: string) => {
   background: #b0bbc5;
 }
 
-/* Firefox scrollbar */
 .sidebar-right,
 .services-list {
   scrollbar-width: thin;
@@ -138,11 +213,6 @@ const isActive = (path: string) => {
   min-height: 0;
 }
 
-.additional-links {
-  margin-top: auto;
-  padding-bottom: 1.5rem;
-}
-
 .service-item {
   display: grid;
   grid-template-columns: auto 1fr;
@@ -153,6 +223,10 @@ const isActive = (path: string) => {
   border-radius: 8px;
   transition: all 0.2s;
   border: 1px solid transparent;
+  background: transparent;
+  cursor: pointer;
+  text-align: left;
+  width: 100%;
 }
 
 .service-item:hover,
@@ -170,6 +244,68 @@ const isActive = (path: string) => {
 }
 
 .service-item span:last-child {
+  color: #0a3a63;
+  font-size: 0.95rem;
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+.back-to-services {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #0a3a63;
+  text-decoration: underline;
+  font-weight: 600;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem 0;
+  font-size: 0.95rem;
+  transition: all 0.2s;
+  margin-bottom: 1rem;
+}
+
+.back-to-services:hover {
+  color: #5cb947;
+}
+
+.subitems-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.subitem {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.6rem;
+  align-items: flex-start;
+  padding: 0.75rem 0.85rem;
+  border-radius: 8px;
+  transition: all 0.2s;
+  border: 1px solid transparent;
+  background: transparent;
+  cursor: pointer;
+  text-align: left;
+  width: 100%;
+}
+
+.subitem:hover,
+.subitem.active {
+  background: #eff6fc;
+  border-color: #cfe5f6;
+}
+
+.subitem .n {
+  font-weight: 700;
+  color: #2ba9e0;
+  font-size: 1rem;
+  font-family: 'Archivo', system-ui, sans-serif;
+  min-width: 24px;
+}
+
+.subitem span:last-child {
   color: #0a3a63;
   font-size: 0.95rem;
   font-weight: 500;

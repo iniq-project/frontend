@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { inject, watch, ref } from 'vue'
+
 definePageMeta({
   layout: 'default',
 })
@@ -6,151 +8,170 @@ definePageMeta({
 useHead({
   title: 'INIQ » Conformidade de Rótulos e Embalagens',
 })
+
+// Inject active sub-item from layout
+const activeSubItemId = inject('activeSubItemId')
+
+// Track if sub-item is selected
+const isSubItemSelected = ref(false)
+
+// Sync with layout
+if (activeSubItemId) {
+  watch(activeSubItemId, (newId) => {
+    isSubItemSelected.value = !!newId
+  }, { immediate: true })
+}
 </script>
 
 <template>
   <div class="combined-card">
-    <div class="dg-top">
-      <div class="dg-photo-wrapper">
-        <img
-          class="dg-photo"
-          src="/director-geral.png"
-          alt="Director-Geral"
-        />
-        <div class="dg-details">
-          <h3>Carmo Adriana dos Santos</h3>
-          <p class="role">Direcção-Geral</p>
+    <!-- Top info - only show when no sub-item is selected -->
+    <template v-if="!isSubItemSelected">
+      <div class="dg-top">
+        <div class="dg-photo-wrapper">
+          <img
+            class="dg-photo"
+            src="/director-geral.png"
+            alt="Director-Geral"
+          />
+          <div class="dg-details">
+            <h3>Carmo Adriana dos Santos</h3>
+            <p class="role">Direcção-Geral</p>
+          </div>
         </div>
-      </div>
-      <div class="dg-message">
-        <h4>Mensagem do Responsável</h4>
-        <p>
-          “A rotulagem e as embalagens são o primeiro ponto de contacto entre o
-          produto e o consumidor, devendo ser claras, precisas e conformes aos
-          requisitos aplicáveis.”
-        </p>
-      </div>
-    </div>
-
-    <div class="quality-policy-section">
-      <h4>Política de Conformidade de Rótulos e Embalagens</h4>
-      <p>
-        O INIQ compromete-se a garantir que a rotulagem e as embalagens dos
-        produtos comercializados no mercado nacional cumpram os requisitos
-        técnicos e regulamentares aplicáveis, proporcionando informação clara e
-        precisa aos consumidores.
-      </p>
-    </div>
-
-    <section class="mt-12">
-      <div class="container">
-        <div class="panel-head">
-          <span class="eyebrow">Informações Gerais</span>
-          <h2>Conformidade de Rótulos e Embalagens</h2>
+        <div class="dg-message">
+          <h4>Mensagem do Responsável</h4>
           <p>
-            Validação e certificação da conformidade da rotulagem e das embalagens
-            dos produtos comercializados no mercado nacional.
+            “A rotulagem e as embalagens são o primeiro ponto de contacto entre o
+            produto e o consumidor, devendo ser claras, precisas e conformes aos
+            requisitos aplicáveis.”
           </p>
         </div>
-
-        <div class="mdomains">
-          <article class="mdomain">
-            <div class="ico">
-              <svg
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              >
-                <path d="M3 8a2 2 0 0 1 2-2h9l7 6-7 6H5a2 2 0 0 1-2-2V8Z"></path>
-                <circle cx="8" cy="12" r="1.4"></circle>
-              </svg>
-            </div>
-            <h3>Validação de Rotulagem</h3>
-            <p>
-              Análise e validação da conformidade da rotulagem dos produtos com os
-              requisitos técnicos e legais aplicáveis.
-            </p>
-            <ul>
-              <li>Informação ao consumidor</li>
-              <li>Requisitos de rotulagem</li>
-              <li>Línguas oficiais</li>
-            </ul>
-          </article>
-          <article class="mdomain">
-            <div class="ico">
-              <svg
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              >
-                <rect x="4" y="4" width="16" height="16" rx="2"></rect>
-                <path d="m8 12 2.5 2.5L16 9"></path>
-              </svg>
-            </div>
-            <h3>Avaliação de Embalagens</h3>
-            <p>
-              Verificação da conformidade das embalagens com os requisitos de
-              segurança, meio ambiente e informação.
-            </p>
-            <ul>
-              <li>Segurança de embalagens</li>
-              <li>Impacto ambiental</li>
-              <li>Material de embalagem</li>
-            </ul>
-          </article>
-          <article class="mdomain">
-            <div class="ico">
-              <svg
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              >
-                <path d="M20 6 9 17l-5-5"></path>
-              </svg>
-            </div>
-            <h3>Certificação</h3>
-            <p>
-              Emissão de certificados de conformidade para rotulagem e embalagens
-              que cumpram os requisitos aplicáveis.
-            </p>
-            <ul>
-              <li>Certificado de conformidade</li>
-              <li>Validade do certificado</li>
-              <li>Rastreabilidade</li>
-            </ul>
-          </article>
-        </div>
       </div>
-    </section>
 
-    <section class="section">
-      <div class="container">
-        <div class="cta-band">
-          <div>
-            <h2>Precisa de validar rótulos ou embalagens?</h2>
+      <div class="quality-policy-section mb-10">
+        <h4>Política de Conformidade de Rótulos e Embalagens</h4>
+        <p>
+          O INIQ compromete-se a garantir que a rotulagem e as embalagens dos
+          produtos comercializados no mercado nacional cumpram os requisitos
+          técnicos e regulamentares aplicáveis, proporcionando informação clara e
+          precisa aos consumidores.
+        </p>
+      </div>
+    </template>
+
+    <!-- Sub-item content - only show when "Solicitar Serviço" is selected -->
+    <template v-if="isSubItemSelected">
+      <section class="mt-12">
+        <div class="container">
+          <div class="panel-head">
+            <span class="eyebrow">Informações Gerais</span>
+            <h2>Conformidade de Rótulos e Embalagens</h2>
             <p>
-              Contacte o INIQ para obter mais informações sobre os requisitos de
-              conformidade de rótulos e embalagens.
+              Validação e certificação da conformidade da rotulagem e das embalagens
+              dos produtos comercializados no mercado nacional.
             </p>
           </div>
-          <div class="cta-band__actions">
-            <NuxtLink to="/contactos" class="btn btn--ghost"
-              >Pedir informação</NuxtLink
-            >
-            
+
+          <div class="mdomains">
+            <article class="mdomain">
+              <div class="ico">
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="M3 8a2 2 0 0 1 2-2h9l7 6-7 6H5a2 2 0 0 1-2-2V8Z"></path>
+                  <circle cx="8" cy="12" r="1.4"></circle>
+                </svg>
+              </div>
+              <h3>Validação de Rotulagem</h3>
+              <p>
+                Análise e validação da conformidade da rotulagem dos produtos com os
+                requisitos técnicos e legais aplicáveis.
+              </p>
+              <ul>
+                <li>Informação ao consumidor</li>
+                <li>Requisitos de rotulagem</li>
+                <li>Línguas oficiais</li>
+              </ul>
+            </article>
+            <article class="mdomain">
+              <div class="ico">
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <rect x="4" y="4" width="16" height="16" rx="2"></rect>
+                  <path d="m8 12 2.5 2.5L16 9"></path>
+                </svg>
+              </div>
+              <h3>Avaliação de Embalagens</h3>
+              <p>
+                Verificação da conformidade das embalagens com os requisitos de
+                segurança, meio ambiente e informação.
+              </p>
+              <ul>
+                <li>Segurança de embalagens</li>
+                <li>Impacto ambiental</li>
+                <li>Material de embalagem</li>
+              </ul>
+            </article>
+            <article class="mdomain">
+              <div class="ico">
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="M20 6 9 17l-5-5"></path>
+                </svg>
+              </div>
+              <h3>Certificação</h3>
+              <p>
+                Emissão de certificados de conformidade para rotulagem e embalagens
+                que cumpram os requisitos aplicáveis.
+              </p>
+              <ul>
+                <li>Certificado de conformidade</li>
+                <li>Validade do certificado</li>
+                <li>Rastreabilidade</li>
+              </ul>
+            </article>
           </div>
         </div>
-      </div>
-    </section>
+      </section>
+
+      <section class="section">
+        <div class="container">
+          <div class="cta-band">
+            <div>
+              <h2>Precisa de validar rótulos ou embalagens?</h2>
+              <p>
+                Contacte o INIQ para obter mais informações sobre os requisitos de
+                conformidade de rótulos e embalagens.
+              </p>
+            </div>
+            <div class="cta-band__actions">
+              <NuxtLink to="/contactos" class="btn btn--ghost"
+                >Pedir informação</NuxtLink
+              >
+              
+            </div>
+          </div>
+        </div>
+      </section>
+    </template>
   </div>
 </template>
 

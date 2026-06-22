@@ -1,10 +1,30 @@
-
 <script setup>
+import { inject, watch } from 'vue'
+
 useHead({
   title: "INIQ » Normas Técnicas & Normalização",
 })
 
+// Injetar o activeSubItemId do layout
+const activeSubItemId = inject('activeSubItemId')
+
+// Mapear subItemId para tab
 const activeTab = ref("venda")
+
+// Sincronizar activeTab com activeSubItemId
+const isSubItemSelected = ref(false)
+
+if (activeSubItemId) {
+  watch(activeSubItemId, (newId) => {
+    isSubItemSelected.value = !!newId
+    
+    if (newId === 'venda-normas') {
+      activeTab.value = 'venda'
+    } else if (newId === 'consulta-publica') {
+      activeTab.value = 'consulta'
+    }
+  }, { immediate: true })
+}
 const modalOpen = ref(false)
 const modalMode = ref("venda")
 const modalEyebrow = ref("Venda de Normas")
@@ -134,57 +154,44 @@ const handleSubmit = () => {
 </script>
 <template>
   <div class="combined-card">
-    <div class="dg-top">
-      <div class="dg-photo-wrapper">
-        <img
-          class="dg-photo"
-          src="/perfis/04.jpg"
-          alt="Chefe do Departamento de Normalização"
-        />
-        <div class="dg-details">
-          <h3>Dra. Inês Cabral</h3>
-          <p class="role">Chefe do Departamento de Normalização</p>
+    <!-- Mostrar apenas quando NENHUM sub-serviço estiver selecionado -->
+    <template v-if="!isSubItemSelected">
+      <div class="dg-top">
+        <div class="dg-photo-wrapper">
+          <img
+            class="dg-photo"
+            src="/perfis/04.jpg"
+            alt="Chefe do Departamento de Normalização"
+          />
+          <div class="dg-details">
+            <h3>Dra. Inês Cabral</h3>
+            <p class="role">Chefe do Departamento de Normalização</p>
+          </div>
+        </div>
+        <div class="dg-message">
+          <h4>Mensagem do Responsável</h4>
+          <p>
+            “A normalização é o ponto de partida da qualidade. Construímos, com as
+            comissões técnicas, as referências que dão confiança ao mercado.”
+          </p>
         </div>
       </div>
-      <div class="dg-message">
-        <h4>Mensagem do Responsável</h4>
+
+      <div class="quality-policy-section">
+        <h4>Política de Qualidade para Normalização</h4>
         <p>
-          “A normalização é o ponto de partida da qualidade. Construímos, com as
-          comissões técnicas, as referências que dão confiança ao mercado.”
+          O INIQ compromete-se a coordenar e desenvolver o sistema nacional de
+          normalização de Angola, garantindo a conformidade com as melhores
+          práticas internacionais, promovendo a participação transparente de todas
+          as partes interessadas, e garantindo que as normas angolanas apoiem a
+          inovação, a competitividade empresarial e a proteção do consumidor, com
+          foco na melhoria contínua e excelência.
         </p>
       </div>
-    </div>
+    </template>
 
-    <div class="quality-policy-section">
-      <h4>Política de Qualidade para Normalização</h4>
-      <p>
-        O INIQ compromete-se a coordenar e desenvolver o sistema nacional de
-        normalização de Angola, garantindo a conformidade com as melhores
-        práticas internacionais, promovendo a participação transparente de todas
-        as partes interessadas, e garantindo que as normas angolanas apoiem a
-        inovação, a competitividade empresarial e a proteção do consumidor, com
-        foco na melhoria contínua e excelência.
-      </p>
-    </div>
-
-    <div class="tabs-bar">
-      <div class="tabs">
-        <button
-          :class="['tab-btn', { 'is-active': activeTab === 'venda' }]"
-          @click="activeTab = 'venda'"
-        >
-          <span class="n">01</span> Venda de Normas
-        </button>
-        <button
-          :class="['tab-btn', { 'is-active': activeTab === 'consulta' }]"
-          @click="activeTab = 'consulta'"
-        >
-          <span class="n">02</span> Projectos em Consulta Pública
-        </button>
-      </div>
-    </div>
-
-    <div v-if="activeTab === 'venda'" class="tab-panel">
+    <!-- Tab do Venda de Normas (só mostra se o sub-item estiver selecionado) -->
+    <div v-if="isSubItemSelected && activeTab === 'venda'" class="tab-panel">
       <div class="panel-head">
         <span class="eyebrow">Venda de Normas</span>
         <h2>Catálogo nacional de normas</h2>
@@ -242,7 +249,8 @@ const handleSubmit = () => {
       </div>
     </div>
 
-    <div v-if="activeTab === 'consulta'" class="tab-panel">
+    <!-- Tab do Projectos em Consulta Pública (só mostra se o sub-item estiver selecionado) -->
+    <div v-if="isSubItemSelected && activeTab === 'consulta'" class="tab-panel">
       <div class="panel-head">
         <span class="eyebrow">Projectos-Normas em Consulta Pública</span>
         <h2>Participe na elaboração das normas</h2>

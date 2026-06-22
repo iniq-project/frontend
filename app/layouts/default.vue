@@ -1,4 +1,27 @@
 <script setup>
+import { provide, ref, watch } from 'vue'
+
+const route = useRoute()
+const activeSubItemId = ref(null)
+
+const handleSelectService = (serviceId) => {
+  activeSubItemId.value = null
+}
+
+const handleSelectSubItem = (serviceId, subItemId) => {
+  activeSubItemId.value = subItemId
+}
+
+watch(
+  () => route.path,
+  (newPath) => {
+    if (newPath === '/') {
+      activeSubItemId.value = null
+    }
+  }
+)
+
+provide('activeSubItemId', activeSubItemId)
 </script>
 
 <template>
@@ -6,10 +29,10 @@
     <UiHeaderComponent />
     <div class="main-container">
       <UiSideBarComponent class="sidebar-left">
-        <template #eyebrow>
+        <template #eyebrow">
           <slot name="sidebar-eyebrow" />
         </template>
-        <template #title>
+        <template #title">
           <slot name="sidebar-title" />
         </template>
         <slot name="sidebar-content" />
@@ -17,7 +40,11 @@
       <main class="center-content">
         <slot />
       </main>
-      <UiNavigatorBarComponent class="sidebar-right" />
+      <UiNavigatorBarComponent 
+        class="sidebar-right" 
+        @select-service="handleSelectService"
+        @select-subitem="handleSelectSubItem"
+      />
       <div class="carousel-spacer"></div>
       <div class="partner-carousel-wrapper">
         <UiPartnerCarousel />
@@ -36,7 +63,7 @@
 
 .main-container {
   display: grid;
-  grid-template-columns: 420px 1fr 380px;
+  grid-template-columns: 320px 1fr 530px;
   grid-template-rows: auto 1fr;
   gap: 0;
   padding: 0;
