@@ -1,3 +1,13 @@
+<script setup lang="ts">
+const route = useRoute()
+
+const isHomePage = computed(() => route.path === '/')
+
+const isActive = (path: string) => {
+  return route.path === path
+}
+</script>
+
 <template>
   <aside class="sidebar-right">
     <NuxtLink v-if="!isHomePage" to="/" class="back-btn">← Voltar à Página Inicial</NuxtLink>
@@ -36,24 +46,20 @@
         <span>Prémio Nacional da Qualidade</span>
       </NuxtLink>
     </nav>
+    <div class="area-reservada-wrapper">
+      <a href="https://reliable-haupia-87ded0.netlify.app/admin" target="_blank" rel="noopener noreferrer" class="area-reservada">
+        Área Reservada
+      </a>
+    </div>
   </aside>
 </template>
 
-<script setup lang="ts">
-const route = useRoute()
-
-const isHomePage = computed(() => route.path === '/')
-
-const isActive = (path: string) => {
-  return route.path === path
-}
-</script>
 
 <style scoped>
 .sidebar-right {
   position: sticky;
   top: 0;
-  height: 100vh;
+  height: 75vh;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
@@ -61,8 +67,37 @@ const isActive = (path: string) => {
   margin-top: 0;
   overflow-y: auto;
   background: white;
-  border-radius: 0;
+  border-radius: 0 0 0 12px;
   box-shadow: none;
+}
+
+/* Custom scrollbar for sidebar */
+.sidebar-right::-webkit-scrollbar,
+.services-list::-webkit-scrollbar {
+  width: 4px; /* Very thin */
+}
+
+.sidebar-right::-webkit-scrollbar-track,
+.services-list::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.sidebar-right::-webkit-scrollbar-thumb,
+.services-list::-webkit-scrollbar-thumb {
+  background: #d0d8e0;
+  border-radius: 4px;
+}
+
+.sidebar-right::-webkit-scrollbar-thumb:hover,
+.services-list::-webkit-scrollbar-thumb:hover {
+  background: #b0bbc5;
+}
+
+/* Firefox scrollbar */
+.sidebar-right,
+.services-list {
+  scrollbar-width: thin;
+  scrollbar-color: #d0d8e0 transparent;
 }
 
 .back-btn {
@@ -70,21 +105,17 @@ const isActive = (path: string) => {
   align-items: center;
   gap: 0.5rem;
   color: #0a3a63;
-  text-decoration: none;
+  text-decoration: underline;
   font-weight: 600;
   margin-bottom: 1.5rem;
   font-size: 0.95rem;
-  padding: 0.75rem 1.25rem;
-  border: 2px solid #0a3a63;
-  border-radius: 8px;
-  background: white;
   transition: all 0.2s;
+  flex-shrink: 0;
 }
 
 .back-btn:hover {
-  background: #eff6fc;
-  border-color: #0a3a63;
-  color: #0a3a63;
+  color: #5cb947;
+  text-decoration: underline;
 }
 
 .sidebar-right h2 {
@@ -94,13 +125,17 @@ const isActive = (path: string) => {
   font-weight: 700;
   border-left: 4px solid #5cb947;
   padding-left: 0.75rem;
+  flex-shrink: 0;
 }
 
 .services-list {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
-  margin-bottom: 2rem;
+  gap: 0.3rem;
+  margin-bottom: 1rem;
+  overflow-y: auto;
+  flex: 1;
+  min-height: 0;
 }
 
 .additional-links {
@@ -139,5 +174,34 @@ const isActive = (path: string) => {
   font-size: 0.95rem;
   font-weight: 500;
   line-height: 1.4;
+}
+
+.area-reservada-wrapper {
+  padding-top: 1rem;
+  border-top: 1px solid #e9eff6;
+  margin-bottom: 1.5rem;
+}
+
+.area-reservada {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #0a3a63;
+  text-decoration: underline;
+  font-weight: 600;
+  font-size: 0.95rem;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+
+.area-reservada:hover {
+  color: #5cb947;
+  text-decoration: underline;
+}
+
+.carousel-wrapper {
+  flex-shrink: 0;
+  padding: 1rem 0;
+  border-top: 1px solid #e9eff6;
 }
 </style>

@@ -385,6 +385,8 @@ useHead({
 .cta-band__actions {
   display: flex;
   gap: 1rem;
+  position: relative;
+  z-index: 3;
 }
 
 .btn {

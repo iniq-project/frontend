@@ -1,3 +1,7 @@
+
+<script setup lang="ts">
+</script>
+
 <template>
   <aside class="sidebar-left">
     <div class="sidebar-content">
@@ -5,30 +9,34 @@
         <slot name="eyebrow">Quem Somos</slot>
       </div>
       <h2 class="main-title">
-        <slot name="title">O Instituto Nacional das Infra-Estruturas da Qualidade</slot>
+        <slot name="title"
+          >O Instituto Nacional das Infra-Estruturas da Qualidade</slot
+        >
       </h2>
       <div class="about-text">
         <slot>
-          <p>Criado pelo Decreto Presidencial n.º 95/21, de Abril de 2021, o Instituto Nacional das Infra-Estruturas da Qualidade (INIQ) é um instituto público dotado de personalidade jurídica e autonomia administrativa, financeira e patrimonial, sob superintendência do Ministério da Indústria e Comércio.</p>
-          <p>Ao INIQ compete coordenar, supervisionar e desenvolver o Sistema Nacional da Qualidade, integrando as componentes de normalização, metrologia, ensaios, certificação e acreditação.</p>
+          <ul>
+            <li>
+              Criado pelo Decreto Presidencial n.º 95/21, de Abril de 2021
+            </li>
+            <li>
+              Instituto público sob superintendência do Ministério da Indústria e Comércio
+            </li>
+            <li>
+              Compete coordenar o Sistema Nacional da Qualidade
+            </li>
+          </ul>
         </slot>
       </div>
     </div>
 
     <div class="sidebar-footer">
-      <div class="gov-info">
-        Palácio de Vidro, Largo 17 de Setembro, Luanda
-      </div>
-      <div class="lang-btns">
-        <button class="active">PT</button>
-        <button>EN</button>
-      </div>
+      <div class="gov-info">Edificio Palacio do vidro <br>
+        Largo 17 de Setembro n° 7 <br>
+        5° Andar, Ala Esquerda.</div>
     </div>
   </aside>
 </template>
-
-<script setup lang="ts">
-</script>
 
 <style scoped>
 .sidebar-left {
@@ -68,14 +76,14 @@
 }
 
 .eyebrow::before {
-  content: '';
+  content: "";
   width: 20px;
   height: 2px;
   background: linear-gradient(90deg, #5cb947, #2ba9e0);
 }
 
 .main-title {
-  font-family: 'Archivo', system-ui, sans-serif;
+  font-family: "Archivo", system-ui, sans-serif;
   font-size: clamp(1.5rem, 2vw, 1.85rem);
   font-weight: 800;
   color: white;
@@ -89,12 +97,28 @@
   font-size: 0.95rem;
 }
 
-.about-text p {
-  margin-bottom: 1.25rem;
+.about-text ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
 }
 
-.about-text p:last-child {
+.about-text li {
+  position: relative;
+  padding-left: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.about-text li:last-child {
   margin-bottom: 0;
+}
+
+.about-text li::before {
+  content: "•";
+  position: absolute;
+  left: 0;
+  color: #5cb947;
+  font-weight: bold;
 }
 
 .sidebar-footer {
@@ -109,7 +133,7 @@
 }
 
 .gov-info {
-  font-family: monospace;
+  /* font-family: monospace; */
   font-size: 0.85rem;
   color: #94a3b8;
   line-height: 1.5;

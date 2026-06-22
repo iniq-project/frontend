@@ -1,9 +1,11 @@
+<script setup>
+</script>
+
 <template>
   <div class="new-layout">
-    <HeaderComponent />
-
+    <UiHeaderComponent />
     <div class="main-container">
-      <SideBarComponent>
+      <UiSideBarComponent class="sidebar-left">
         <template #eyebrow>
           <slot name="sidebar-eyebrow" />
         </template>
@@ -11,24 +13,18 @@
           <slot name="sidebar-title" />
         </template>
         <slot name="sidebar-content" />
-      </SideBarComponent>
-
+      </UiSideBarComponent>
       <main class="center-content">
         <slot />
-        <PartnerCarousel />
       </main>
-
-      <NavigatorBarComponent />
+      <UiNavigatorBarComponent class="sidebar-right" />
+      <div class="carousel-spacer"></div>
+      <div class="partner-carousel-wrapper">
+        <UiPartnerCarousel />
+      </div>
     </div>
   </div>
 </template>
-
-<script setup>
-import HeaderComponent from "~/Components/ui/HeaderComponent.vue"
-import SideBarComponent from "~/Components/ui/SideBarComponent.vue"
-import NavigatorBarComponent from "~/Components/ui/NavigatorBarComponent.vue"
-import PartnerCarousel from "~/Components/ui/PartnerCarousel.vue"
-</script>
 
 <style scoped>
 .new-layout {
@@ -40,7 +36,8 @@ import PartnerCarousel from "~/Components/ui/PartnerCarousel.vue"
 
 .main-container {
   display: grid;
-  grid-template-columns: 420px 1fr 380px;
+  grid-template-columns: 320px 1fr 530px;
+  grid-template-rows: auto 1fr;
   gap: 0;
   padding: 0;
   max-width: 100%;
@@ -51,7 +48,14 @@ import PartnerCarousel from "~/Components/ui/PartnerCarousel.vue"
   min-height: 0;
 }
 
+.sidebar-left {
+  grid-column: 1 / 2;
+  grid-row: 1 / 3;
+}
+
 .center-content {
+  grid-column: 2 / 3;
+  grid-row: 1 / 2;
   padding: 2rem 2rem;
   overflow-y: auto;
   display: flex;
@@ -59,7 +63,21 @@ import PartnerCarousel from "~/Components/ui/PartnerCarousel.vue"
   min-height: 0;
 }
 
-.center-content > :first-child {
-  flex: 1;
+.sidebar-right {
+  grid-column: 3 / 4;
+  grid-row: 1 / 2;
+}
+
+.carousel-spacer {
+  grid-column: 1 / 2;
+  grid-row: 2 / 3;
+}
+
+.partner-carousel-wrapper {
+  grid-column: 2 / 4;
+  grid-row: 2 / 3;
+  display: flex;
+  align-items: stretch;
+  min-height: 0;
 }
 </style>
