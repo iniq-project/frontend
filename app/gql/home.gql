@@ -1,0 +1,7 @@
+query fetch {
+    queryHomepageContents {
+    data: flatData {
+      responsible__Dynamic
+    }
+  }
+}
