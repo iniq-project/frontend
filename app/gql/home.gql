@@ -1,7 +1,13 @@
 query fetch {
-    queryHomepageContents {
+  queryHomepageContents {
     data: flatData {
-      responsible__Dynamic
+      responsible {
+        name
+        position
+        phoneNumber
+        message
+        qualityPolicy
+      }
     }
   }
 }
