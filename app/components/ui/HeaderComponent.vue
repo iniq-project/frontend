@@ -2,19 +2,23 @@
 const route = useRoute()
 
 const pageTitles = {
-  '/': 'Instituto Nacional das Infra-Estruturas da Qualidade',
-  '/normas-tecnicas': 'Normas Técnicas & Normalização',
-  '/metrologia': 'Metrologia',
-  '/acreditacao': 'Registo, Cadastro e Acreditação',
-  '/importacao': 'Validação, Verificação e Certificação de Produtos a Importar',
-  '/formacao': 'Formação e Qualificação em Qualidade',
-  '/rotulos': 'Conformidade de Rótulos e Embalagens',
-  '/regulamentos': 'Regulamentos Técnicos',
-  '/premio-qualidade': 'Prémio Nacional da Qualidade',
-  '/contactos': 'Contactos',
+  "/": "Instituto Nacional das Infra-Estruturas da Qualidade",
+  "/normas-tecnicas": "Normalização",
+  "/metrologia": "Metrologia",
+  "/registo-cadastro": "Registo e Cadastro ",
+  "/importacao": "Validação, Verificação e Certificação de Produtos a Importar",
+  "/formacao": "Formação e Qualificação em Qualidade",
+  "/rotulos": "Avaliação da Conformidade",
+  "/regulamentos": "Regulamentos Técnicos",
+  "/premio-qualidade": "Prémio Nacional da Qualidade",
+  "/contactos": "Contactos",
 }
 
-const pageTitle = computed(() => pageTitles[route.path as keyof typeof pageTitles] || 'Instituto Nacional das Infra-Estruturas da Qualidade')
+const pageTitle = computed(
+  () =>
+    pageTitles[route.path as keyof typeof pageTitles] ||
+    "Instituto Nacional das Infra-Estruturas da Qualidade",
+)
 </script>
 
 <template>
@@ -28,7 +32,11 @@ const pageTitle = computed(() => pageTitles[route.path as keyof typeof pageTitle
       <h1>{{ pageTitle }}</h1>
     </div>
     <div class="logo-right">
-      <a href="https://mindcom.gov.ao/home" target="_blank" rel="noopener noreferrer">
+      <a
+        href="https://mindcom.gov.ao/home"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
         <img src="/gov-mindcom-t.png" alt="Governo de Angola" />
       </a>
     </div>

@@ -13,6 +13,8 @@ const showSubItems = ref(false)
 const emit = defineEmits(['select-service', 'select-subitem'])
 
 const selectService = (service: Service) => {
+  if (service.disabled) return
+  
   activeServiceId.value = service.id
   showSubItems.value = true
   const path = `/${service.id}`
@@ -49,7 +51,9 @@ onMounted(() => {
     '/formacao': 'formacao',
     '/rotulos': 'rotulos',
     '/regulamentos': 'regulamentos',
-    '/premio-qualidade': 'premio-qualidade'
+    '/premio-qualidade': 'premio-qualidade',
+    '/certificacao': 'certificacao',
+    '/registo-cadastro': 'registo-cadastro'
   }
   if (pathToId[route.path]) {
     activeServiceId.value = pathToId[route.path]
@@ -75,7 +79,9 @@ watch(
         '/formacao': 'formacao',
         '/rotulos': 'rotulos',
         '/regulamentos': 'regulamentos',
-        '/premio-qualidade': 'premio-qualidade'
+        '/premio-qualidade': 'premio-qualidade',
+        '/certificacao': 'certificacao',
+        '/registo-cadastro': 'registo-cadastro'
       }
       if (pathToId[newPath]) {
         activeServiceId.value = pathToId[newPath]
@@ -97,7 +103,7 @@ watch(
           v-for="service in services"
           :key="service.id"
           class="service-item"
-          :class="{ active: activeServiceId === service.id }"
+          :class="{ active: activeServiceId === service.id, disabled: service.disabled }"
           @click="selectService(service)"
         >
           <span class="n">{{ service.number }}</span>
@@ -233,6 +239,12 @@ watch(
 .service-item.active {
   background: linear-gradient(135deg, #f0f7f2 0%, #eff6fc 100%);
   border-color: #d0e8d6;
+}
+
+.service-item.disabled {
+  opacity: 0.5;
+  pointer-events: none;
+  cursor: not-allowed;
 }
 
 .service-item .n {
