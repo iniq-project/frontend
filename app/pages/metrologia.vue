@@ -9,25 +9,20 @@ useHead({
   title: 'INIQ » Metrologia',
 })
 
-// Inject active sub-item from layout
 const activeSubItemId = inject('activeSubItemId')
 
-// Track if sub-item is selected
 const isSubItemSelected = ref(false)
 const showRequisitos = ref(false)
 const showForm = ref(false)
 const formSubmitted = ref(false)
 const errors = ref<Record<string, boolean>>({})
 
-// Ref for first input
 const fileInput = ref<HTMLInputElement | null>(null)
 
-// Form data
 const formData = ref({
   carta: null as File | null,
 })
 
-// Watch for showForm to focus and scroll
 watch(showForm, async (newValue) => {
   if (newValue) {
     await nextTick()
@@ -40,7 +35,6 @@ watch(showForm, async (newValue) => {
   }
 })
 
-// Sync with layout
 if (activeSubItemId) {
   watch(activeSubItemId, (newId) => {
     isSubItemSelected.value = !!newId
@@ -98,7 +92,6 @@ function handleSubmit() {
 
 <template>
     <div class="combined-card">
-      <!-- Top info - only show when no sub-item is selected -->
       <template v-if="!isSubItemSelected">
         <div class="dg-top">
           <div class="dg-photo-wrapper">
@@ -128,7 +121,6 @@ function handleSubmit() {
         </div>
       </template>
 
-      <!-- Sub-item content - only show when "Solicitar Serviço" is selected -->
       <template v-if="isSubItemSelected">
         <template v-if="!showRequisitos && !showForm">
           <section class="mt-12">

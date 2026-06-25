@@ -1,15 +1,15 @@
 <script setup lang="ts">
-import { inject, watch, ref, nextTick } from 'vue'
+import { inject, watch, ref, nextTick } from "vue"
 
 definePageMeta({
-  layout: 'default',
+  layout: "default",
 })
 
 useHead({
-  title: 'INIQ » Avaliação da Conformidade',
+  title: "INIQ » Avaliação da Conformidade",
 })
 
-const activeSubItemId = inject('activeSubItemId')
+const activeSubItemId = inject("activeSubItemId")
 
 const isSubItemSelected = ref(false)
 const showForm = ref(false)
@@ -19,8 +19,8 @@ const errors = ref<Record<string, boolean>>({})
 const nomeInput = ref<HTMLInputElement | null>(null)
 
 const formData = ref({
-  nome: '',
-  email: '',
+  nome: "",
+  email: "",
   doc1: null as File | null,
   doc2: null as File | null,
   doc3: null as File | null,
@@ -35,9 +35,9 @@ watch(showForm, async (newValue) => {
   if (newValue) {
     await nextTick()
     if (nomeInput.value) {
-      const formSection = document.querySelector('.form-section') as HTMLElement
+      const formSection = document.querySelector(".form-section") as HTMLElement
       if (formSection) {
-        formSection.scrollIntoView({ behavior: 'smooth', block: 'start' })
+        formSection.scrollIntoView({ behavior: "smooth", block: "start" })
       }
       // Small delay to let the section scroll, then focus
       setTimeout(() => {
@@ -49,9 +49,13 @@ watch(showForm, async (newValue) => {
 
 // Sync with layout
 if (activeSubItemId) {
-  watch(activeSubItemId, (newId) => {
-    isSubItemSelected.value = !!newId
-  }, { immediate: true })
+  watch(
+    activeSubItemId,
+    (newId) => {
+      isSubItemSelected.value = !!newId
+    },
+    { immediate: true },
+  )
 }
 
 function handleFileChange(event: Event, docKey: keyof typeof formData) {
@@ -67,56 +71,61 @@ function handleFileChange(event: Event, docKey: keyof typeof formData) {
 
 function validateForm(): boolean {
   const newErrors: Record<string, boolean> = {}
-  
+
   if (!formData.value.nome.trim()) {
     newErrors.nome = true
   }
-  
-  if (!formData.value.email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.value.email)) {
+
+  if (
+    !formData.value.email.trim() ||
+    !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.value.email)
+  ) {
     newErrors.email = true
   }
-  
+
   if (!formData.value.doc1) {
     newErrors.doc1 = true
   }
-  
+
   if (!formData.value.doc2) {
     newErrors.doc2 = true
   }
-  
+
   if (!formData.value.doc3) {
     newErrors.doc3 = true
   }
-  
+
   if (!formData.value.doc4) {
     newErrors.doc4 = true
   }
-  
+
   if (!formData.value.doc5) {
     newErrors.doc5 = true
   }
-  
+
   if (!formData.value.doc6) {
     newErrors.doc6 = true
   }
-  
+
   if (!formData.value.doc7) {
     newErrors.doc7 = true
   }
-  
+
   errors.value = newErrors
-  
+
   // Focus on first error field
   if (Object.keys(newErrors).length > 0) {
     const firstErrorField = Object.keys(newErrors)[0]
-    const fieldElement = document.querySelector(`[name="${firstErrorField}"]`) as HTMLElement
+    const fieldElement = document.querySelector(
+      `[name="${firstErrorField}"]`,
+    ) as HTMLElement
     if (fieldElement) {
-      fieldElement.scrollIntoView({ behavior: 'smooth', block: 'center' })
+      fieldElement.scrollIntoView({ behavior: "smooth", block: "center" })
       fieldElement.focus()
     }
     return false
   }
-  
+
   return true
 }
 
@@ -124,14 +133,14 @@ function handleSubmit() {
   if (!validateForm()) {
     return
   }
-  
+
   formSubmitted.value = true
   setTimeout(() => {
     formSubmitted.value = false
     showForm.value = false
     formData.value = {
-      nome: '',
-      email: '',
+      nome: "",
+      email: "",
       doc1: null,
       doc2: null,
       doc3: null,
@@ -163,9 +172,9 @@ function handleSubmit() {
         <div class="dg-message">
           <h4>Mensagem do Responsável</h4>
           <p>
-            “A rotulagem e as embalagens são o primeiro ponto de contacto entre o
-            produto e o consumidor, devendo ser claras, precisas e conformes aos
-            requisitos aplicáveis.”
+            “A rotulagem e as embalagens são o primeiro ponto de contacto entre
+            o produto e o consumidor, devendo ser claras, precisas e conformes
+            aos requisitos aplicáveis.”
           </p>
         </div>
       </div>
@@ -175,8 +184,8 @@ function handleSubmit() {
         <p>
           O INIQ compromete-se a garantir que a rotulagem e as embalagens dos
           produtos comercializados no mercado nacional cumpram os requisitos
-          técnicos e regulamentares aplicáveis, proporcionando informação clara e
-          precisa aos consumidores.
+          técnicos e regulamentares aplicáveis, proporcionando informação clara
+          e precisa aos consumidores.
         </p>
       </div>
     </template>
@@ -189,7 +198,8 @@ function handleSubmit() {
               <span class="eyebrow">Requisitos</span>
               <h2>Documentação Necessária</h2>
               <p>
-                Lista de documentos que deverá preparar para submeter o seu pedido de avaliação de conformidade.
+                Lista de documentos que deverá preparar para submeter o seu
+                pedido de avaliação de conformidade.
               </p>
             </div>
 
@@ -231,10 +241,24 @@ function handleSubmit() {
             <div class="download-section">
               <div class="download-info">
                 <h3>Modelo do Ofício</h3>
-                <p>Faça o download do modelo de ofício para apresentar o seu pedido.</p>
+                <p>
+                  Faça o download do modelo de ofício para apresentar o seu
+                  pedido.
+                </p>
               </div>
-              <a href="/docs/Modelo do Ofício.pdf" download class="btn btn--download">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <a
+                href="/docs/Modelo do Ofício.pdf"
+                download
+                class="btn btn--download"
+              >
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
                   <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
                   <polyline points="7 10 12 15 17 10"></polyline>
                   <line x1="12" y1="15" x2="12" y2="3"></line>
@@ -249,7 +273,14 @@ function handleSubmit() {
           <div class="container">
             <button @click="showForm = true" class="btn btn--primary">
               Submeter Processo
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2.2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
                 <path d="M5 12h14M13 6l6 6-6 6"></path>
               </svg>
             </button>
@@ -269,16 +300,31 @@ function handleSubmit() {
               </div>
 
               <div v-if="formSubmitted" class="success-message">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2.4"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
                   <path d="M20 6 9 17l-5-5"></path>
                 </svg>
-                <span><b>Processo submetido com sucesso!</b> A equipa do INIQ irá analisar o seu pedido.</span>
+                <span
+                  ><b>Processo submetido com sucesso!</b> A equipa do INIQ irá
+                  analisar o seu pedido.</span
+                >
               </div>
 
               <form v-else @submit.prevent="handleSubmit" novalidate>
                 <div class="field">
-                  <label for="nome">Nome completo <span class="req">*</span></label>
-                  <div class="input-wrapper" :class="{ 'has-error': errors.nome }">
+                  <label for="nome"
+                    >Nome completo <span class="req">*</span></label
+                  >
+                  <div
+                    class="input-wrapper"
+                    :class="{ 'has-error': errors.nome }"
+                  >
                     <input
                       ref="nomeInput"
                       type="text"
@@ -290,12 +336,17 @@ function handleSubmit() {
                       @input="errors.nome = false"
                     />
                   </div>
-                  <span v-if="errors.nome" class="error-message">Por favor, informe seu nome completo</span>
+                  <span v-if="errors.nome" class="error-message"
+                    >Por favor, informe seu nome completo</span
+                  >
                 </div>
 
                 <div class="field">
                   <label for="email">E-mail <span class="req">*</span></label>
-                  <div class="input-wrapper" :class="{ 'has-error': errors.email }">
+                  <div
+                    class="input-wrapper"
+                    :class="{ 'has-error': errors.email }"
+                  >
                     <input
                       type="email"
                       id="email"
@@ -306,12 +357,19 @@ function handleSubmit() {
                       @input="errors.email = false"
                     />
                   </div>
-                  <span v-if="errors.email" class="error-message">Por favor, informe um e-mail válido</span>
+                  <span v-if="errors.email" class="error-message"
+                    >Por favor, informe um e-mail válido</span
+                  >
                 </div>
 
                 <div class="field">
-                  <label for="doc1">Doc. 1 — Carta/Ofício <span class="req">*</span></label>
-                  <div class="file-input-wrapper" :class="{ 'has-error': errors.doc1 }">
+                  <label for="doc1"
+                    >Doc. 1 — Carta/Ofício <span class="req">*</span></label
+                  >
+                  <div
+                    class="file-input-wrapper"
+                    :class="{ 'has-error': errors.doc1 }"
+                  >
                     <input
                       type="file"
                       id="doc1"
@@ -319,14 +377,23 @@ function handleSubmit() {
                       required
                       @change="handleFileChange($event, 'doc1')"
                     />
-                    <span class="file-label">{{ formData.doc1 ? formData.doc1.name : 'Escolher arquivo' }}</span>
+                    <span class="file-label">{{
+                      formData.doc1 ? formData.doc1.name : "Escolher arquivo"
+                    }}</span>
                   </div>
-                  <span v-if="errors.doc1" class="error-message">Por favor, selecione este arquivo</span>
+                  <span v-if="errors.doc1" class="error-message"
+                    >Por favor, selecione este arquivo</span
+                  >
                 </div>
 
                 <div class="field">
-                  <label for="doc2">Doc. 2 — NIF <span class="req">*</span></label>
-                  <div class="file-input-wrapper" :class="{ 'has-error': errors.doc2 }">
+                  <label for="doc2"
+                    >Doc. 2 — NIF <span class="req">*</span></label
+                  >
+                  <div
+                    class="file-input-wrapper"
+                    :class="{ 'has-error': errors.doc2 }"
+                  >
                     <input
                       type="file"
                       id="doc2"
@@ -334,14 +401,23 @@ function handleSubmit() {
                       required
                       @change="handleFileChange($event, 'doc2')"
                     />
-                    <span class="file-label">{{ formData.doc2 ? formData.doc2.name : 'Escolher arquivo' }}</span>
+                    <span class="file-label">{{
+                      formData.doc2 ? formData.doc2.name : "Escolher arquivo"
+                    }}</span>
                   </div>
-                  <span v-if="errors.doc2" class="error-message">Por favor, selecione este arquivo</span>
+                  <span v-if="errors.doc2" class="error-message"
+                    >Por favor, selecione este arquivo</span
+                  >
                 </div>
 
                 <div class="field">
-                  <label for="doc3">Doc. 3 — Fatura Comercial <span class="req">*</span></label>
-                  <div class="file-input-wrapper" :class="{ 'has-error': errors.doc3 }">
+                  <label for="doc3"
+                    >Doc. 3 — Fatura Comercial <span class="req">*</span></label
+                  >
+                  <div
+                    class="file-input-wrapper"
+                    :class="{ 'has-error': errors.doc3 }"
+                  >
                     <input
                       type="file"
                       id="doc3"
@@ -349,14 +425,24 @@ function handleSubmit() {
                       required
                       @change="handleFileChange($event, 'doc3')"
                     />
-                    <span class="file-label">{{ formData.doc3 ? formData.doc3.name : 'Escolher arquivo' }}</span>
+                    <span class="file-label">{{
+                      formData.doc3 ? formData.doc3.name : "Escolher arquivo"
+                    }}</span>
                   </div>
-                  <span v-if="errors.doc3" class="error-message">Por favor, selecione este arquivo</span>
+                  <span v-if="errors.doc3" class="error-message"
+                    >Por favor, selecione este arquivo</span
+                  >
                 </div>
 
                 <div class="field">
-                  <label for="doc4">Doc. 4 — Certificado de Origem <span class="req">*</span></label>
-                  <div class="file-input-wrapper" :class="{ 'has-error': errors.doc4 }">
+                  <label for="doc4"
+                    >Doc. 4 — Certificado de Origem
+                    <span class="req">*</span></label
+                  >
+                  <div
+                    class="file-input-wrapper"
+                    :class="{ 'has-error': errors.doc4 }"
+                  >
                     <input
                       type="file"
                       id="doc4"
@@ -364,14 +450,23 @@ function handleSubmit() {
                       required
                       @change="handleFileChange($event, 'doc4')"
                     />
-                    <span class="file-label">{{ formData.doc4 ? formData.doc4.name : 'Escolher arquivo' }}</span>
+                    <span class="file-label">{{
+                      formData.doc4 ? formData.doc4.name : "Escolher arquivo"
+                    }}</span>
                   </div>
-                  <span v-if="errors.doc4" class="error-message">Por favor, selecione este arquivo</span>
+                  <span v-if="errors.doc4" class="error-message"
+                    >Por favor, selecione este arquivo</span
+                  >
                 </div>
 
                 <div class="field">
-                  <label for="doc5">Doc. 5 — Teste de Ensaio <span class="req">*</span></label>
-                  <div class="file-input-wrapper" :class="{ 'has-error': errors.doc5 }">
+                  <label for="doc5"
+                    >Doc. 5 — Teste de Ensaio <span class="req">*</span></label
+                  >
+                  <div
+                    class="file-input-wrapper"
+                    :class="{ 'has-error': errors.doc5 }"
+                  >
                     <input
                       type="file"
                       id="doc5"
@@ -379,14 +474,24 @@ function handleSubmit() {
                       required
                       @change="handleFileChange($event, 'doc5')"
                     />
-                    <span class="file-label">{{ formData.doc5 ? formData.doc5.name : 'Escolher arquivo' }}</span>
+                    <span class="file-label">{{
+                      formData.doc5 ? formData.doc5.name : "Escolher arquivo"
+                    }}</span>
                   </div>
-                  <span v-if="errors.doc5" class="error-message">Por favor, selecione este arquivo</span>
+                  <span v-if="errors.doc5" class="error-message"
+                    >Por favor, selecione este arquivo</span
+                  >
                 </div>
 
                 <div class="field">
-                  <label for="doc6">Doc. 6 — Especificações Técnicas <span class="req">*</span></label>
-                  <div class="file-input-wrapper" :class="{ 'has-error': errors.doc6 }">
+                  <label for="doc6"
+                    >Doc. 6 — Especificações Técnicas
+                    <span class="req">*</span></label
+                  >
+                  <div
+                    class="file-input-wrapper"
+                    :class="{ 'has-error': errors.doc6 }"
+                  >
                     <input
                       type="file"
                       id="doc6"
@@ -394,14 +499,24 @@ function handleSubmit() {
                       required
                       @change="handleFileChange($event, 'doc6')"
                     />
-                    <span class="file-label">{{ formData.doc6 ? formData.doc6.name : 'Escolher arquivo' }}</span>
+                    <span class="file-label">{{
+                      formData.doc6 ? formData.doc6.name : "Escolher arquivo"
+                    }}</span>
                   </div>
-                  <span v-if="errors.doc6" class="error-message">Por favor, selecione este arquivo</span>
+                  <span v-if="errors.doc6" class="error-message"
+                    >Por favor, selecione este arquivo</span
+                  >
                 </div>
 
                 <div class="field">
-                  <label for="doc7">Doc. 7 — Documento de Transporte <span class="req">*</span></label>
-                  <div class="file-input-wrapper" :class="{ 'has-error': errors.doc7 }">
+                  <label for="doc7"
+                    >Doc. 7 — Documento de Transporte
+                    <span class="req">*</span></label
+                  >
+                  <div
+                    class="file-input-wrapper"
+                    :class="{ 'has-error': errors.doc7 }"
+                  >
                     <input
                       type="file"
                       id="doc7"
@@ -409,13 +524,21 @@ function handleSubmit() {
                       required
                       @change="handleFileChange($event, 'doc7')"
                     />
-                    <span class="file-label">{{ formData.doc7 ? formData.doc7.name : 'Escolher arquivo' }}</span>
+                    <span class="file-label">{{
+                      formData.doc7 ? formData.doc7.name : "Escolher arquivo"
+                    }}</span>
                   </div>
-                  <span v-if="errors.doc7" class="error-message">Por favor, selecione este arquivo</span>
+                  <span v-if="errors.doc7" class="error-message"
+                    >Por favor, selecione este arquivo</span
+                  >
                 </div>
 
                 <div class="form-actions">
-                  <button type="button" @click="showForm = false" class="btn btn--ghost">
+                  <button
+                    type="button"
+                    @click="showForm = false"
+                    class="btn btn--ghost"
+                  >
                     Voltar
                   </button>
                   <button type="submit" class="btn btn--primary">
@@ -456,7 +579,7 @@ function handleSubmit() {
 
 .requisito-num {
   flex-shrink: 0;
-  font-family: 'Archivo', system-ui, sans-serif;
+  font-family: "Archivo", system-ui, sans-serif;
   font-weight: 800;
   font-size: 1.1rem;
   color: #5cb947;
@@ -674,7 +797,7 @@ function handleSubmit() {
   transition: all 0.2s;
   cursor: pointer;
   border: none;
-  font-family: 'IBM Plex Sans', system-ui, sans-serif;
+  font-family: "IBM Plex Sans", system-ui, sans-serif;
   font-size: 1rem;
 }
 
@@ -770,7 +893,7 @@ function handleSubmit() {
   padding: 0.9rem 1rem;
   border: 2px solid #e6eff6;
   border-radius: 10px;
-  font-family: 'IBM Plex Sans', system-ui, sans-serif;
+  font-family: "IBM Plex Sans", system-ui, sans-serif;
   font-size: 0.9375rem;
   color: #0a3a63;
   background: white;
@@ -837,7 +960,7 @@ function handleSubmit() {
   border-radius: 10px;
   background: linear-gradient(135deg, #f8fafc 0%, #eff6fc 100%);
   color: #0a3a63;
-  font-family: 'IBM Plex Sans', system-ui, sans-serif;
+  font-family: "IBM Plex Sans", system-ui, sans-serif;
   font-size: 0.9375rem;
   font-weight: 500;
   transition: all 0.2s;
