@@ -1,36 +1,39 @@
 <script setup lang="ts">
-import { ref, computed, watch, onMounted } from 'vue'
-import { services, type Service } from '~/data/services'
+import { ref, computed, watch, onMounted } from "vue"
+import { useRoute, useRouter } from "vue-router"
+import { services, type Service } from "~/data/services"
 
 const route = useRoute()
 const router = useRouter()
-const isHomePage = computed(() => route.path === '/')
+const isHomePage = computed(() => route.path === "/")
 
 const activeServiceId = ref<string | null>(null)
 const activeSubItemId = ref<string | null>(null)
 const showSubItems = ref(false)
 
-const emit = defineEmits(['select-service', 'select-subitem'])
+const emit = defineEmits(["select-service", "select-subitem"])
 
 const selectService = (service: Service) => {
+  if (service.disabled) return
+
   activeServiceId.value = service.id
   showSubItems.value = true
   const path = `/${service.id}`
   router.push(path)
-  
+
   activeSubItemId.value = null
-  emit('select-service', service.id)
+  emit("select-service", service.id)
 }
 
 const goBackToServices = () => {
   showSubItems.value = false
   activeSubItemId.value = null
-  emit('select-service', null)
+  emit("select-service", null)
 }
 
 const selectSubItem = (serviceId: string, subItemId: string) => {
   activeSubItemId.value = subItemId
-  emit('select-subitem', serviceId, subItemId)
+  emit("select-subitem", serviceId, subItemId)
 }
 
 const goHome = () => {
@@ -38,18 +41,22 @@ const goHome = () => {
   activeSubItemId.value = null
 }
 
-const activeService = computed(() => services.find(s => s.id === activeServiceId.value))
+const activeService = computed(() =>
+  services.find((s) => s.id === activeServiceId.value),
+)
 
 onMounted(() => {
   const pathToId: Record<string, string> = {
-    '/normas-tecnicas': 'normas-tecnicas',
-    '/metrologia': 'metrologia',
-    '/acreditacao': 'acreditacao',
-    '/importacao': 'importacao',
-    '/formacao': 'formacao',
-    '/rotulos': 'rotulos',
-    '/regulamentos': 'regulamentos',
-    '/premio-qualidade': 'premio-qualidade'
+    "/normas-tecnicas": "normas-tecnicas",
+    "/metrologia": "metrologia",
+    "/acreditacao": "acreditacao",
+    "/importacao": "importacao",
+    "/formacao": "formacao",
+    "/rotulos": "rotulos",
+    "/regulamentos": "regulamentos",
+    "/premio-qualidade": "premio-qualidade",
+    "/certificacao": "certificacao",
+    "/registo-cadastro": "registo-cadastro",
   }
   if (pathToId[route.path]) {
     activeServiceId.value = pathToId[route.path]
@@ -61,21 +68,23 @@ onMounted(() => {
 watch(
   () => route.path,
   (newPath) => {
-    if (newPath === '/') {
+    if (newPath === "/") {
       activeServiceId.value = null
       activeSubItemId.value = null
       showSubItems.value = false
-      emit('select-service', null)
+      emit("select-service", null)
     } else {
       const pathToId: Record<string, string> = {
-        '/normas-tecnicas': 'normas-tecnicas',
-        '/metrologia': 'metrologia',
-        '/acreditacao': 'acreditacao',
-        '/importacao': 'importacao',
-        '/formacao': 'formacao',
-        '/rotulos': 'rotulos',
-        '/regulamentos': 'regulamentos',
-        '/premio-qualidade': 'premio-qualidade'
+        "/normas-tecnicas": "normas-tecnicas",
+        "/metrologia": "metrologia",
+        "/acreditacao": "acreditacao",
+        "/importacao": "importacao",
+        "/formacao": "formacao",
+        "/rotulos": "rotulos",
+        "/regulamentos": "regulamentos",
+        "/premio-qualidade": "premio-qualidade",
+        "/certificacao": "certificacao",
+        "/registo-cadastro": "registo-cadastro",
       }
       if (pathToId[newPath]) {
         activeServiceId.value = pathToId[newPath]
@@ -83,13 +92,19 @@ watch(
         activeSubItemId.value = null
       }
     }
-  }
+  },
 )
 </script>
 
 <template>
   <aside class="sidebar-right">
-    <NuxtLink v-if="!isHomePage && !showSubItems" to="/" class="back-btn" @click="goHome">← Voltar à Página Inicial</NuxtLink>
+    <NuxtLink
+      v-if="!isHomePage && !showSubItems"
+      to="/"
+      class="back-btn"
+      @click="goHome"
+      >← Voltar à Página Inicial</NuxtLink
+    >
     <h2>Serviços</h2>
     <nav class="services-list">
       <template v-if="!showSubItems">
@@ -97,7 +112,10 @@ watch(
           v-for="service in services"
           :key="service.id"
           class="service-item"
-          :class="{ active: activeServiceId === service.id }"
+          :class="{
+            active: activeServiceId === service.id,
+            disabled: service.disabled,
+          }"
           @click="selectService(service)"
         >
           <span class="n">{{ service.number }}</span>
@@ -123,7 +141,12 @@ watch(
       </template>
     </nav>
     <div class="area-reservada-wrapper">
-      <a href="https://reliable-haupia-87ded0.netlify.app/admin" target="_blank" rel="noopener noreferrer" class="area-reservada">
+      <a
+        href="https://reliable-haupia-87ded0.netlify.app/admin"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="area-reservada"
+      >
         Área Reservada
       </a>
     </div>
@@ -235,11 +258,17 @@ watch(
   border-color: #d0e8d6;
 }
 
+.service-item.disabled {
+  opacity: 0.5;
+  pointer-events: none;
+  cursor: not-allowed;
+}
+
 .service-item .n {
   font-weight: 800;
   color: #5cb947;
   font-size: 1.1rem;
-  font-family: 'Archivo', system-ui, sans-serif;
+  font-family: "Archivo", system-ui, sans-serif;
   min-width: 28px;
 }
 
@@ -301,7 +330,7 @@ watch(
   font-weight: 700;
   color: #2ba9e0;
   font-size: 1rem;
-  font-family: 'Archivo', system-ui, sans-serif;
+  font-family: "Archivo", system-ui, sans-serif;
   min-width: 24px;
 }
 
