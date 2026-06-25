@@ -25,7 +25,7 @@ export interface SubItem {
 
 export const services: Service[] = [
   {
-    id: "normas-tecnicas",
+    id: "normalizacao",
     number: "01",
     title: "Normalização",
     subItems: [
@@ -34,11 +34,11 @@ export const services: Service[] = [
     ],
   },
   {
-    id: "rotulos",
+    id: "avaliacao-da-conformidade",
     number: "02",
     title: "Avaliação da Conformidade",
     subItems: [
-      { id: "solicitar-servico", number: "01", title: "Solicitar Serviço" }
+      { id: "solicitar-servico", number: "01", title: "Ver Requisitos" }
     ]
   },
   {

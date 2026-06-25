@@ -6,22 +6,18 @@ definePageMeta({
 })
 
 useHead({
-  title: 'INIQ — Registo e Cadastro',
+  title: 'INIQ » Avaliação da Conformidade',
 })
 
-// Inject active sub-item from layout
 const activeSubItemId = inject('activeSubItemId')
 
-// Track if sub-item is selected
 const isSubItemSelected = ref(false)
 const showForm = ref(false)
 const formSubmitted = ref(false)
 const errors = ref<Record<string, boolean>>({})
 
-// Ref for first input
 const nomeInput = ref<HTMLInputElement | null>(null)
 
-// Form data
 const formData = ref({
   nome: '',
   email: '',
@@ -30,6 +26,8 @@ const formData = ref({
   doc3: null as File | null,
   doc4: null as File | null,
   doc5: null as File | null,
+  doc6: null as File | null,
+  doc7: null as File | null,
 })
 
 // Watch for showForm to focus and scroll
@@ -98,6 +96,14 @@ function validateForm(): boolean {
     newErrors.doc5 = true
   }
   
+  if (!formData.value.doc6) {
+    newErrors.doc6 = true
+  }
+  
+  if (!formData.value.doc7) {
+    newErrors.doc7 = true
+  }
+  
   errors.value = newErrors
   
   // Focus on first error field
@@ -131,6 +137,8 @@ function handleSubmit() {
       doc3: null,
       doc4: null,
       doc5: null,
+      doc6: null,
+      doc7: null,
     }
     errors.value = {}
   }, 3000)
@@ -139,41 +147,40 @@ function handleSubmit() {
 
 <template>
   <div class="combined-card">
-    <!-- Top info - only show when no sub-item is selected -->
     <template v-if="!isSubItemSelected">
       <div class="dg-top">
         <div class="dg-photo-wrapper">
           <img
             class="dg-photo"
-            src="/perfis/02.jpg"
-            alt="Chefe do Departamento de Acreditação"
+            src="/director-geral.png"
+            alt="Director-Geral"
           />
           <div class="dg-details">
-            <h3>Dr. Joaquim Mateus</h3>
-            <p class="role">Chefe do Departamento de Acreditação</p>
+            <h3>Carmo Adriana dos Santos</h3>
+            <p class="role">Direcção-Geral</p>
           </div>
         </div>
         <div class="dg-message">
           <h4>Mensagem do Responsável</h4>
           <p>
-            “A acreditação dá confiança ao mercado: reconhece formalmente quem tem
-            competência técnica para avaliar a conformidade.”
+            “A rotulagem e as embalagens são o primeiro ponto de contacto entre o
+            produto e o consumidor, devendo ser claras, precisas e conformes aos
+            requisitos aplicáveis.”
           </p>
         </div>
       </div>
 
       <div class="quality-policy-section mb-10">
-        <h4>Política de Acreditação</h4>
+        <h4>Política de Avaliação da Conformidade</h4>
         <p>
-          A acreditação é o nível mais elevado de garantia da qualidade: avalia quem
-          avalia. Ao reconhecer a competência dos organismos, o INIQ assegura que
-          ensaios, certificados e relatórios emitidos em Angola merecem confiança no
-          mercado nacional e internacional.
+          O INIQ compromete-se a garantir que a rotulagem e as embalagens dos
+          produtos comercializados no mercado nacional cumpram os requisitos
+          técnicos e regulamentares aplicáveis, proporcionando informação clara e
+          precisa aos consumidores.
         </p>
       </div>
     </template>
 
-    <!-- Sub-item content - only show when "Ver Requisitos" is selected -->
     <template v-if="isSubItemSelected">
       <template v-if="!showForm">
         <section class="mt-12">
@@ -182,30 +189,38 @@ function handleSubmit() {
               <span class="eyebrow">Requisitos</span>
               <h2>Documentação Necessária</h2>
               <p>
-                Lista de documentos que deverá preparar para submeter o seu pedido de registo e cadastro.
+                Lista de documentos que deverá preparar para submeter o seu pedido de avaliação de conformidade.
               </p>
             </div>
 
             <div class="requisitos-list">
               <div class="requisito-item">
                 <span class="requisito-num">1</span>
-                <span class="requisito-text">Ofício dirigido ao INIQ (modelo Anexo 1)</span>
+                <span class="requisito-text">Carta/Ofício</span>
               </div>
               <div class="requisito-item">
                 <span class="requisito-num">2</span>
-                <span class="requisito-text">Relatório de Análise Técnica e Diagnóstico</span>
+                <span class="requisito-text">NIF</span>
               </div>
               <div class="requisito-item">
                 <span class="requisito-num">3</span>
-                <span class="requisito-text">Formulários preenchidos + documentos de identificação + CV do técnico responsável</span>
+                <span class="requisito-text">Fatura Comercial</span>
               </div>
               <div class="requisito-item">
                 <span class="requisito-num">4</span>
-                <span class="requisito-text">Cópias da documentação legal (Certidão de Registo Comercial, Alvará Comercial, NIF)</span>
+                <span class="requisito-text">Certificado de Origem</span>
               </div>
               <div class="requisito-item">
                 <span class="requisito-num">5</span>
-                <span class="requisito-text">Apresentação da organização</span>
+                <span class="requisito-text">Teste de Ensaio</span>
+              </div>
+              <div class="requisito-item">
+                <span class="requisito-num">6</span>
+                <span class="requisito-text">Especificações Técnicas</span>
+              </div>
+              <div class="requisito-item">
+                <span class="requisito-num">7</span>
+                <span class="requisito-text">Documento de Transporte</span>
               </div>
             </div>
           </div>
@@ -215,7 +230,7 @@ function handleSubmit() {
           <div class="container">
             <div class="download-section">
               <div class="download-info">
-                <h3>Modelo do Ofício (Anexo 1)</h3>
+                <h3>Modelo do Ofício</h3>
                 <p>Faça o download do modelo de ofício para apresentar o seu pedido.</p>
               </div>
               <a href="/docs/Modelo do Ofício.pdf" download class="btn btn--download">
@@ -247,7 +262,7 @@ function handleSubmit() {
           <div class="container">
             <div class="form-section">
               <div class="form-header">
-                <h3>Submeter Processo de Registo e Cadastro</h3>
+                <h3>Submeter Processo de Avaliação de Conformidade</h3>
                 <button @click="showForm = false" class="btn btn--ghost">
                   Voltar
                 </button>
@@ -264,13 +279,13 @@ function handleSubmit() {
                 <div class="field">
                   <label for="nome">Nome completo <span class="req">*</span></label>
                   <div class="input-wrapper" :class="{ 'has-error': errors.nome }">
-                    <input 
+                    <input
                       ref="nomeInput"
-                      type="text" 
-                      id="nome" 
-                      name="nome" 
-                      required 
-                      placeholder="O seu nome completo" 
+                      type="text"
+                      id="nome"
+                      name="nome"
+                      required
+                      placeholder="O seu nome completo"
                       v-model="formData.nome"
                       @input="errors.nome = false"
                     />
@@ -281,12 +296,12 @@ function handleSubmit() {
                 <div class="field">
                   <label for="email">E-mail <span class="req">*</span></label>
                   <div class="input-wrapper" :class="{ 'has-error': errors.email }">
-                    <input 
-                      type="email" 
-                      id="email" 
-                      name="email" 
-                      required 
-                      placeholder="nome@exemplo.ao" 
+                    <input
+                      type="email"
+                      id="email"
+                      name="email"
+                      required
+                      placeholder="nome@exemplo.ao"
                       v-model="formData.email"
                       @input="errors.email = false"
                     />
@@ -295,14 +310,14 @@ function handleSubmit() {
                 </div>
 
                 <div class="field">
-                  <label for="doc1">Doc. 1 - Ofício dirigido ao INIQ <span class="req">*</span></label>
+                  <label for="doc1">Doc. 1 — Carta/Ofício <span class="req">*</span></label>
                   <div class="file-input-wrapper" :class="{ 'has-error': errors.doc1 }">
-                    <input 
-                      type="file" 
-                      id="doc1" 
-                      name="doc1" 
-                      required 
-                      @change="handleFileChange($event, 'doc1')" 
+                    <input
+                      type="file"
+                      id="doc1"
+                      name="doc1"
+                      required
+                      @change="handleFileChange($event, 'doc1')"
                     />
                     <span class="file-label">{{ formData.doc1 ? formData.doc1.name : 'Escolher arquivo' }}</span>
                   </div>
@@ -310,14 +325,14 @@ function handleSubmit() {
                 </div>
 
                 <div class="field">
-                  <label for="doc2">Doc. 2 - Relatório de Análise Técnica e Diagnóstico <span class="req">*</span></label>
+                  <label for="doc2">Doc. 2 — NIF <span class="req">*</span></label>
                   <div class="file-input-wrapper" :class="{ 'has-error': errors.doc2 }">
-                    <input 
-                      type="file" 
-                      id="doc2" 
-                      name="doc2" 
-                      required 
-                      @change="handleFileChange($event, 'doc2')" 
+                    <input
+                      type="file"
+                      id="doc2"
+                      name="doc2"
+                      required
+                      @change="handleFileChange($event, 'doc2')"
                     />
                     <span class="file-label">{{ formData.doc2 ? formData.doc2.name : 'Escolher arquivo' }}</span>
                   </div>
@@ -325,14 +340,14 @@ function handleSubmit() {
                 </div>
 
                 <div class="field">
-                  <label for="doc3">Doc. 3 - Formulários preenchidos + documentos de identificação + CV <span class="req">*</span></label>
+                  <label for="doc3">Doc. 3 — Fatura Comercial <span class="req">*</span></label>
                   <div class="file-input-wrapper" :class="{ 'has-error': errors.doc3 }">
-                    <input 
-                      type="file" 
-                      id="doc3" 
-                      name="doc3" 
-                      required 
-                      @change="handleFileChange($event, 'doc3')" 
+                    <input
+                      type="file"
+                      id="doc3"
+                      name="doc3"
+                      required
+                      @change="handleFileChange($event, 'doc3')"
                     />
                     <span class="file-label">{{ formData.doc3 ? formData.doc3.name : 'Escolher arquivo' }}</span>
                   </div>
@@ -340,14 +355,14 @@ function handleSubmit() {
                 </div>
 
                 <div class="field">
-                  <label for="doc4">Doc. 4 - Cópias da documentação legal <span class="req">*</span></label>
+                  <label for="doc4">Doc. 4 — Certificado de Origem <span class="req">*</span></label>
                   <div class="file-input-wrapper" :class="{ 'has-error': errors.doc4 }">
-                    <input 
-                      type="file" 
-                      id="doc4" 
-                      name="doc4" 
-                      required 
-                      @change="handleFileChange($event, 'doc4')" 
+                    <input
+                      type="file"
+                      id="doc4"
+                      name="doc4"
+                      required
+                      @change="handleFileChange($event, 'doc4')"
                     />
                     <span class="file-label">{{ formData.doc4 ? formData.doc4.name : 'Escolher arquivo' }}</span>
                   </div>
@@ -355,18 +370,48 @@ function handleSubmit() {
                 </div>
 
                 <div class="field">
-                  <label for="doc5">Doc. 5 - Apresentação da organização <span class="req">*</span></label>
+                  <label for="doc5">Doc. 5 — Teste de Ensaio <span class="req">*</span></label>
                   <div class="file-input-wrapper" :class="{ 'has-error': errors.doc5 }">
-                    <input 
-                      type="file" 
-                      id="doc5" 
-                      name="doc5" 
-                      required 
-                      @change="handleFileChange($event, 'doc5')" 
+                    <input
+                      type="file"
+                      id="doc5"
+                      name="doc5"
+                      required
+                      @change="handleFileChange($event, 'doc5')"
                     />
                     <span class="file-label">{{ formData.doc5 ? formData.doc5.name : 'Escolher arquivo' }}</span>
                   </div>
                   <span v-if="errors.doc5" class="error-message">Por favor, selecione este arquivo</span>
+                </div>
+
+                <div class="field">
+                  <label for="doc6">Doc. 6 — Especificações Técnicas <span class="req">*</span></label>
+                  <div class="file-input-wrapper" :class="{ 'has-error': errors.doc6 }">
+                    <input
+                      type="file"
+                      id="doc6"
+                      name="doc6"
+                      required
+                      @change="handleFileChange($event, 'doc6')"
+                    />
+                    <span class="file-label">{{ formData.doc6 ? formData.doc6.name : 'Escolher arquivo' }}</span>
+                  </div>
+                  <span v-if="errors.doc6" class="error-message">Por favor, selecione este arquivo</span>
+                </div>
+
+                <div class="field">
+                  <label for="doc7">Doc. 7 — Documento de Transporte <span class="req">*</span></label>
+                  <div class="file-input-wrapper" :class="{ 'has-error': errors.doc7 }">
+                    <input
+                      type="file"
+                      id="doc7"
+                      name="doc7"
+                      required
+                      @change="handleFileChange($event, 'doc7')"
+                    />
+                    <span class="file-label">{{ formData.doc7 ? formData.doc7.name : 'Escolher arquivo' }}</span>
+                  </div>
+                  <span v-if="errors.doc7" class="error-message">Por favor, selecione este arquivo</span>
                 </div>
 
                 <div class="form-actions">
@@ -425,6 +470,19 @@ function handleSubmit() {
   font-size: 1rem;
   color: #0a3a63;
   font-weight: 500;
+}
+
+.download-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: linear-gradient(135deg, #eff6fc 0%, #e6f3f9 50%, #f0f7f2 100%);
+  border-radius: 16px;
+  padding: 2.5rem 2rem;
+  gap: 2rem;
+  flex-wrap: wrap;
+  box-shadow: 0 4px 16px rgba(10, 58, 99, 0.06);
+  border: 1px solid #e6eff6;
 }
 
 .download-info h3 {
@@ -640,19 +698,6 @@ function handleSubmit() {
   background: #f8fafc;
 }
 
-.download-section {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: linear-gradient(135deg, #eff6fc 0%, #e6f3f9 50%, #f0f7f2 100%);
-  border-radius: 16px;
-  padding: 2.5rem 2rem;
-  gap: 2rem;
-  flex-wrap: wrap;
-  box-shadow: 0 4px 16px rgba(10, 58, 99, 0.06);
-  border: 1px solid #e6eff6;
-}
-
 .form-section {
   margin-top: 2rem;
   background: white;
@@ -812,14 +857,6 @@ function handleSubmit() {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%232ba9e0'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12' /%3E%3C/svg%3E");
   background-size: contain;
   background-repeat: no-repeat;
-}
-
-.file-name {
-  display: inline-block;
-  margin-top: 0.5rem;
-  font-size: 0.875rem;
-  color: #475569;
-  font-weight: 500;
 }
 
 .form-actions {

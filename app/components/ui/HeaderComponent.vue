@@ -1,14 +1,17 @@
 <script setup lang="ts">
+import { useRoute } from "vue-router"
+import { computed } from "vue"
+
 const route = useRoute()
 
 const pageTitles = {
   "/": "Instituto Nacional das Infra-Estruturas da Qualidade",
-  "/normas-tecnicas": "Normalização",
+  "/normalizacao": "Normalização",
   "/metrologia": "Metrologia",
   "/registo-cadastro": "Registo e Cadastro ",
   "/importacao": "Validação, Verificação e Certificação de Produtos a Importar",
   "/formacao": "Formação e Qualificação em Qualidade",
-  "/rotulos": "Avaliação da Conformidade",
+  "/avaliacao-da-conformidade": "Avaliação da Conformidade",
   "/regulamentos": "Regulamentos Técnicos",
   "/premio-qualidade": "Prémio Nacional da Qualidade",
   "/contactos": "Contactos",
