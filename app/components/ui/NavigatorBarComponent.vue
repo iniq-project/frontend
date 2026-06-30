@@ -105,7 +105,7 @@ watch(
       @click="goHome"
       >← Voltar à Página Inicial</NuxtLink
     >
-    <h2>Serviços</h2>
+    <h2>Serviços e Processos</h2>
     <nav class="services-list">
       <template v-if="!showSubItems">
         <button
