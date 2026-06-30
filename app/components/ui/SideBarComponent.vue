@@ -5,13 +5,11 @@
 <template>
   <aside class="sidebar-left">
     <div class="sidebar-content">
-      <div class="eyebrow">
+      <!-- <div class="eyebrow">
         <slot name="eyebrow">Quem Somos</slot>
-      </div>
+      </div> -->
       <h2 class="main-title">
-        <slot name="title"
-          >O Instituto Nacional das Infra-Estruturas da Qualidade</slot
-        >
+        <slot name="title">Quem Somos</slot>
       </h2>
       <div class="about-text">
         <slot>
@@ -20,20 +18,21 @@
               Criado pelo Decreto Presidencial n.º 95/21, de Abril de 2021
             </li>
             <li>
-              Instituto público sob superintendência do Ministério da Indústria e Comércio
+              Instituto público sob superintendência do Ministério da Indústria
+              e Comércio
             </li>
-            <li>
-              Compete coordenar o Sistema Nacional da Qualidade
-            </li>
+            <li>Compete coordenar o Sistema Nacional da Qualidade</li>
           </ul>
         </slot>
       </div>
     </div>
 
     <div class="sidebar-footer">
-      <div class="gov-info">Edificio Palacio do vidro <br>
-        Largo 17 de Setembro n° 7 <br>
-        5° Andar, Ala Esquerda.</div>
+      <div class="gov-info">
+        Edificio Palacio do vidro <br />
+        Largo 17 de Setembro n° 7 <br />
+        5° Andar, Ala Esquerda.
+      </div>
     </div>
   </aside>
 </template>
