@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { inject, watch, ref } from 'vue'
+
 definePageMeta({
   layout: 'default',
 })
@@ -6,6 +8,19 @@ definePageMeta({
 useHead({
   title: 'INIQ » Formação e Qualificação em Qualidade',
 })
+
+// Inject active sub-item from layout
+const activeSubItemId = inject('activeSubItemId')
+
+// Track if sub-item is selected
+const isSubItemSelected = ref(false)
+
+// Sync with layout
+if (activeSubItemId) {
+  watch(activeSubItemId, (newId) => {
+    isSubItemSelected.value = !!newId
+  }, { immediate: true })
+}
 
 const activeTab = ref('catalogo')
 const modalOpen = ref(false)
@@ -131,133 +146,139 @@ const handleSubmit = () => {
 
 <template>
   <div class="combined-card">
-    <div class="dg-top">
-      <div class="dg-photo-wrapper">
-        <img
-          class="dg-photo"
-          src="/director-geral.png"
-          alt="Director-Geral"
-        />
-        <div class="dg-details">
-          <h3>Carmo Adriana dos Santos</h3>
-          <p class="role">Direcção-Geral</p>
+    <!-- Top info - only show when no sub-item is selected -->
+    <template v-if="!isSubItemSelected">
+      <div class="dg-top">
+        <div class="dg-photo-wrapper">
+          <img
+            class="dg-photo"
+            src="/director-geral.png"
+            alt="Director-Geral"
+          />
+          <div class="dg-details">
+            <h3>Carmo Adriana dos Santos</h3>
+            <p class="role">Direcção-Geral</p>
+          </div>
         </div>
-      </div>
-      <div class="dg-message">
-        <h4>Mensagem do Responsável</h4>
-        <p>
-          “A formação é o pilar da qualidade. Capacitar os profissionais é garantir
-          que os padrões são mantidos e a excelência é alcançada.”
-        </p>
-      </div>
-    </div>
-
-    <div class="quality-policy-section">
-      <h4>Política de Formação</h4>
-      <p>
-        O INIQ compromete-se a oferecer formação de qualidade, alinhada com as
-        normas internacionais e as necessidades do mercado angolano, promovendo a
-        capacitação técnica e o desenvolvimento profissional contínuo.
-      </p>
-    </div>
-
-    <section class="mt-12">
-      <div class="container">
-        <div class="panel-head" style="margin-bottom: 24px">
-          <span class="eyebrow">Catálogo de Cursos</span>
-          <h2>Escolha o seu curso</h2>
+        <div class="dg-message">
+          <h4>Mensagem do Responsável</h4>
           <p>
-            Os cursos são geridos pelo INIQ e actualizados regularmente. Clique num
-            curso para ver o programa completo e inscrever-se.
+            “A formação é o pilar da qualidade. Capacitar os profissionais é garantir
+            que os padrões são mantidos e a excelência é alcançada.”
           </p>
         </div>
-
-        <div class="catalog-toolbar">
-          <div class="catalog-search">
-            <svg
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-            >
-              <circle cx="11" cy="11" r="7"></circle>
-              <path d="m21 21-4.3-4.3"></path>
-            </svg>
-            <input
-              type="text"
-              placeholder="Pesquisar cursos…"
-              aria-label="Pesquisar cursos"
-            />
-          </div>
-          <div class="catalog-filter">
-            <button class="chip is-active">Todas as áreas</button>
-            <button class="chip">Qualidade</button>
-            <button class="chip">Metrologia</button>
-            <button class="chip">Normalização</button>
-            <button class="chip">Segurança Alimentar</button>
-          </div>
-        </div>
-
-        <div class="course-grid">
-          <article
-            class="course-card"
-            v-for="course in courses"
-            :key="course.id"
-            @click="openModal(course)"
-          >
-            <div class="course-thumb">
-              <img :src="course.thumbnail" :alt="course.title" />
-              <div class="course-badges">
-                <span class="course-category">{{ course.category }}</span>
-                <span class="course-level">{{ course.level }}</span>
-              </div>
-            </div>
-            <div class="course-body">
-              <h3 class="course-title">{{ course.title }}</h3>
-              <p class="course-desc">{{ course.description }}</p>
-              <div class="course-meta">
-                <div class="meta-item">
-                  <svg
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  >
-                    <rect x="3" y="4" width="18" height="18" rx="2"></rect>
-                    <path d="M16 2v4M8 2v4M3 10h18"></path>
-                  </svg>
-                  <span>{{ course.duration }}</span>
-                </div>
-                <div class="meta-item">
-                  <svg
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  >
-                    <circle cx="12" cy="12" r="10"></circle>
-                    <path d="M12 6v6l4 2"></path>
-                  </svg>
-                  <span>{{ course.modality }}</span>
-                </div>
-              </div>
-              <div class="course-footer">
-                <div class="course-price">
-                  <span class="price-value">{{ formatPrice(course.price) }}</span>
-                  <span class="price-currency">AOA</span>
-                </div>
-                <button class="btn btn--green">Ver curso</button>
-              </div>
-            </div>
-          </article>
-        </div>
       </div>
-    </section>
+
+      <div class="quality-policy-section mb-10">
+        <h4>Política de Formação</h4>
+        <p>
+          O INIQ compromete-se a oferecer formação de qualidade, alinhada com as
+          normas internacionais e as necessidades do mercado angolano, promovendo a
+          capacitação técnica e o desenvolvimento profissional contínuo.
+        </p>
+      </div>
+    </template>
+
+    <!-- Sub-item content - only show when "Solicitar Serviço" is selected -->
+    <template v-if="isSubItemSelected">
+      <section class="mt-12">
+        <div class="container">
+          <div class="panel-head" style="margin-bottom: 24px">
+            <span class="eyebrow">Catálogo de Cursos</span>
+            <h2>Escolha o seu curso</h2>
+            <p>
+              Os cursos são geridos pelo INIQ e actualizados regularmente. Clique num
+              curso para ver o programa completo e inscrever-se.
+            </p>
+          </div>
+
+          <div class="catalog-toolbar">
+            <div class="catalog-search">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+              >
+                <circle cx="11" cy="11" r="7"></circle>
+                <path d="m21 21-4.3-4.3"></path>
+              </svg>
+              <input
+                type="text"
+                placeholder="Pesquisar cursos…"
+                aria-label="Pesquisar cursos"
+              />
+            </div>
+            <div class="catalog-filter">
+              <button class="chip is-active">Todas as áreas</button>
+              <button class="chip">Qualidade</button>
+              <button class="chip">Metrologia</button>
+              <button class="chip">Normalização</button>
+              <button class="chip">Segurança Alimentar</button>
+            </div>
+          </div>
+
+          <div class="course-grid">
+            <article
+              class="course-card"
+              v-for="course in courses"
+              :key="course.id"
+              @click="openModal(course)"
+            >
+              <div class="course-thumb">
+                <img :src="course.thumbnail" :alt="course.title" />
+                <div class="course-badges">
+                  <span class="course-category">{{ course.category }}</span>
+                  <span class="course-level">{{ course.level }}</span>
+                </div>
+              </div>
+              <div class="course-body">
+                <h3 class="course-title">{{ course.title }}</h3>
+                <p class="course-desc">{{ course.description }}</p>
+                <div class="course-meta">
+                  <div class="meta-item">
+                    <svg
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    >
+                      <rect x="3" y="4" width="18" height="18" rx="2"></rect>
+                      <path d="M16 2v4M8 2v4M3 10h18"></path>
+                    </svg>
+                    <span>{{ course.duration }}</span>
+                  </div>
+                  <div class="meta-item">
+                    <svg
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    >
+                      <circle cx="12" cy="12" r="10"></circle>
+                      <path d="M12 6v6l4 2"></path>
+                    </svg>
+                    <span>{{ course.modality }}</span>
+                  </div>
+                </div>
+                <div class="course-footer">
+                  <div class="course-price">
+                    <span class="price-value">{{ formatPrice(course.price) }}</span>
+                    <span class="price-currency">AOA</span>
+                  </div>
+                  <button class="btn btn--green">Ver curso</button>
+                </div>
+              </div>
+            </article>
+          </div>
+        </div>
+      </section>
+    </template>
   </div>
 
   <div v-if="modalOpen" class="modal" :class="{ open: modalOpen }" @click.self="closeModal">

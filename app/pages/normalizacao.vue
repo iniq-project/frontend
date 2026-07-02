@@ -1,10 +1,30 @@
+<script setup lang="ts">
+import { inject, watch, ref } from 'vue'
 
-<script setup>
 useHead({
-  title: "INIQ » Normas Técnicas & Normalização",
+  title: "INIQ » Normalização",
 })
 
+
+const activeSubItemId = inject('activeSubItemId')
+
+
 const activeTab = ref("venda")
+
+
+const isSubItemSelected = ref(false)
+
+if (activeSubItemId) {
+  watch(activeSubItemId, (newId) => {
+    isSubItemSelected.value = !!newId
+    
+    if (newId === 'venda-normas') {
+      activeTab.value = 'venda'
+    } else if (newId === 'consulta-publica') {
+      activeTab.value = 'consulta'
+    }
+  }, { immediate: true })
+}
 const modalOpen = ref(false)
 const modalMode = ref("venda")
 const modalEyebrow = ref("Venda de Normas")
@@ -16,6 +36,7 @@ const successMsg = ref(
   "Receberá por e-mail os dados de pagamento (Referência Multicaixa). Após confirmação, a norma fica imediatamente disponível na sua área reservada.",
 )
 const orderRef = ref("")
+const errors = ref<Record<string, boolean>>({})
 
 const normas = ref([
   {
@@ -72,31 +93,28 @@ const projetosConsulta = ref([
 ])
 
 const formData = ref({
-  nome: "",
-  entidade: "",
+  nomeEntidade: "",
+  nif: "",
   email: "",
   telefone: "",
-  nif: "",
-  formato: "PDF (digital)",
   contribuicao: "",
-  pagamento: "Referência Multicaixa",
-  observacoes: "",
 })
 
-const formatPrice = (price) => {
+const formatPrice = (price: number) => {
   return price.toLocaleString("pt-PT")
 }
 
-const openModal = (mode, item) => {
+const openModal = (mode: string, item: any) => {
   modalMode.value = mode
   formSubmitted.value = false
+  errors.value = {}
 
   if (mode === "venda") {
     modalEyebrow.value = "Venda de Normas"
     modalTitle.value = "Solicitar Norma"
     modalRef.value = `${item.code} — ${item.title}`
-    successTitle.value = "Pedido submetido com sucesso"
-    successMsg.value = `Receberá por e-mail os dados de pagamento (${formData.value.pagamento}). Após confirmação, a norma fica imediatamente disponível na sua área reservada.`
+    successTitle.value = "RUPE gerado com sucesso"
+    successMsg.value = "Utilize o RUPE abaixo para efetuar o pagamento. Após confirmação do pagamento, o técnico/administrador irá validar e liberar o acesso à norma."
   } else {
     modalEyebrow.value = "Consulta Pública"
     modalTitle.value = "Submeter Contribuição"
@@ -107,15 +125,11 @@ const openModal = (mode, item) => {
   }
 
   formData.value = {
-    nome: "",
-    entidade: "",
+    nomeEntidade: "",
+    nif: "",
     email: "",
     telefone: "",
-    nif: "",
-    formato: "PDF (digital)",
     contribuicao: "",
-    pagamento: "Referência Multicaixa",
-    observacoes: "",
   }
 
   modalOpen.value = true
@@ -125,66 +139,91 @@ const closeModal = () => {
   modalOpen.value = false
 }
 
+const validateForm = (): boolean => {
+  if (modalMode.value === "venda") {
+    const newErrors: Record<string, boolean> = {}
+    
+    if (!formData.value.nomeEntidade.trim()) {
+      newErrors.nomeEntidade = true
+    }
+    
+    if (!formData.value.nif.trim()) {
+      newErrors.nif = true
+    }
+    
+    if (!formData.value.email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.value.email)) {
+      newErrors.email = true
+    }
+    
+    if (!formData.value.telefone.trim()) {
+      newErrors.telefone = true
+    }
+    
+    errors.value = newErrors
+    return Object.keys(newErrors).length === 0
+  }
+  return true
+}
+
+const generateRUPE = (): string => {
+  const year = new Date().getFullYear()
+  const randomNum = Math.floor(100000 + Math.random() * 899999)
+  return `RUPE-${year}-${randomNum}`
+}
+
 const handleSubmit = () => {
-  // Generate reference
-  const refNumber = Math.floor(10000 + Math.random() * 89999)
-  orderRef.value = `REF: INIQ-2026-${refNumber}`
+  if (!validateForm()) {
+    return
+  }
+  
+  if (modalMode.value === "venda") {
+    orderRef.value = generateRUPE()
+  } else {
+    const refNumber = Math.floor(10000 + Math.random() * 89999)
+    orderRef.value = `REF: INIQ-2026-${refNumber}`
+  }
+  
   formSubmitted.value = true
 }
 </script>
 <template>
   <div class="combined-card">
-    <div class="dg-top">
-      <div class="dg-photo-wrapper">
-        <img
-          class="dg-photo"
-          src="/perfis/04.jpg"
-          alt="Chefe do Departamento de Normalização"
-        />
-        <div class="dg-details">
-          <h3>Dra. Inês Cabral</h3>
-          <p class="role">Chefe do Departamento de Normalização</p>
+    <template v-if="!isSubItemSelected">
+      <div class="dg-top">
+        <div class="dg-photo-wrapper">
+          <img
+            class="dg-photo"
+            src="/perfis/04.jpg"
+            alt="Chefe do Departamento de Normalização"
+          />
+          <div class="dg-details">
+            <h3>Dra. Inês Cabral</h3>
+            <p class="role">Chefe do Departamento de Normalização</p>
+          </div>
+        </div>
+        <div class="dg-message">
+          <h4>Mensagem do Responsável</h4>
+          <p>
+            “A normalização é o ponto de partida da qualidade. Construímos, com as
+            comissões técnicas, as referências que dão confiança ao mercado.”
+          </p>
         </div>
       </div>
-      <div class="dg-message">
-        <h4>Mensagem do Responsável</h4>
+
+      <div class="quality-policy-section">
+        <h4>Política de Qualidade para Normalização</h4>
         <p>
-          “A normalização é o ponto de partida da qualidade. Construímos, com as
-          comissões técnicas, as referências que dão confiança ao mercado.”
+          O INIQ compromete-se a coordenar e desenvolver o sistema nacional de
+          normalização de Angola, garantindo a conformidade com as melhores
+          práticas internacionais, promovendo a participação transparente de todas
+          as partes interessadas, e garantindo que as normas angolanas apoiem a
+          inovação, a competitividade empresarial e a proteção do consumidor, com
+          foco na melhoria contínua e excelência.
         </p>
       </div>
-    </div>
+    </template>
 
-    <div class="quality-policy-section">
-      <h4>Política de Qualidade para Normalização</h4>
-      <p>
-        O INIQ compromete-se a coordenar e desenvolver o sistema nacional de
-        normalização de Angola, garantindo a conformidade com as melhores
-        práticas internacionais, promovendo a participação transparente de todas
-        as partes interessadas, e garantindo que as normas angolanas apoiem a
-        inovação, a competitividade empresarial e a proteção do consumidor, com
-        foco na melhoria contínua e excelência.
-      </p>
-    </div>
-
-    <div class="tabs-bar">
-      <div class="tabs">
-        <button
-          :class="['tab-btn', { 'is-active': activeTab === 'venda' }]"
-          @click="activeTab = 'venda'"
-        >
-          <span class="n">01</span> Venda de Normas
-        </button>
-        <button
-          :class="['tab-btn', { 'is-active': activeTab === 'consulta' }]"
-          @click="activeTab = 'consulta'"
-        >
-          <span class="n">02</span> Projectos em Consulta Pública
-        </button>
-      </div>
-    </div>
-
-    <div v-if="activeTab === 'venda'" class="tab-panel">
+    <div v-if="isSubItemSelected && activeTab === 'venda'" class="tab-panel">
       <div class="panel-head">
         <span class="eyebrow">Venda de Normas</span>
         <h2>Catálogo nacional de normas</h2>
@@ -234,7 +273,7 @@ const handleSubmit = () => {
               <span class="price-currency">AOA</span>
             </div>
             <button class="btn btn--primary" @click="openModal('venda', norma)">
-              Solicitar
+              Comprar
             </button>
           </div>
           <h3 class="catalog-item-title">{{ norma.title }}</h3>
@@ -242,7 +281,7 @@ const handleSubmit = () => {
       </div>
     </div>
 
-    <div v-if="activeTab === 'consulta'" class="tab-panel">
+    <div v-if="isSubItemSelected && activeTab === 'consulta'" class="tab-panel">
       <div class="panel-head">
         <span class="eyebrow">Projectos-Normas em Consulta Pública</span>
         <h2>Participe na elaboração das normas</h2>
@@ -320,81 +359,59 @@ const handleSubmit = () => {
       <div class="modal-body">
         <div v-if="!formSubmitted" class="form-wrap" id="formWrap">
           <form @submit.prevent="handleSubmit">
-            <div class="field-row">
-              <div class="field">
-                <label for="f-nome"
-                  >Nome completo <span class="req">*</span></label
-                >
-                <input
-                  type="text"
-                  id="f-nome"
-                  name="nome"
-                  required
-                  placeholder="Nome do requerente"
-                  v-model="formData.nome"
-                />
-              </div>
-              <div class="field">
-                <label for="f-entidade">Entidade / Empresa</label>
-                <input
-                  type="text"
-                  id="f-entidade"
-                  name="entidade"
-                  placeholder="Opcional"
-                  v-model="formData.entidade"
-                />
-              </div>
+            <div class="field">
+              <label for="f-nomeEntidade"
+                >Nome da Entidade <span class="req">*</span></label
+              >
+              <input
+                type="text"
+                id="f-nomeEntidade"
+                name="nomeEntidade"
+                required
+                placeholder="Nome da entidade ou empresa"
+                v-model="formData.nomeEntidade"
+                :class="{ 'error': errors.nomeEntidade }"
+              />
+              <span v-if="errors.nomeEntidade" class="error-text">Por favor, informe o nome da entidade</span>
             </div>
-            <div class="field-row">
-              <div class="field">
-                <label for="f-email">E-mail <span class="req">*</span></label>
-                <input
-                  type="email"
-                  id="f-email"
-                  name="email"
-                  required
-                  placeholder="nome@exemplo.ao"
-                  v-model="formData.email"
-                />
-              </div>
-              <div class="field">
-                <label for="f-tel">Telefone <span class="req">*</span></label>
-                <input
-                  type="tel"
-                  id="f-tel"
-                  name="telefone"
-                  required
-                  placeholder="+244 9XX XXX XXX"
-                  v-model="formData.telefone"
-                />
-              </div>
+            <div class="field">
+              <label for="f-nif">NIF <span class="req">*</span></label>
+              <input
+                type="text"
+                id="f-nif"
+                name="nif"
+                required
+                placeholder="Número de Identificação Fiscal"
+                v-model="formData.nif"
+                :class="{ 'error': errors.nif }"
+              />
+              <span v-if="errors.nif" class="error-text">Por favor, informe o NIF</span>
             </div>
-            <div class="field-row">
-              <div class="field">
-                <label for="f-nif">NIF / BI</label>
-                <input
-                  type="text"
-                  id="f-nif"
-                  name="nif"
-                  placeholder="Para emissão de recibo"
-                  v-model="formData.nif"
-                />
-              </div>
-              <div class="field">
-                <label for="f-formato"
-                  >Formato <span class="req">*</span></label
-                >
-                <select
-                  id="f-formato"
-                  name="formato"
-                  required
-                  v-model="formData.formato"
-                >
-                  <option value="PDF (digital)">PDF (digital)</option>
-                  <option value="Impresso">Impresso</option>
-                  <option value="Digital + Impresso">Digital + Impresso</option>
-                </select>
-              </div>
+            <div class="field">
+              <label for="f-email">E-mail <span class="req">*</span></label>
+              <input
+                type="email"
+                id="f-email"
+                name="email"
+                required
+                placeholder="nome@exemplo.ao"
+                v-model="formData.email"
+                :class="{ 'error': errors.email }"
+              />
+              <span v-if="errors.email" class="error-text">Por favor, informe um e-mail válido</span>
+            </div>
+            <div class="field">
+              <label for="f-tel">Número de Telefone <span class="req">*</span></label>
+              <input
+                type="tel"
+                id="f-tel"
+                name="telefone"
+                required
+                placeholder="+244 9XX XXX XXX"
+                v-model="formData.telefone"
+                :class="{ 'error': errors.telefone }"
+              />
+              <span v-if="errors.telefone" class="error-text">Por favor, informe o número de telefone</span>
             </div>
             <div v-if="modalMode === 'contrib'" class="field" id="contribField">
               <label for="f-contrib">A sua contribuição</label>
@@ -403,53 +420,6 @@ const handleSubmit = () => {
                 name="contribuicao"
                 placeholder="Indique o artigo/secção e a redacção alternativa proposta, com a respectiva fundamentação."
                 v-model="formData.contribuicao"
-              ></textarea>
-            </div>
-            <div v-if="modalMode === 'venda'" class="field" id="payField">
-              <label>Meio de pagamento <span class="req">*</span></label>
-              <div class="pay-options">
-                <label
-                  class="pay-opt"
-                  :class="{
-                    sel: formData.pagamento === 'Referência Multicaixa',
-                  }"
-                >
-                  <input
-                    type="radio"
-                    name="pagamento"
-                    value="Referência Multicaixa"
-                    v-model="formData.pagamento"
-                    checked
-                  />
-                  <span
-                    ><b>Referência Multicaixa</b
-                    ><span>Pague em ATM ou homebanking</span></span
-                  >
-                </label>
-                <label
-                  class="pay-opt"
-                  :class="{ sel: formData.pagamento === 'Multicaixa Express' }"
-                >
-                  <input
-                    type="radio"
-                    name="pagamento"
-                    value="Multicaixa Express"
-                    v-model="formData.pagamento"
-                  />
-                  <span
-                    ><b>Multicaixa Express</b
-                    ><span>QR code ou link por SMS</span></span
-                  >
-                </label>
-              </div>
-            </div>
-            <div class="field">
-              <label for="f-obs">Observações</label>
-              <textarea
-                id="f-obs"
-                name="observacoes"
-                placeholder="Informação adicional (opcional)"
-                v-model="formData.observacoes"
               ></textarea>
             </div>
             <div class="modal-foot">
@@ -1086,12 +1056,27 @@ const handleSubmit = () => {
   box-sizing: border-box;
 }
 
+.field input.error,
+.field select.error,
+.field textarea.error {
+  border-color: #dc2626;
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
+}
+
 .field input:focus,
 .field select:focus,
 .field textarea:focus {
   outline: none;
   border-color: #2ba9e0;
   box-shadow: 0 0 0 3px rgba(27, 143, 214, 0.15);
+}
+
+.error-text {
+  display: block;
+  margin-top: 0.35rem;
+  font-size: 0.875rem;
+  color: #dc2626;
+  font-weight: 500;
 }
 
 .field textarea {
