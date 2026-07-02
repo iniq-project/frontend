@@ -174,4 +174,48 @@ a.partner-slide:hover {
   max-width: 180px;
   object-fit: contain;
 }
+
+@media (max-width: 1199px) {
+  .partner-carousel {
+    padding: 1.5rem 1rem;
+    min-height: 140px;
+  }
+
+  .carousel-btn {
+    width: 36px;
+    height: 36px;
+  }
+
+  .carousel-btn svg {
+    width: 24px;
+    height: 24px;
+  }
+
+  a.partner-slide {
+    width: 160px;
+    height: 72px;
+  }
+
+  .partner-slide img {
+    max-height: 56px;
+    max-width: 140px;
+  }
+}
+
+@media (max-width: 767px) {
+  .partner-carousel {
+    gap: 0.5rem;
+    padding: 1.25rem 0.75rem;
+  }
+
+  a.partner-slide {
+    width: 130px;
+    height: 64px;
+  }
+
+  .partner-slide img {
+    max-height: 48px;
+    max-width: 110px;
+  }
+}
 </style>

@@ -98,26 +98,15 @@ watch(
 
 <template>
   <aside class="sidebar-right">
-    <NuxtLink
-      v-if="!isHomePage && !showSubItems"
-      to="/"
-      class="back-btn"
-      @click="goHome"
-      >← Voltar à Página Inicial</NuxtLink
-    >
+    <NuxtLink v-if="!isHomePage && !showSubItems" to="/" class="back-btn" @click="goHome">← Voltar à Página Inicial
+    </NuxtLink>
     <h2>Serviços e Processos</h2>
     <nav class="services-list">
       <template v-if="!showSubItems">
-        <button
-          v-for="service in services"
-          :key="service.id"
-          class="service-item"
-          :class="{
-            active: activeServiceId === service.id,
-            disabled: service.disabled,
-          }"
-          @click="selectService(service)"
-        >
+        <button v-for="service in services" :key="service.id" class="service-item" :class="{
+          active: activeServiceId === service.id,
+          disabled: service.disabled,
+        }" @click="selectService(service)">
           <span class="n">{{ service.number }}</span>
           <span>{{ service.title }}</span>
         </button>
@@ -127,13 +116,8 @@ watch(
           ← Voltar para serviços
         </button>
         <div v-if="activeService.subItems?.length" class="subitems-list">
-          <button
-            v-for="subItem in activeService.subItems"
-            :key="subItem.id"
-            class="subitem"
-            :class="{ active: activeSubItemId === subItem.id }"
-            @click="selectSubItem(activeService.id, subItem.id)"
-          >
+          <button v-for="subItem in activeService.subItems" :key="subItem.id" class="subitem"
+            :class="{ active: activeSubItemId === subItem.id }" @click="selectSubItem(activeService.id, subItem.id)">
             <span class="n">{{ subItem.number }}</span>
             <span>{{ subItem.title }}</span>
           </button>
@@ -141,12 +125,8 @@ watch(
       </template>
     </nav>
     <div class="area-reservada-wrapper">
-      <a
-        href="https://reliable-haupia-87ded0.netlify.app/admin"
-        target="_blank"
-        rel="noopener noreferrer"
-        class="area-reservada"
-      >
+      <a href="https://reliable-haupia-87ded0.netlify.app/admin" target="_blank" rel="noopener noreferrer"
+        class="area-reservada">
         Área Reservada
       </a>
     </div>
@@ -173,7 +153,8 @@ watch(
 /* Custom scrollbar for sidebar */
 .sidebar-right::-webkit-scrollbar,
 .services-list::-webkit-scrollbar {
-  width: 4px; /* Very thin */
+  width: 4px;
+  /* Very thin */
 }
 
 .sidebar-right::-webkit-scrollbar-track,
@@ -368,5 +349,61 @@ watch(
   flex-shrink: 0;
   padding: 1rem 0;
   border-top: 1px solid #e9eff6;
+}
+
+.drawer-close {
+  display: none;
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  width: 40px;
+  height: 40px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  background: white;
+  color: #64748b;
+  cursor: pointer;
+  place-items: center;
+  padding: 0;
+  z-index: 2;
+}
+
+.drawer-close svg {
+  width: 20px;
+  height: 20px;
+}
+
+.drawer-close:hover {
+  border-color: #2ba9e0;
+  color: #0a3a63;
+}
+
+@media (max-width: 1199px) {
+  .sidebar-right {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: min(88vw, 360px);
+    height: 100vh;
+    z-index: 100;
+    transform: translateX(100%);
+    transition: transform 0.25s ease;
+    box-shadow: -8px 0 32px rgba(10, 58, 99, 0.15);
+    border-radius: 0;
+    padding-top: 3.5rem;
+  }
+
+  .sidebar-right.open {
+    transform: translateX(0);
+  }
+
+  .drawer-close {
+    display: grid;
+  }
+
+  .service-item span:last-child {
+    font-size: 1rem;
+  }
 }
 </style>
