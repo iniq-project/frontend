@@ -12,6 +12,7 @@
 @import "./quem.css";
 @import "./admin.css";
 @import "./home-single.css";
+@import "./responsive.css";
 
 @theme static {
   --font-sans: 'Public Sans', sans-serif;

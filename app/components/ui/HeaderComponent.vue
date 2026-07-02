@@ -1,6 +1,14 @@
 <script setup lang="ts">
 const route = useRoute()
 
+defineProps<{
+  menuOpen?: boolean
+}>()
+
+const emit = defineEmits<{
+  toggleMenu: []
+}>()
+
 const pageTitles = {
   '/': 'Instituto Nacional das Infra-Estruturas da Qualidade',
   '/normas-tecnicas': 'Normas Técnicas & Normalização',
@@ -27,10 +35,25 @@ const pageTitle = computed(() => pageTitles[route.path as keyof typeof pageTitle
     <div class="header-center">
       <h1>{{ pageTitle }}</h1>
     </div>
-    <div class="logo-right">
-      <a href="https://mindcom.gov.ao/home" target="_blank" rel="noopener noreferrer">
-        <img src="/gov-mindcom-t.png" alt="Governo de Angola" />
-      </a>
+    <div class="header-actions">
+      <button
+        type="button"
+        class="menu-toggle"
+        :class="{ open: menuOpen }"
+        :aria-expanded="menuOpen"
+        aria-controls="services-menu"
+        aria-label="Abrir menu de serviços"
+        @click="emit('toggleMenu')"
+      >
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <path d="M4 7h16M4 12h16M4 17h16" />
+        </svg>
+      </button>
+      <div class="logo-right">
+        <a href="https://mindcom.gov.ao/home" target="_blank" rel="noopener noreferrer">
+          <img src="/gov-mindcom-t.png" alt="Governo de Angola" />
+        </a>
+      </div>
     </div>
   </header>
 </template>
@@ -99,5 +122,98 @@ const pageTitle = computed(() => pageTitles[route.path as keyof typeof pageTitle
   color: #0a3a63;
   font-weight: 700;
   line-height: 1.3;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.75rem;
+}
+
+.menu-toggle {
+  display: none;
+  width: 44px;
+  height: 44px;
+  border: 1px solid #d0d9e3;
+  border-radius: 8px;
+  background: white;
+  color: #0a3a63;
+  cursor: pointer;
+  place-items: center;
+  padding: 0;
+  flex-shrink: 0;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.menu-toggle:hover {
+  border-color: #5cb947;
+  background: #f0f7f2;
+}
+
+.menu-toggle svg {
+  width: 22px;
+  height: 22px;
+}
+
+@media (max-width: 1199px) {
+  .new-header {
+    grid-template-columns: auto 1fr auto;
+    padding: 0.875rem 1rem;
+    gap: 0.75rem;
+  }
+
+  .logo-left,
+  .logo-right {
+    height: 56px;
+  }
+
+  .logo-left img {
+    height: 52px;
+    max-height: 52px;
+  }
+
+  .logo-right img {
+    height: 36px;
+    max-height: 36px;
+  }
+
+  .header-center h1 {
+    font-size: clamp(0.85rem, 2.8vw, 1.15rem);
+    line-height: 1.25;
+  }
+
+  .menu-toggle {
+    display: grid;
+  }
+}
+
+@media (max-width: 767px) {
+  .new-header {
+    grid-template-columns: auto 1fr;
+    grid-template-rows: auto auto;
+  }
+
+  .logo-left {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .header-actions {
+    grid-column: 2;
+    grid-row: 1;
+    justify-self: end;
+  }
+
+  .header-center {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    text-align: center;
+    padding-top: 0.25rem;
+  }
+
+  .header-center h1 {
+    font-size: 0.9rem;
+  }
 }
 </style>

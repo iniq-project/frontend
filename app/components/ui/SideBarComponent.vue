@@ -165,4 +165,40 @@
   border-color: #5cb947;
   color: #0f172a;
 }
+
+@media (max-width: 1199px) {
+  .sidebar-left {
+    position: static;
+    height: auto;
+    min-height: 0;
+    padding: 1.25rem 1rem;
+  }
+
+  .sidebar-content {
+    padding-top: 0.5rem;
+  }
+
+  .main-title {
+    font-size: 1.35rem;
+  }
+
+  .about-text {
+    font-size: 0.9rem;
+  }
+
+  .sidebar-footer {
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+  }
+}
+
+@media (max-width: 767px) {
+  .main-title {
+    font-size: 1.2rem;
+  }
+
+  .gov-info {
+    font-size: 0.8rem;
+  }
+}
 </style>

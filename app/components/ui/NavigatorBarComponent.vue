@@ -1,6 +1,10 @@
 <script setup lang="ts">
 const route = useRoute()
 
+defineEmits<{
+  close: []
+}>()
+
 const isHomePage = computed(() => route.path === '/')
 
 const isActive = (path: string) => {
@@ -9,10 +13,15 @@ const isActive = (path: string) => {
 </script>
 
 <template>
-  <aside class="sidebar-right">
-    <NuxtLink v-if="!isHomePage" to="/" class="back-btn">← Voltar à Página Inicial</NuxtLink>
+  <aside id="services-menu" class="sidebar-right">
+    <button type="button" class="drawer-close" aria-label="Fechar menu" @click="$emit('close')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+        <path d="M6 6l12 12M18 6 6 18" />
+      </svg>
+    </button>
+    <NuxtLink v-if="!isHomePage" to="/" class="back-btn" @click="$emit('close')">← Voltar à Página Inicial</NuxtLink>
     <h2>Serviços</h2>
-    <nav class="services-list">
+    <nav class="services-list" @click="$emit('close')">
       <NuxtLink to="/normas-tecnicas" class="service-item" :class="{ active: isActive('/normas-tecnicas') }">
         <span class="n">01</span>
         <span>Normas Técnicas & Normalização</span>
@@ -203,5 +212,61 @@ const isActive = (path: string) => {
   flex-shrink: 0;
   padding: 1rem 0;
   border-top: 1px solid #e9eff6;
+}
+
+.drawer-close {
+  display: none;
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  width: 40px;
+  height: 40px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  background: white;
+  color: #64748b;
+  cursor: pointer;
+  place-items: center;
+  padding: 0;
+  z-index: 2;
+}
+
+.drawer-close svg {
+  width: 20px;
+  height: 20px;
+}
+
+.drawer-close:hover {
+  border-color: #2ba9e0;
+  color: #0a3a63;
+}
+
+@media (max-width: 1199px) {
+  .sidebar-right {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: min(88vw, 360px);
+    height: 100vh;
+    z-index: 100;
+    transform: translateX(100%);
+    transition: transform 0.25s ease;
+    box-shadow: -8px 0 32px rgba(10, 58, 99, 0.15);
+    border-radius: 0;
+    padding-top: 3.5rem;
+  }
+
+  .sidebar-right.open {
+    transform: translateX(0);
+  }
+
+  .drawer-close {
+    display: grid;
+  }
+
+  .service-item span:last-child {
+    font-size: 1rem;
+  }
 }
 </style>

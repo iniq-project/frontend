@@ -654,6 +654,9 @@ const handleSubmit = () => {
 
 .tab-panel {
   padding: 1.5rem 2rem 2rem 2rem;
+  max-width: 100%;
+  overflow-x: hidden;
+  box-sizing: border-box;
 }
 
 .panel-head {
@@ -700,6 +703,8 @@ const handleSubmit = () => {
   gap: 1rem;
   margin-bottom: 1.5rem;
   align-items: center;
+  box-sizing: border-box;
+  max-width: 100%;
 }
 
 .catalog-search {
@@ -710,14 +715,20 @@ const handleSubmit = () => {
   border: 1px solid #e2e8f0;
   border-radius: 8px;
   padding: 0.5rem 1rem;
-  flex: 1;
-  min-width: 250px;
+  flex: 1 1 auto;
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
+  position: static;
 }
 
 .catalog-search svg {
   width: 20px;
   height: 20px;
   color: #64748b;
+  flex-shrink: 0;
+  position: static;
+  transform: none;
 }
 
 .catalog-search input {
@@ -726,12 +737,18 @@ const handleSubmit = () => {
   outline: none;
   font-size: 0.95rem;
   width: 100%;
+  min-width: 0;
+  flex: 1;
+  padding: 0;
+  box-sizing: border-box;
 }
 
 .catalog-filter {
   display: flex;
   gap: 0.5rem;
   flex-wrap: wrap;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .chip {
@@ -1203,5 +1220,191 @@ const handleSubmit = () => {
   border-radius: 6px;
   padding: 12px 20px;
   margin: 22px 0;
+}
+
+@media (max-width: 1199px) {
+  .combined-card {
+    max-width: 100%;
+    overflow-x: hidden;
+    border-radius: 10px;
+  }
+
+  .dg-top {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    padding: 1.5rem;
+  }
+
+  .dg-photo-wrapper {
+    flex-direction: row;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .dg-photo {
+    width: 100px;
+    height: 100px;
+    flex-shrink: 0;
+  }
+
+  .quality-policy-section {
+    padding: 1.25rem 1.5rem;
+  }
+
+  .quality-policy-section h4,
+  .dg-message h4 {
+    font-size: 1.15rem;
+  }
+
+  .quality-policy-section p,
+  .dg-message p {
+    font-size: 1rem;
+  }
+
+  .tabs-bar {
+    position: static;
+    top: auto;
+    padding: 0 1rem;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .tabs {
+    flex-wrap: nowrap;
+    min-width: max-content;
+  }
+
+  .tab-btn {
+    margin-right: 1.25rem;
+    font-size: 0.875rem;
+    white-space: nowrap;
+    padding: 0.875rem 0;
+  }
+
+  .tab-panel {
+    padding: 1.25rem 1rem 1.5rem;
+  }
+
+  .panel-head {
+    max-width: 100%;
+  }
+
+  .catalog-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
+    max-width: 100%;
+    overflow: hidden;
+  }
+
+  .catalog-search {
+    flex: 1 1 auto;
+    min-width: 0;
+    max-width: 100%;
+    width: 100%;
+  }
+
+  .catalog-filter {
+    flex-wrap: wrap;
+    width: 100%;
+    overflow-x: visible;
+  }
+
+  .chip {
+    flex-shrink: 0;
+  }
+
+  .catalog-item-top {
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+
+  .catalog-item-price {
+    margin-left: 0;
+    width: 100%;
+  }
+
+  .catalog-item-top .btn--primary {
+    display: flex;
+    width: 100%;
+    justify-content: center;
+  }
+
+  .consulta-item {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .consulta-deadline {
+    align-items: flex-start;
+    min-width: 0;
+    width: 100%;
+  }
+
+  .consulta-deadline .btn--green {
+    display: flex;
+    width: 100%;
+    justify-content: center;
+  }
+
+  .field-row,
+  .pay-options {
+    grid-template-columns: 1fr;
+  }
+
+  .modal-panel {
+    width: calc(100vw - 24px);
+    max-height: calc(100vh - 32px);
+    border-radius: 12px;
+  }
+
+  .modal-head,
+  .modal-body {
+    padding-left: 1.25rem;
+    padding-right: 1.25rem;
+  }
+
+  .modal-foot {
+    flex-direction: column;
+  }
+
+  .modal-foot .btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 767px) {
+  .dg-details h3 {
+    font-size: 1.1rem;
+  }
+
+  .panel-head h2 {
+    font-size: 1.25rem;
+  }
+
+  .catalog-item {
+    padding: 1rem;
+  }
+
+  .catalog-item-title {
+    font-size: 1rem;
+  }
+
+  .tab-btn {
+    font-size: 0.8rem;
+  }
+}
+
+@media (min-width: 1200px) {
+  .catalog-search {
+    flex: 1;
+    min-width: 250px;
+  }
+
+  .catalog-filter {
+    width: auto;
+    flex: 0 1 auto;
+  }
 }
 </style>

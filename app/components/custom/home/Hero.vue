@@ -133,4 +133,10 @@ defineProps({
   color: #475569;
   line-height: 1.8;
 }
+
+@media (max-width: 1199px) {
+  .combined-card {
+    border-radius: 10px;
+  }
+}
 </style>

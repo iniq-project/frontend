@@ -27,7 +27,10 @@
 .subhero p { margin-top: 14px; color: #b4c4d4; max-width: 640px; font-size: 18px; }
 
 /* ---- Tabs ---- */
-.tabs-bar { background: #fff; border-bottom: 1px solid var(--slate-200); position: sticky; top: 80px; z-index: 40; }
+.tabs-bar { background: #fff; border-bottom: 1px solid var(--slate-200); }
+@media (min-width: 1200px) {
+  .tabs-bar { position: sticky; top: 80px; z-index: 40; }
+}
 .tabs { display: flex; gap: 4px; overflow-x: auto; }
 .tab-btn {
   font-family: var(--font-body); font-weight: 600; font-size: 15.5px; color: var(--slate-600);
@@ -70,7 +73,10 @@
   background: #fff; border: 1px solid var(--slate-200); border-radius: var(--r-md);
   padding: 14px 16px; margin-bottom: 20px;
 }
-.catalog-search { position: relative; flex: 1; min-width: 220px; }
+.catalog-search { position: relative; flex: 1; min-width: 0; }
+@media (min-width: 1200px) {
+  .catalog-search { min-width: 220px; }
+}
 .catalog-search svg { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); width: 18px; height: 18px; color: var(--slate-400); }
 .catalog-search input {
   width: 100%; padding: 12px 14px 12px 42px; border: 1px solid var(--slate-200); border-radius: var(--r-sm);
@@ -196,7 +202,6 @@
   .ct-grid { grid-template-columns: repeat(2, 1fr); }
 }
 @media (max-width: 720px) {
-  .tabs-bar { top: 68px; }
   .ct-grid { grid-template-columns: 1fr; }
   .catalog__row { grid-template-columns: 1fr; gap: 12px; }
   .catalog__price { text-align: left; }
