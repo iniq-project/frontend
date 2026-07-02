@@ -122,15 +122,15 @@ onUnmounted(() => {
     min-height: auto;
   }
 
-  .sidebar-left {
+  .center-content {
     order: 1;
+    padding: 1.25rem 1rem;
+    overflow-y: visible;
     width: 100%;
   }
 
-  .center-content {
+  .sidebar-left {
     order: 2;
-    padding: 1.25rem 1rem;
-    overflow-y: visible;
     width: 100%;
   }
 
