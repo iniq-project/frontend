@@ -1,41 +1,39 @@
 <script setup>
+import { provide, ref, watch } from 'vue'
+
 const route = useRoute()
-const menuOpen = ref(false)
+const activeSubItemId = ref(null)
 
-const toggleMenu = () => {
-  menuOpen.value = !menuOpen.value
+const handleSelectService = (serviceId) => {
+  activeSubItemId.value = null
 }
 
-const closeMenu = () => {
-  menuOpen.value = false
+const handleSelectSubItem = (serviceId, subItemId) => {
+  activeSubItemId.value = subItemId
 }
 
-watch(() => route.path, closeMenu)
+watch(
+  () => route.path,
+  (newPath) => {
+    if (newPath === '/') {
+      activeSubItemId.value = null
+    }
+  }
+)
 
-watch(menuOpen, (open) => {
-  document.body.style.overflow = open ? 'hidden' : ''
-})
-
-onUnmounted(() => {
-  document.body.style.overflow = ''
-})
+provide('activeSubItemId', activeSubItemId)
 </script>
 
 <template>
   <div class="new-layout">
     <UiHeaderComponent @toggle-menu="toggleMenu" :menu-open="menuOpen" />
-    <div
-      class="mobile-overlay"
-      :class="{ open: menuOpen }"
-      aria-hidden="true"
-      @click="closeMenu"
-    />
+    <div class="mobile-overlay" :class="{ open: menuOpen }" aria-hidden="true" @click="closeMenu" />
     <div class="main-container">
       <UiSideBarComponent class="sidebar-left">
-        <template #eyebrow>
+        <template #eyebrow">
           <slot name="sidebar-eyebrow" />
         </template>
-        <template #title>
+        <template #title">
           <slot name="sidebar-title" />
         </template>
         <slot name="sidebar-content" />
@@ -43,11 +41,8 @@ onUnmounted(() => {
       <main class="center-content">
         <slot />
       </main>
-      <UiNavigatorBarComponent
-        class="sidebar-right"
-        :class="{ open: menuOpen }"
-        @close="closeMenu"
-      />
+      <UiNavigatorBarComponent class="sidebar-right" @select-service="handleSelectService"
+        @select-subitem="handleSelectSubItem" />
       <div class="carousel-spacer"></div>
       <div class="partner-carousel-wrapper">
         <UiPartnerCarousel />
