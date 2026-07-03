@@ -1,4 +1,3 @@
-
 <script setup lang="ts">
 </script>
 
@@ -29,9 +28,9 @@
 
     <div class="sidebar-footer">
       <div class="gov-info">
-        Edificio Palacio do vidro <br />
-        Largo 17 de Setembro n° 7 <br />
-        5° Andar, Ala Esquerda.
+        <span class="gov-info__line">Edificio Palacio do vidro</span>
+        <span class="gov-info__line">Largo 17 de Setembro n° 7</span>
+        <span class="gov-info__line">5° Andar, Ala Esquerda.</span>
       </div>
     </div>
   </aside>
@@ -129,13 +128,18 @@
   padding-bottom: 1.5rem;
   border-top: 1px solid rgba(255, 255, 255, 0.1);
   flex-shrink: 0;
+  width: 100%;
 }
 
 .gov-info {
-  /* font-family: monospace; */
   font-size: 0.85rem;
   color: #94a3b8;
   line-height: 1.5;
+  width: 100%;
+}
+
+.gov-info__line {
+  display: block;
 }
 
 .lang-btns {
@@ -170,24 +174,45 @@
     position: static;
     height: auto;
     min-height: 0;
+    width: 100%;
+    box-sizing: border-box;
     padding: 1.25rem 1rem;
   }
 
   .sidebar-content {
     padding-top: 0.5rem;
+    width: 100%;
   }
 
   .main-title {
     font-size: 1.35rem;
+    width: 100%;
   }
 
   .about-text {
     font-size: 0.9rem;
+    width: 100%;
   }
 
   .sidebar-footer {
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
     padding-top: 1rem;
     padding-bottom: 1rem;
+  }
+
+  .gov-info {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .gov-info__line {
+    display: inline;
+  }
+
+  .gov-info__line:not(:last-child)::after {
+    content: ' ';
   }
 }
 
@@ -198,6 +223,7 @@
 
   .gov-info {
     font-size: 0.8rem;
+    width: 100%;
   }
 }
 </style>

@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { inject, watch, ref, nextTick } from 'vue'
+import type { DocumentsType } from '~/constants/document-requirements'
+import { flattenDocumentSlots } from '~/constants/document-requirements'
 
 definePageMeta({
   layout: 'default',
@@ -9,6 +11,8 @@ useHead({
   title: 'INIQ — Registo e Cadastro',
 })
 
+const documentSlots = flattenDocumentSlots('REGISTO_CADASTRO')
+
 // Inject active sub-item from layout
 const activeSubItemId = inject('activeSubItemId')
 
@@ -16,6 +20,9 @@ const activeSubItemId = inject('activeSubItemId')
 const isSubItemSelected = ref(false)
 const showForm = ref(false)
 const formSubmitted = ref(false)
+const isSubmitting = ref(false)
+const submitError = ref('')
+const referenceNumber = ref('')
 const errors = ref<Record<string, boolean>>({})
 
 // Ref for first input
@@ -25,12 +32,24 @@ const nomeInput = ref<HTMLInputElement | null>(null)
 const formData = ref({
   nome: '',
   email: '',
-  doc1: null as File | null,
-  doc2: null as File | null,
-  doc3: null as File | null,
-  doc4: null as File | null,
-  doc5: null as File | null,
+  files: Object.fromEntries(
+    documentSlots.map((slot) => [slot.type, null]),
+  ) as Record<DocumentsType, File | null>,
 })
+
+function resetForm() {
+  formData.value = {
+    nome: '',
+    email: '',
+    files: Object.fromEntries(
+      documentSlots.map((slot) => [slot.type, null]),
+    ) as Record<DocumentsType, File | null>,
+  }
+  errors.value = {}
+  submitError.value = ''
+  referenceNumber.value = ''
+  formSubmitted.value = false
+}
 
 // Watch for showForm to focus and scroll
 watch(showForm, async (newValue) => {
@@ -56,51 +75,35 @@ if (activeSubItemId) {
   }, { immediate: true })
 }
 
-function handleFileChange(event: Event, docKey: keyof typeof formData) {
+function handleFileChange(event: Event, docType: DocumentsType) {
   const target = event.target as HTMLInputElement
   if (target.files && target.files.length > 0) {
-    formData.value[docKey] = target.files[0]
-    // Clear error for this field
-    if (errors.value[docKey]) {
-      errors.value[docKey] = false
+    formData.value.files[docType] = target.files[0]
+    if (errors.value[docType]) {
+      errors.value[docType] = false
     }
   }
 }
 
 function validateForm(): boolean {
   const newErrors: Record<string, boolean> = {}
-  
+
   if (!formData.value.nome.trim()) {
     newErrors.nome = true
   }
-  
+
   if (!formData.value.email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.value.email)) {
     newErrors.email = true
   }
-  
-  if (!formData.value.doc1) {
-    newErrors.doc1 = true
+
+  for (const slot of documentSlots) {
+    if (!formData.value.files[slot.type]) {
+      newErrors[slot.type] = true
+    }
   }
-  
-  if (!formData.value.doc2) {
-    newErrors.doc2 = true
-  }
-  
-  if (!formData.value.doc3) {
-    newErrors.doc3 = true
-  }
-  
-  if (!formData.value.doc4) {
-    newErrors.doc4 = true
-  }
-  
-  if (!formData.value.doc5) {
-    newErrors.doc5 = true
-  }
-  
+
   errors.value = newErrors
-  
-  // Focus on first error field
+
   if (Object.keys(newErrors).length > 0) {
     const firstErrorField = Object.keys(newErrors)[0]
     const fieldElement = document.querySelector(`[name="${firstErrorField}"]`) as HTMLElement
@@ -110,30 +113,62 @@ function validateForm(): boolean {
     }
     return false
   }
-  
+
   return true
 }
 
-function handleSubmit() {
+async function handleSubmit() {
+  submitError.value = ''
+
   if (!validateForm()) {
     return
   }
-  
-  formSubmitted.value = true
-  setTimeout(() => {
-    formSubmitted.value = false
-    showForm.value = false
-    formData.value = {
-      nome: '',
-      email: '',
-      doc1: null,
-      doc2: null,
-      doc3: null,
-      doc4: null,
-      doc5: null,
+
+  isSubmitting.value = true
+
+  try {
+    const payload = new FormData()
+    payload.append('name', formData.value.nome.trim())
+    payload.append('email', formData.value.email.trim())
+    payload.append('serviceType', 'REGISTO_CADASTRO')
+
+    for (const slot of documentSlots) {
+      const file = formData.value.files[slot.type]
+      if (file) {
+        payload.append('types', slot.type)
+        payload.append('files', file)
+      }
     }
-    errors.value = {}
-  }, 3000)
+
+    const response = await $fetch<{
+      referenceNumber: string
+      receiptNote?: { message: string }
+    }>('/api/processes/init', {
+      method: 'POST',
+      body: payload,
+      timeout: 120_000,
+    })
+
+    referenceNumber.value = response.referenceNumber
+    formSubmitted.value = true
+  } catch (error: unknown) {
+    const fetchError = error as {
+      data?: { statusMessage?: string; message?: string }
+      statusMessage?: string
+    }
+    submitError.value =
+      fetchError.data?.statusMessage
+      ?? fetchError.statusMessage
+      ?? fetchError.data?.message
+      ?? 'Não foi possível submeter o processo. Tente novamente.'
+  } finally {
+    isSubmitting.value = false
+  }
+}
+
+function handleBackFromForm() {
+  showForm.value = false
+  resetForm()
 }
 </script>
 
@@ -248,7 +283,7 @@ function handleSubmit() {
             <div class="form-section">
               <div class="form-header">
                 <h3>Submeter Processo de Registo e Cadastro</h3>
-                <button @click="showForm = false" class="btn btn--ghost">
+                <button type="button" @click="handleBackFromForm" class="btn btn--ghost">
                   Voltar
                 </button>
               </div>
@@ -257,10 +292,17 @@ function handleSubmit() {
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
                   <path d="M20 6 9 17l-5-5"></path>
                 </svg>
-                <span><b>Processo submetido com sucesso!</b> A equipa do INIQ irá analisar o seu pedido.</span>
+                <span>
+                  <b>Processo submetido com sucesso!</b>
+                  Referência: <strong>{{ referenceNumber }}</strong>.
+                  A equipa do INIQ irá analisar o seu pedido.
+                </span>
               </div>
 
               <form v-else @submit.prevent="handleSubmit" novalidate>
+                <div v-if="submitError" class="error-banner">
+                  {{ submitError }}
+                </div>
                 <div class="field">
                   <label for="nome">Nome completo <span class="req">*</span></label>
                   <div class="input-wrapper" :class="{ 'has-error': errors.nome }">
@@ -294,87 +336,32 @@ function handleSubmit() {
                   <span v-if="errors.email" class="error-message">Por favor, informe um e-mail válido</span>
                 </div>
 
-                <div class="field">
-                  <label for="doc1">Doc. 1 - Ofício dirigido ao INIQ <span class="req">*</span></label>
-                  <div class="file-input-wrapper" :class="{ 'has-error': errors.doc1 }">
-                    <input 
-                      type="file" 
-                      id="doc1" 
-                      name="doc1" 
-                      required 
-                      @change="handleFileChange($event, 'doc1')" 
+                <div
+                  v-for="slot in documentSlots"
+                  :key="slot.type"
+                  class="field"
+                >
+                  <label :for="slot.type">{{ slot.label }} <span class="req">*</span></label>
+                  <div class="file-input-wrapper" :class="{ 'has-error': errors[slot.type] }">
+                    <input
+                      type="file"
+                      :id="slot.type"
+                      :name="slot.type"
+                      required
+                      :accept="slot.pdfOnly ? 'application/pdf' : '.pdf,.jpg,.jpeg,.png'"
+                      @change="handleFileChange($event, slot.type)"
                     />
-                    <span class="file-label">{{ formData.doc1 ? formData.doc1.name : 'Escolher arquivo' }}</span>
+                    <span class="file-label">{{ formData.files[slot.type]?.name ?? 'Escolher arquivo' }}</span>
                   </div>
-                  <span v-if="errors.doc1" class="error-message">Por favor, selecione este arquivo</span>
-                </div>
-
-                <div class="field">
-                  <label for="doc2">Doc. 2 - Relatório de Análise Técnica e Diagnóstico <span class="req">*</span></label>
-                  <div class="file-input-wrapper" :class="{ 'has-error': errors.doc2 }">
-                    <input 
-                      type="file" 
-                      id="doc2" 
-                      name="doc2" 
-                      required 
-                      @change="handleFileChange($event, 'doc2')" 
-                    />
-                    <span class="file-label">{{ formData.doc2 ? formData.doc2.name : 'Escolher arquivo' }}</span>
-                  </div>
-                  <span v-if="errors.doc2" class="error-message">Por favor, selecione este arquivo</span>
-                </div>
-
-                <div class="field">
-                  <label for="doc3">Doc. 3 - Formulários preenchidos + documentos de identificação + CV <span class="req">*</span></label>
-                  <div class="file-input-wrapper" :class="{ 'has-error': errors.doc3 }">
-                    <input 
-                      type="file" 
-                      id="doc3" 
-                      name="doc3" 
-                      required 
-                      @change="handleFileChange($event, 'doc3')" 
-                    />
-                    <span class="file-label">{{ formData.doc3 ? formData.doc3.name : 'Escolher arquivo' }}</span>
-                  </div>
-                  <span v-if="errors.doc3" class="error-message">Por favor, selecione este arquivo</span>
-                </div>
-
-                <div class="field">
-                  <label for="doc4">Doc. 4 - Cópias da documentação legal <span class="req">*</span></label>
-                  <div class="file-input-wrapper" :class="{ 'has-error': errors.doc4 }">
-                    <input 
-                      type="file" 
-                      id="doc4" 
-                      name="doc4" 
-                      required 
-                      @change="handleFileChange($event, 'doc4')" 
-                    />
-                    <span class="file-label">{{ formData.doc4 ? formData.doc4.name : 'Escolher arquivo' }}</span>
-                  </div>
-                  <span v-if="errors.doc4" class="error-message">Por favor, selecione este arquivo</span>
-                </div>
-
-                <div class="field">
-                  <label for="doc5">Doc. 5 - Apresentação da organização <span class="req">*</span></label>
-                  <div class="file-input-wrapper" :class="{ 'has-error': errors.doc5 }">
-                    <input 
-                      type="file" 
-                      id="doc5" 
-                      name="doc5" 
-                      required 
-                      @change="handleFileChange($event, 'doc5')" 
-                    />
-                    <span class="file-label">{{ formData.doc5 ? formData.doc5.name : 'Escolher arquivo' }}</span>
-                  </div>
-                  <span v-if="errors.doc5" class="error-message">Por favor, selecione este arquivo</span>
+                  <span v-if="errors[slot.type]" class="error-message">Por favor, selecione este arquivo</span>
                 </div>
 
                 <div class="form-actions">
-                  <button type="button" @click="showForm = false" class="btn btn--ghost">
+                  <button type="button" @click="handleBackFromForm" class="btn btn--ghost" :disabled="isSubmitting">
                     Voltar
                   </button>
-                  <button type="submit" class="btn btn--primary">
-                    Enviar Processo
+                  <button type="submit" class="btn btn--primary" :disabled="isSubmitting">
+                    {{ isSubmitting ? 'A enviar…' : 'Enviar Processo' }}
                   </button>
                 </div>
               </form>
@@ -697,6 +684,24 @@ function handleSubmit() {
 .success-message b {
   display: block;
   font-size: 1.1rem;
+}
+
+.error-banner {
+  margin-bottom: 1.25rem;
+  padding: 1rem 1.25rem;
+  border-radius: 10px;
+  background: rgba(192, 57, 43, 0.08);
+  border: 1px solid rgba(192, 57, 43, 0.25);
+  color: #c0392b;
+  font-size: 0.9375rem;
+  line-height: 1.5;
+}
+
+.btn--primary:disabled,
+.btn--ghost:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+  transform: none;
 }
 
 .field {
