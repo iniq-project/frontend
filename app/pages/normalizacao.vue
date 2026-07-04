@@ -1,17 +1,17 @@
-<script setup>
-import { inject, watch } from 'vue'
+<script setup lang="ts">
+import { inject, watch, ref } from 'vue'
 
 useHead({
-  title: "INIQ » Normas Técnicas & Normalização",
+  title: "INIQ » Normalização",
 })
 
-// Injetar o activeSubItemId do layout
+
 const activeSubItemId = inject('activeSubItemId')
 
-// Mapear subItemId para tab
+
 const activeTab = ref("venda")
 
-// Sincronizar activeTab com activeSubItemId
+
 const isSubItemSelected = ref(false)
 
 if (activeSubItemId) {
@@ -36,6 +36,7 @@ const successMsg = ref(
   "Receberá por e-mail os dados de pagamento (Referência Multicaixa). Após confirmação, a norma fica imediatamente disponível na sua área reservada.",
 )
 const orderRef = ref("")
+const errors = ref<Record<string, boolean>>({})
 
 const normas = ref([
   {
@@ -92,31 +93,28 @@ const projetosConsulta = ref([
 ])
 
 const formData = ref({
-  nome: "",
-  entidade: "",
+  nomeEntidade: "",
+  nif: "",
   email: "",
   telefone: "",
-  nif: "",
-  formato: "PDF (digital)",
   contribuicao: "",
-  pagamento: "Referência Multicaixa",
-  observacoes: "",
 })
 
-const formatPrice = (price) => {
+const formatPrice = (price: number) => {
   return price.toLocaleString("pt-PT")
 }
 
-const openModal = (mode, item) => {
+const openModal = (mode: string, item: any) => {
   modalMode.value = mode
   formSubmitted.value = false
+  errors.value = {}
 
   if (mode === "venda") {
     modalEyebrow.value = "Venda de Normas"
     modalTitle.value = "Solicitar Norma"
     modalRef.value = `${item.code} — ${item.title}`
-    successTitle.value = "Pedido submetido com sucesso"
-    successMsg.value = `Receberá por e-mail os dados de pagamento (${formData.value.pagamento}). Após confirmação, a norma fica imediatamente disponível na sua área reservada.`
+    successTitle.value = "RUPE gerado com sucesso"
+    successMsg.value = "Utilize o RUPE abaixo para efetuar o pagamento. Após confirmação do pagamento, o técnico/administrador irá validar e liberar o acesso à norma."
   } else {
     modalEyebrow.value = "Consulta Pública"
     modalTitle.value = "Submeter Contribuição"
@@ -127,15 +125,11 @@ const openModal = (mode, item) => {
   }
 
   formData.value = {
-    nome: "",
-    entidade: "",
+    nomeEntidade: "",
+    nif: "",
     email: "",
     telefone: "",
-    nif: "",
-    formato: "PDF (digital)",
     contribuicao: "",
-    pagamento: "Referência Multicaixa",
-    observacoes: "",
   }
 
   modalOpen.value = true
@@ -145,16 +139,55 @@ const closeModal = () => {
   modalOpen.value = false
 }
 
+const validateForm = (): boolean => {
+  if (modalMode.value === "venda") {
+    const newErrors: Record<string, boolean> = {}
+    
+    if (!formData.value.nomeEntidade.trim()) {
+      newErrors.nomeEntidade = true
+    }
+    
+    if (!formData.value.nif.trim()) {
+      newErrors.nif = true
+    }
+    
+    if (!formData.value.email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.value.email)) {
+      newErrors.email = true
+    }
+    
+    if (!formData.value.telefone.trim()) {
+      newErrors.telefone = true
+    }
+    
+    errors.value = newErrors
+    return Object.keys(newErrors).length === 0
+  }
+  return true
+}
+
+const generateRUPE = (): string => {
+  const year = new Date().getFullYear()
+  const randomNum = Math.floor(100000 + Math.random() * 899999)
+  return `RUPE-${year}-${randomNum}`
+}
+
 const handleSubmit = () => {
-  // Generate reference
-  const refNumber = Math.floor(10000 + Math.random() * 89999)
-  orderRef.value = `REF: INIQ-2026-${refNumber}`
+  if (!validateForm()) {
+    return
+  }
+  
+  if (modalMode.value === "venda") {
+    orderRef.value = generateRUPE()
+  } else {
+    const refNumber = Math.floor(10000 + Math.random() * 89999)
+    orderRef.value = `REF: INIQ-2026-${refNumber}`
+  }
+  
   formSubmitted.value = true
 }
 </script>
 <template>
   <div class="combined-card">
-    <!-- Mostrar apenas quando NENHUM sub-serviço estiver selecionado -->
     <template v-if="!isSubItemSelected">
       <div class="dg-top">
         <div class="dg-photo-wrapper">
@@ -190,7 +223,6 @@ const handleSubmit = () => {
       </div>
     </template>
 
-    <!-- Tab do Venda de Normas (só mostra se o sub-item estiver selecionado) -->
     <div v-if="isSubItemSelected && activeTab === 'venda'" class="tab-panel">
       <div class="panel-head">
         <span class="eyebrow">Venda de Normas</span>
@@ -241,7 +273,7 @@ const handleSubmit = () => {
               <span class="price-currency">AOA</span>
             </div>
             <button class="btn btn--primary" @click="openModal('venda', norma)">
-              Solicitar
+              Comprar
             </button>
           </div>
           <h3 class="catalog-item-title">{{ norma.title }}</h3>
@@ -249,7 +281,6 @@ const handleSubmit = () => {
       </div>
     </div>
 
-    <!-- Tab do Projectos em Consulta Pública (só mostra se o sub-item estiver selecionado) -->
     <div v-if="isSubItemSelected && activeTab === 'consulta'" class="tab-panel">
       <div class="panel-head">
         <span class="eyebrow">Projectos-Normas em Consulta Pública</span>
@@ -328,81 +359,59 @@ const handleSubmit = () => {
       <div class="modal-body">
         <div v-if="!formSubmitted" class="form-wrap" id="formWrap">
           <form @submit.prevent="handleSubmit">
-            <div class="field-row">
-              <div class="field">
-                <label for="f-nome"
-                  >Nome completo <span class="req">*</span></label
-                >
-                <input
-                  type="text"
-                  id="f-nome"
-                  name="nome"
-                  required
-                  placeholder="Nome do requerente"
-                  v-model="formData.nome"
-                />
-              </div>
-              <div class="field">
-                <label for="f-entidade">Entidade / Empresa</label>
-                <input
-                  type="text"
-                  id="f-entidade"
-                  name="entidade"
-                  placeholder="Opcional"
-                  v-model="formData.entidade"
-                />
-              </div>
+            <div class="field">
+              <label for="f-nomeEntidade"
+                >Nome da Entidade <span class="req">*</span></label
+              >
+              <input
+                type="text"
+                id="f-nomeEntidade"
+                name="nomeEntidade"
+                required
+                placeholder="Nome da entidade ou empresa"
+                v-model="formData.nomeEntidade"
+                :class="{ 'error': errors.nomeEntidade }"
+              />
+              <span v-if="errors.nomeEntidade" class="error-text">Por favor, informe o nome da entidade</span>
             </div>
-            <div class="field-row">
-              <div class="field">
-                <label for="f-email">E-mail <span class="req">*</span></label>
-                <input
-                  type="email"
-                  id="f-email"
-                  name="email"
-                  required
-                  placeholder="nome@exemplo.ao"
-                  v-model="formData.email"
-                />
-              </div>
-              <div class="field">
-                <label for="f-tel">Telefone <span class="req">*</span></label>
-                <input
-                  type="tel"
-                  id="f-tel"
-                  name="telefone"
-                  required
-                  placeholder="+244 9XX XXX XXX"
-                  v-model="formData.telefone"
-                />
-              </div>
+            <div class="field">
+              <label for="f-nif">NIF <span class="req">*</span></label>
+              <input
+                type="text"
+                id="f-nif"
+                name="nif"
+                required
+                placeholder="Número de Identificação Fiscal"
+                v-model="formData.nif"
+                :class="{ 'error': errors.nif }"
+              />
+              <span v-if="errors.nif" class="error-text">Por favor, informe o NIF</span>
             </div>
-            <div class="field-row">
-              <div class="field">
-                <label for="f-nif">NIF / BI</label>
-                <input
-                  type="text"
-                  id="f-nif"
-                  name="nif"
-                  placeholder="Para emissão de recibo"
-                  v-model="formData.nif"
-                />
-              </div>
-              <div class="field">
-                <label for="f-formato"
-                  >Formato <span class="req">*</span></label
-                >
-                <select
-                  id="f-formato"
-                  name="formato"
-                  required
-                  v-model="formData.formato"
-                >
-                  <option value="PDF (digital)">PDF (digital)</option>
-                  <option value="Impresso">Impresso</option>
-                  <option value="Digital + Impresso">Digital + Impresso</option>
-                </select>
-              </div>
+            <div class="field">
+              <label for="f-email">E-mail <span class="req">*</span></label>
+              <input
+                type="email"
+                id="f-email"
+                name="email"
+                required
+                placeholder="nome@exemplo.ao"
+                v-model="formData.email"
+                :class="{ 'error': errors.email }"
+              />
+              <span v-if="errors.email" class="error-text">Por favor, informe um e-mail válido</span>
+            </div>
+            <div class="field">
+              <label for="f-tel">Número de Telefone <span class="req">*</span></label>
+              <input
+                type="tel"
+                id="f-tel"
+                name="telefone"
+                required
+                placeholder="+244 9XX XXX XXX"
+                v-model="formData.telefone"
+                :class="{ 'error': errors.telefone }"
+              />
+              <span v-if="errors.telefone" class="error-text">Por favor, informe o número de telefone</span>
             </div>
             <div v-if="modalMode === 'contrib'" class="field" id="contribField">
               <label for="f-contrib">A sua contribuição</label>
@@ -411,53 +420,6 @@ const handleSubmit = () => {
                 name="contribuicao"
                 placeholder="Indique o artigo/secção e a redacção alternativa proposta, com a respectiva fundamentação."
                 v-model="formData.contribuicao"
-              ></textarea>
-            </div>
-            <div v-if="modalMode === 'venda'" class="field" id="payField">
-              <label>Meio de pagamento <span class="req">*</span></label>
-              <div class="pay-options">
-                <label
-                  class="pay-opt"
-                  :class="{
-                    sel: formData.pagamento === 'Referência Multicaixa',
-                  }"
-                >
-                  <input
-                    type="radio"
-                    name="pagamento"
-                    value="Referência Multicaixa"
-                    v-model="formData.pagamento"
-                    checked
-                  />
-                  <span
-                    ><b>Referência Multicaixa</b
-                    ><span>Pague em ATM ou homebanking</span></span
-                  >
-                </label>
-                <label
-                  class="pay-opt"
-                  :class="{ sel: formData.pagamento === 'Multicaixa Express' }"
-                >
-                  <input
-                    type="radio"
-                    name="pagamento"
-                    value="Multicaixa Express"
-                    v-model="formData.pagamento"
-                  />
-                  <span
-                    ><b>Multicaixa Express</b
-                    ><span>QR code ou link por SMS</span></span
-                  >
-                </label>
-              </div>
-            </div>
-            <div class="field">
-              <label for="f-obs">Observações</label>
-              <textarea
-                id="f-obs"
-                name="observacoes"
-                placeholder="Informação adicional (opcional)"
-                v-model="formData.observacoes"
               ></textarea>
             </div>
             <div class="modal-foot">
@@ -662,6 +624,9 @@ const handleSubmit = () => {
 
 .tab-panel {
   padding: 1.5rem 2rem 2rem 2rem;
+  max-width: 100%;
+  overflow-x: hidden;
+  box-sizing: border-box;
 }
 
 .panel-head {
@@ -708,6 +673,8 @@ const handleSubmit = () => {
   gap: 1rem;
   margin-bottom: 1.5rem;
   align-items: center;
+  box-sizing: border-box;
+  max-width: 100%;
 }
 
 .catalog-search {
@@ -718,14 +685,20 @@ const handleSubmit = () => {
   border: 1px solid #e2e8f0;
   border-radius: 8px;
   padding: 0.5rem 1rem;
-  flex: 1;
-  min-width: 250px;
+  flex: 1 1 auto;
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
+  position: static;
 }
 
 .catalog-search svg {
   width: 20px;
   height: 20px;
   color: #64748b;
+  flex-shrink: 0;
+  position: static;
+  transform: none;
 }
 
 .catalog-search input {
@@ -734,12 +707,18 @@ const handleSubmit = () => {
   outline: none;
   font-size: 0.95rem;
   width: 100%;
+  min-width: 0;
+  flex: 1;
+  padding: 0;
+  box-sizing: border-box;
 }
 
 .catalog-filter {
   display: flex;
   gap: 0.5rem;
   flex-wrap: wrap;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .chip {
@@ -1094,12 +1073,27 @@ const handleSubmit = () => {
   box-sizing: border-box;
 }
 
+.field input.error,
+.field select.error,
+.field textarea.error {
+  border-color: #dc2626;
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
+}
+
 .field input:focus,
 .field select:focus,
 .field textarea:focus {
   outline: none;
   border-color: #2ba9e0;
   box-shadow: 0 0 0 3px rgba(27, 143, 214, 0.15);
+}
+
+.error-text {
+  display: block;
+  margin-top: 0.35rem;
+  font-size: 0.875rem;
+  color: #dc2626;
+  font-weight: 500;
 }
 
 .field textarea {
@@ -1211,5 +1205,191 @@ const handleSubmit = () => {
   border-radius: 6px;
   padding: 12px 20px;
   margin: 22px 0;
+}
+
+@media (max-width: 1199px) {
+  .combined-card {
+    max-width: 100%;
+    overflow-x: hidden;
+    border-radius: 10px;
+  }
+
+  .dg-top {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    padding: 1.5rem;
+  }
+
+  .dg-photo-wrapper {
+    flex-direction: row;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .dg-photo {
+    width: 100px;
+    height: 100px;
+    flex-shrink: 0;
+  }
+
+  .quality-policy-section {
+    padding: 1.25rem 1.5rem;
+  }
+
+  .quality-policy-section h4,
+  .dg-message h4 {
+    font-size: 1.15rem;
+  }
+
+  .quality-policy-section p,
+  .dg-message p {
+    font-size: 1rem;
+  }
+
+  .tabs-bar {
+    position: static;
+    top: auto;
+    padding: 0 1rem;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .tabs {
+    flex-wrap: nowrap;
+    min-width: max-content;
+  }
+
+  .tab-btn {
+    margin-right: 1.25rem;
+    font-size: 0.875rem;
+    white-space: nowrap;
+    padding: 0.875rem 0;
+  }
+
+  .tab-panel {
+    padding: 1.25rem 1rem 1.5rem;
+  }
+
+  .panel-head {
+    max-width: 100%;
+  }
+
+  .catalog-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
+    max-width: 100%;
+    overflow: hidden;
+  }
+
+  .catalog-search {
+    flex: 1 1 auto;
+    min-width: 0;
+    max-width: 100%;
+    width: 100%;
+  }
+
+  .catalog-filter {
+    flex-wrap: wrap;
+    width: 100%;
+    overflow-x: visible;
+  }
+
+  .chip {
+    flex-shrink: 0;
+  }
+
+  .catalog-item-top {
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+
+  .catalog-item-price {
+    margin-left: 0;
+    width: 100%;
+  }
+
+  .catalog-item-top .btn--primary {
+    display: flex;
+    width: 100%;
+    justify-content: center;
+  }
+
+  .consulta-item {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .consulta-deadline {
+    align-items: flex-start;
+    min-width: 0;
+    width: 100%;
+  }
+
+  .consulta-deadline .btn--green {
+    display: flex;
+    width: 100%;
+    justify-content: center;
+  }
+
+  .field-row,
+  .pay-options {
+    grid-template-columns: 1fr;
+  }
+
+  .modal-panel {
+    width: calc(100vw - 24px);
+    max-height: calc(100vh - 32px);
+    border-radius: 12px;
+  }
+
+  .modal-head,
+  .modal-body {
+    padding-left: 1.25rem;
+    padding-right: 1.25rem;
+  }
+
+  .modal-foot {
+    flex-direction: column;
+  }
+
+  .modal-foot .btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 767px) {
+  .dg-details h3 {
+    font-size: 1.1rem;
+  }
+
+  .panel-head h2 {
+    font-size: 1.25rem;
+  }
+
+  .catalog-item {
+    padding: 1rem;
+  }
+
+  .catalog-item-title {
+    font-size: 1rem;
+  }
+
+  .tab-btn {
+    font-size: 0.8rem;
+  }
+}
+
+@media (min-width: 1200px) {
+  .catalog-search {
+    flex: 1;
+    min-width: 250px;
+  }
+
+  .catalog-filter {
+    width: auto;
+    flex: 0 1 auto;
+  }
 }
 </style>

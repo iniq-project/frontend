@@ -59,6 +59,10 @@ export default defineNuxtConfig({
     '/': { prerender: true }
   },
 
+  runtimeConfig: {
+    backendUrl: process.env.NUXT_BACKEND_URL || 'http://localhost:3001',
+  },
+
   compatibilityDate: '2025-01-15',
 
   eslint: {

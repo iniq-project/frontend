@@ -1,0 +1,296 @@
+/* ============================================================
+   INIQ — Responsive overrides (mobile & tablet only)
+   Desktop layout (≥1200px) is unchanged.
+   ============================================================ */
+
+@media (max-width: 1199px) {
+  /* Shared card patterns used across pages */
+  .dg-top {
+    grid-template-columns: 1fr !important;
+    gap: 1.5rem !important;
+    padding: 1.5rem !important;
+  }
+
+  .dg-photo-wrapper {
+    flex-direction: row !important;
+    align-items: center !important;
+    gap: 1rem !important;
+  }
+
+  .dg-photo {
+    width: 100px !important;
+    height: 100px !important;
+    flex-shrink: 0;
+  }
+
+  .quality-policy-section {
+    padding: 1.25rem 1.5rem !important;
+  }
+
+  .quality-policy-section h4,
+  .dg-message h4 {
+    font-size: 1.15rem !important;
+  }
+
+  .quality-policy-section p,
+  .dg-message p {
+    font-size: 1rem !important;
+  }
+
+  /* Tabs */
+  .tabs-bar {
+    padding: 0 1.5rem !important;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .tabs {
+    flex-wrap: nowrap;
+    min-width: max-content;
+  }
+
+  .tab-btn {
+    margin-right: 1.25rem !important;
+    font-size: 0.875rem !important;
+    white-space: nowrap;
+  }
+
+  .tab-panel {
+    padding: 1.25rem 1.5rem 1.5rem !important;
+  }
+
+  /* Catalog */
+  .catalog-item-top {
+    flex-wrap: wrap;
+    gap: 0.75rem !important;
+  }
+
+  .catalog-item-price {
+    margin-left: 0 !important;
+    order: 3;
+    width: 100%;
+  }
+
+  .catalog-item-top .btn {
+    order: 4;
+    width: 100%;
+    text-align: center;
+    justify-content: center;
+  }
+
+  .catalog-toolbar {
+    flex-direction: column;
+    align-items: stretch !important;
+  }
+
+  .catalog-filter {
+    flex-wrap: wrap !important;
+    width: 100%;
+    overflow-x: visible;
+  }
+
+  .catalog-search {
+    min-width: 0 !important;
+    max-width: 100%;
+  }
+
+  .chip {
+    flex-shrink: 0;
+  }
+
+  /* Consulta items */
+  .consulta-item {
+    flex-direction: column !important;
+    gap: 1rem !important;
+  }
+
+  .consulta-deadline {
+    align-items: flex-start !important;
+    min-width: 0 !important;
+    width: 100%;
+  }
+
+  .consulta-deadline .btn {
+    width: 100%;
+    text-align: center;
+    justify-content: center;
+  }
+
+  /* Forms & modals */
+  .field-row {
+    grid-template-columns: 1fr !important;
+  }
+
+  .pay-options {
+    grid-template-columns: 1fr !important;
+  }
+
+  .modal-panel {
+    width: calc(100vw - 24px) !important;
+    max-height: calc(100vh - 32px) !important;
+    border-radius: 12px !important;
+  }
+
+  .modal-head,
+  .modal-body {
+    padding-left: 1.25rem !important;
+    padding-right: 1.25rem !important;
+  }
+
+  .modal-foot {
+    flex-direction: column;
+  }
+
+  .modal-foot .btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  /* Contactos page */
+  .ct-quick {
+    grid-template-columns: 1fr !important;
+  }
+
+  .ct-grid2 {
+    grid-template-columns: 1fr !important;
+  }
+
+  .ct-dept {
+    grid-template-columns: 1fr !important;
+  }
+
+  .section {
+    padding: 1.25rem !important;
+  }
+
+  .section--tight {
+    padding: 1rem 1.25rem 1.25rem !important;
+  }
+
+  .ct-map iframe {
+    height: 280px !important;
+  }
+
+  .ct-map__pin {
+    position: static !important;
+    margin: 0.75rem;
+    max-width: none;
+  }
+
+  /* Metrologia & service sections */
+  .mserv {
+    grid-template-columns: 1fr !important;
+  }
+
+  .mdomains,
+  .trace,
+  .framework,
+  .policy__grid,
+  .pillars,
+  .fstats,
+  .course-grid,
+  .cd__meta-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+
+  .flow {
+    flex-direction: column !important;
+    align-items: stretch !important;
+  }
+
+  .flow__arrow {
+    transform: rotate(90deg);
+    align-self: center;
+  }
+
+  .container {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+
+  .mt-12 {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  .cta-band {
+    grid-template-columns: 1fr !important;
+    text-align: center;
+    padding: 1.5rem !important;
+  }
+
+  .cta-band__actions {
+    justify-content: center;
+  }
+
+  /* Servicos page */
+  .svc-intro {
+    grid-template-columns: 1fr !important;
+  }
+
+  .svc-card {
+    grid-template-columns: 1fr !important;
+    gap: 1rem !important;
+    padding: 1.25rem !important;
+  }
+
+  .svc-card__action {
+    align-items: flex-start !important;
+  }
+
+  /* Formacao */
+  .fc-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .fc-courses {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Eventos / noticias grids */
+  .ev-grid,
+  .news-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+@media (max-width: 767px) {
+  .mdomains,
+  .trace,
+  .framework,
+  .policy__grid,
+  .pillars,
+  .fstats,
+  .course-grid,
+  .cd__meta-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .dg-details h3 {
+    font-size: 1.1rem !important;
+  }
+
+  .panel-head h2 {
+    font-size: 1.25rem !important;
+  }
+
+  .catalog-item {
+    padding: 1rem !important;
+  }
+
+  .catalog-item-title {
+    font-size: 1rem !important;
+  }
+
+  .mdomains,
+  .trace,
+  .framework {
+    gap: 1rem !important;
+  }
+
+  .mdomain,
+  .trace__step,
+  .framework__item {
+    padding: 1.15rem !important;
+  }
+}

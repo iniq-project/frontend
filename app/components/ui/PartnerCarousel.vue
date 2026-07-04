@@ -58,6 +58,7 @@ onUnmounted(() => {
 
 <template>
   <div class="partner-carousel">
+    <div class="parceiro-label">PARCEIROS:</div>
     <button class="carousel-btn prev" @click="scrollLeft">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <path d="M15 18l-6-6 6-6"></path>
@@ -93,6 +94,22 @@ onUnmounted(() => {
   min-height: 200px;
   flex: 1;
   height: 100%;
+}
+
+.parceiro-label {
+  font-family: 'Archivo', system-ui, sans-serif;
+  font-weight: 800;
+  font-size: 1.5rem;
+  color: #0a3a63;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  height: 90px;
+  padding: 0 1rem;
+  border-right: 2px solid #e9eff6;
+  margin-right: 1rem;
 }
 
 .carousel-container {
@@ -156,5 +173,49 @@ a.partner-slide:hover {
   width: auto;
   max-width: 180px;
   object-fit: contain;
+}
+
+@media (max-width: 1199px) {
+  .partner-carousel {
+    padding: 1.5rem 1rem;
+    min-height: 140px;
+  }
+
+  .carousel-btn {
+    width: 36px;
+    height: 36px;
+  }
+
+  .carousel-btn svg {
+    width: 24px;
+    height: 24px;
+  }
+
+  a.partner-slide {
+    width: 160px;
+    height: 72px;
+  }
+
+  .partner-slide img {
+    max-height: 56px;
+    max-width: 140px;
+  }
+}
+
+@media (max-width: 767px) {
+  .partner-carousel {
+    gap: 0.5rem;
+    padding: 1.25rem 0.75rem;
+  }
+
+  a.partner-slide {
+    width: 130px;
+    height: 64px;
+  }
+
+  .partner-slide img {
+    max-height: 48px;
+    max-width: 110px;
+  }
 }
 </style>

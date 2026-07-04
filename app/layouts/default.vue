@@ -26,7 +26,8 @@ provide('activeSubItemId', activeSubItemId)
 
 <template>
   <div class="new-layout">
-    <UiHeaderComponent />
+    <UiHeaderComponent @toggle-menu="toggleMenu" :menu-open="menuOpen" />
+    <div class="mobile-overlay" :class="{ open: menuOpen }" aria-hidden="true" @click="closeMenu" />
     <div class="main-container">
       <UiSideBarComponent class="sidebar-left">
         <template #eyebrow">
@@ -40,11 +41,8 @@ provide('activeSubItemId', activeSubItemId)
       <main class="center-content">
         <slot />
       </main>
-      <UiNavigatorBarComponent 
-        class="sidebar-right" 
-        @select-service="handleSelectService"
-        @select-subitem="handleSelectSubItem"
-      />
+      <UiNavigatorBarComponent class="sidebar-right" @select-service="handleSelectService"
+        @select-subitem="handleSelectSubItem" />
       <div class="carousel-spacer"></div>
       <div class="partner-carousel-wrapper">
         <UiPartnerCarousel />
@@ -106,5 +104,58 @@ provide('activeSubItemId', activeSubItemId)
   display: flex;
   align-items: stretch;
   min-height: 0;
+}
+
+.mobile-overlay {
+  display: none;
+}
+
+@media (max-width: 1199px) {
+  .main-container {
+    display: flex;
+    flex-direction: column;
+    min-height: auto;
+  }
+
+  .center-content {
+    order: 1;
+    padding: 1.25rem 1rem;
+    overflow-y: visible;
+    width: 100%;
+  }
+
+  .sidebar-left {
+    order: 2;
+    width: 100%;
+  }
+
+  .sidebar-right {
+    order: 0;
+  }
+
+  .carousel-spacer {
+    display: none;
+  }
+
+  .partner-carousel-wrapper {
+    order: 3;
+    width: 100%;
+  }
+
+  .mobile-overlay {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(16, 33, 48, 0.45);
+    z-index: 90;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s ease;
+  }
+
+  .mobile-overlay.open {
+    opacity: 1;
+    pointer-events: auto;
+  }
 }
 </style>
