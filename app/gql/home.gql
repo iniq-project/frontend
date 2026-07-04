@@ -1,7 +1,10 @@
 query fetch {
-  queryHomepageContents {
+  queryHomeresponsibleContents {
     data: flatData {
-      responsible {
+      leader {
+        image {
+          url
+        }
         name
         position
         phoneNumber

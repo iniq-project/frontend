@@ -11,36 +11,34 @@ defineProps({
   <div class="combined-card">
     <div class="dg-top">
       <div class="dg-photo-wrapper">
-        <img
-          class="dg-photo"
-          :src="data.director.foto"
-          :alt="data.director.nome"
-        />
+        <img class="dg-photo" :src="data.image?.[0]?.url" :alt="data.name" />
 
         <div class="dg-details">
-          <h3>{{ data.director.nome }}</h3>
-          <p class="role">{{ data.director.cargo }}</p>
-          <p class="phone">{{ data.director.telefone }}</p>
+          <h3>{{ data?.name }}</h3>
+          <p class="role">{{ data?.position }}</p>
+          <p class="phone">{{ data?.phoneNumber }}</p>
         </div>
       </div>
 
       <div class="dg-message">
         <h4>Mensagem do Director-Geral</h4>
-        <p>"{{ data.mensagem }}"</p>
+        <div class="message-content" v-html="data.message" />
       </div>
     </div>
 
     <div class="quality-policy-section">
-      <h4>{{ data.politicaQualidade.titulo }}</h4>
-      <p>
-        {{ data.politicaQualidade.descricao }}
-      </p>
+      <h4>Política da Qualidade</h4>
+      <div class="policy-content" v-html="data.qualityPolicy" />
     </div>
   </div>
 </template>
 
 
 <style scoped>
+.message-content,
+.policy-content {
+  text-align: justify;
+}
 .combined-card {
   background: white;
   border-radius: 12px;
@@ -104,7 +102,6 @@ defineProps({
   margin: 0;
   font-size: 1.35rem;
   color: #0a3a63;
-  font-weight: 700;
   border-left: 4px solid #5cb947;
   padding-left: 0.75rem;
 }

@@ -12,10 +12,14 @@ definePageMeta({
 
 const { query } = useSquidex()
 const data = await query(home, { key: "home" })
+
+const leader = computed(
+  () => data.value?.data.queryHomeresponsibleContents?.[0]?.data?.leader,
+)
 </script>
 
 <template>
   <section>
-    <CustomHomeHero :data="homeData" />
+    <CustomHomeHero :data="leader" />
   </section>
 </template>

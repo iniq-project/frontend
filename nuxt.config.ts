@@ -51,16 +51,13 @@ export default defineNuxtConfig({
       url: process.env.SQUIDEX_URL,
       apiBaseURL: `${process.env.SQUIDEX_URL}/api/content/${process.env.SQUIDEX_APP_NAME}/`,
       apiBaseAssetsURL: `${process.env.SQUIDEX_URL}/api/apps/${process.env.SQUIDEX_APP_NAME}/assets`,
-    }
+    },
+    backendUrl: process.env.NUXT_BACKEND_URL || 'http://localhost:3001',
   },
 
 
   routeRules: {
     '/': { prerender: true }
-  },
-
-  runtimeConfig: {
-    backendUrl: process.env.NUXT_BACKEND_URL || 'http://localhost:3001',
   },
 
   compatibilityDate: '2025-01-15',
