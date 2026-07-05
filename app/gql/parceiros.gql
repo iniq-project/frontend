@@ -1,0 +1,12 @@
+query fetch {
+  queryPartnerContents {
+    data: flatData {
+     brands {
+      url
+      logo {
+        url
+      }
+    }
+    }
+  }
+}

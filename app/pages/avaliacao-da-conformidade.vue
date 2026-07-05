@@ -12,7 +12,6 @@ useHead({
   title: "INIQ » Avaliação da Conformidade",
 })
 
-
 const { query } = useSquidex()
 const data = await query(avaliacaoConformidade, { key: "queryHomeevaluationContents" })
 const requisitosData = await query(requisitosQuery, { key: "queryRequirementContents" })
