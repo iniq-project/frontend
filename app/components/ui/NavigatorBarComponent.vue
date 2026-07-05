@@ -125,7 +125,7 @@ watch(
       </template>
     </nav>
     <div class="area-reservada-wrapper">
-      <a href="https://reliable-haupia-87ded0.netlify.app/admin" target="_blank" rel="noopener noreferrer"
+      <a href="https://backoffice-iniq.netlify.app/login" target="_blank" rel="noopener noreferrer"
         class="area-reservada">
         Área Reservada
       </a>
