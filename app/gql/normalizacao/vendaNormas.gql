@@ -1,0 +1,16 @@
+query fetch {
+  querySalesrulesContents {
+   data: flatData {
+    title
+    description
+    rules {
+      title
+      price
+      reference
+      category {
+        id
+      }
+    }
+  }
+  }
+}
