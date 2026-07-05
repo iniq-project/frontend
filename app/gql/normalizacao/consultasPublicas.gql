@@ -1,0 +1,17 @@
+query fetch {
+  queryPublicconsultationContents {
+   data: flatData {
+    title
+    description
+    rules {
+      title
+      description
+      reference
+      date
+      category {
+        id
+      }
+    }
+  }
+  }
+}

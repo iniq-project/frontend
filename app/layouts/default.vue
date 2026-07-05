@@ -1,8 +1,26 @@
-<script setup>
-import { provide, ref, watch } from 'vue'
+﻿<script setup>
+import { provide, ref, watch, computed } from "vue"
+import quemSomos from "@/gql/quem-somos.gql"
+import parceiros from "@/gql/parceiros.gql"
+ 
+const { query } = useSquidex()
+const data = await query(quemSomos, { key: "about" })
+const partnerData = await query(parceiros, { key: "partner" })
+
+const aboutInfo = computed(() => data.value?.data.queryAboutContents?.[0]?.data)
+const partnerInfo = computed(() => partnerData.value?.data.queryPartnerContents?.[0]?.data)
 
 const route = useRoute()
 const activeSubItemId = ref(null)
+const menuOpen = ref(false)
+
+const toggleMenu = () => {
+  menuOpen.value = !menuOpen.value
+}
+
+const closeMenu = () => {
+  menuOpen.value = false
+}
 
 const handleSelectService = (serviceId) => {
   activeSubItemId.value = null
@@ -15,24 +33,35 @@ const handleSelectSubItem = (serviceId, subItemId) => {
 watch(
   () => route.path,
   (newPath) => {
-    if (newPath === '/') {
+    if (newPath === "/") {
       activeSubItemId.value = null
     }
   }
 )
 
-provide('activeSubItemId', activeSubItemId)
+
+let loader = ref(true);
+onMounted(() => {
+  setTimeout(() => {
+    loader.value = false;
+  }, 3000);
+});
+
+
+provide("activeSubItemId", activeSubItemId)
 </script>
 
 <template>
-  <div class="new-layout">
-    <UiHeaderComponent />
+  <UiLoaderComponent v-if="loader" />
+  <div v-show="!loader" class="new-layout">
+    <UiHeaderComponent @toggle-menu="toggleMenu" :menu-open="menuOpen" />
+    <div class="mobile-overlay" :class="{ open: menuOpen }" aria-hidden="true" @click="closeMenu" />
     <div class="main-container">
-      <UiSideBarComponent class="sidebar-left">
-        <template #eyebrow">
+      <UiSideBarComponent :data="aboutInfo" class="sidebar-left">
+        <template #eyebrow>
           <slot name="sidebar-eyebrow" />
         </template>
-        <template #title">
+        <template #title>
           <slot name="sidebar-title" />
         </template>
         <slot name="sidebar-content" />
@@ -40,14 +69,11 @@ provide('activeSubItemId', activeSubItemId)
       <main class="center-content">
         <slot />
       </main>
-      <UiNavigatorBarComponent 
-        class="sidebar-right" 
-        @select-service="handleSelectService"
-        @select-subitem="handleSelectSubItem"
-      />
+      <UiNavigatorBarComponent class="sidebar-right" :class="{ open: menuOpen }" @select-service="handleSelectService"
+        @select-subitem="handleSelectSubItem" @close="closeMenu" />
       <div class="carousel-spacer"></div>
       <div class="partner-carousel-wrapper">
-        <UiPartnerCarousel />
+        <UiPartnerCarousel :data="partnerInfo" />
       </div>
     </div>
   </div>
@@ -106,5 +132,58 @@ provide('activeSubItemId', activeSubItemId)
   display: flex;
   align-items: stretch;
   min-height: 0;
+}
+
+.mobile-overlay {
+  display: none;
+}
+
+@media (max-width: 1199px) {
+  .main-container {
+    display: flex;
+    flex-direction: column;
+    min-height: auto;
+  }
+
+  .center-content {
+    order: 1;
+    padding: 1.25rem 1rem;
+    overflow-y: visible;
+    width: 100%;
+  }
+
+  .sidebar-left {
+    order: 2;
+    width: 100%;
+  }
+
+  .sidebar-right {
+    order: 0;
+  }
+
+  .carousel-spacer {
+    display: none;
+  }
+
+  .partner-carousel-wrapper {
+    order: 3;
+    width: 100%;
+  }
+
+  .mobile-overlay {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(16, 33, 48, 0.45);
+    z-index: 90;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s ease;
+  }
+
+  .mobile-overlay.open {
+    opacity: 1;
+    pointer-events: auto;
+  }
 }
 </style>

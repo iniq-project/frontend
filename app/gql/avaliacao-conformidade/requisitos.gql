@@ -1,0 +1,20 @@
+query fetch {
+  queryRequirementContents {
+    data: flatData {
+    rules {
+      title
+      description
+      rules {
+        title
+      }
+      model {
+        title
+        description
+        url {
+          url
+        }
+      }
+    }
+  }
+}
+}

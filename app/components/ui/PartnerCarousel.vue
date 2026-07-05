@@ -1,22 +1,17 @@
-
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, onMounted, onUnmounted, computed, watch } from 'vue'
 
-const partners = [
-  { img: '/parceiros/abnt-logot.png', name: 'ABNT', url: 'https://abnt.org.br' },
-  { img: '/parceiros/astmlogot.png', name: 'ASTM', url: 'https://www.astm.org' },
-  { img: '/parceiros/codex-logot.jpg', name: 'Codex', url: 'https://www.fao.org/fao-who-codexalimentarius/home/en/' },
-  { img: '/parceiros/iec-logot.jpg', name: 'IEC', url: 'https://www.iec.ch' },
-  { img: '/parceiros/intilogot.png', name: 'INTI', url: 'https://www.inti.gob.ar' },
-  { img: '/parceiros/ipqlogot.png', name: 'IPQ', url: 'https://www.ipq.pt' },
-  { img: '/parceiros/iso-logot.png', name: 'ISO', url: 'https://www.iso.org' },
-  { img: '/parceiros/logo_sadcas.png', name: 'SADCAS', url: 'https://www.sadcas.org' },
-  { img: '/parceiros/oilmlogote.jpg', name: 'OIML', url: 'https://www.oiml.org' },
-  { img: '/parceiros/sadclogot.png', name: 'SADC', url: 'https://www.sadc.int' },
-  { img: '/parceiros/sadecstanlogot.png', name: 'SADCESTAN', url: 'https://www.sadc.int/pillars/standards-quality-infrastructure' }
-]
+const props = defineProps({
+  data: {
+    type: Object,
+    default: () => ({})
+  }
+})
 
-const allPartners = ref([...partners, ...partners])
+const partners = computed(() => props.data?.brands || [])
+
+const allPartners = computed(() => [...partners.value, ...partners.value])
+
 const currentPosition = ref(0)
 const slideWidth = 200
 const maxPosition = ref(0)
@@ -46,8 +41,11 @@ const scrollRight = () => {
   currentPosition.value = Math.min(maxPosition.value, currentPosition.value + slideWidth)
 }
 
+watch(partners, (newPartners) => {
+  maxPosition.value = newPartners.length * slideWidth
+}, { immediate: true })
+
 onMounted(() => {
-  maxPosition.value = partners.length * slideWidth
   startAutoScroll()
 })
 
@@ -66,8 +64,15 @@ onUnmounted(() => {
     </button>
     <div class="carousel-container">
       <div class="carousel-track" :style="{ transform: `translateX(-${currentPosition}px)` }">
-        <a class="partner-slide" v-for="(partner, index) in allPartners" :key="index" :href="partner.url" target="_blank" rel="noopener noreferrer">
-          <img :src="partner.img" :alt="partner.name" />
+        <a
+          class="partner-slide"
+          v-for="(partner, index) in allPartners"
+          :key="index"
+          :href="partner.url"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <img :src="partner.logo?.[0]?.url" :alt="`Parceiro ${index + 1}`" />
         </a>
       </div>
     </div>
@@ -173,5 +178,49 @@ a.partner-slide:hover {
   width: auto;
   max-width: 180px;
   object-fit: contain;
+}
+
+@media (max-width: 1199px) {
+  .partner-carousel {
+    padding: 1.5rem 1rem;
+    min-height: 140px;
+  }
+
+  .carousel-btn {
+    width: 36px;
+    height: 36px;
+  }
+
+  .carousel-btn svg {
+    width: 24px;
+    height: 24px;
+  }
+
+  a.partner-slide {
+    width: 160px;
+    height: 72px;
+  }
+
+  .partner-slide img {
+    max-height: 56px;
+    max-width: 140px;
+  }
+}
+
+@media (max-width: 767px) {
+  .partner-carousel {
+    gap: 0.5rem;
+    padding: 1.25rem 0.75rem;
+  }
+
+  a.partner-slide {
+    width: 130px;
+    height: 64px;
+  }
+
+  .partner-slide img {
+    max-height: 48px;
+    max-width: 110px;
+  }
 }
 </style>

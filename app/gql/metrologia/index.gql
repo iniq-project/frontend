@@ -1,0 +1,18 @@
+query fetch {
+  queryHomemetrologyContents {
+    data: flatData {
+      leader {
+        image {
+          url
+        }
+        name
+        position
+        phoneNumber
+      titleresponsible
+      message
+      titlequalityPolicy
+      qualityPolicy
+      }
+    }
+  }
+}
