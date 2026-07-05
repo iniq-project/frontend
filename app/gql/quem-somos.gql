@@ -1,0 +1,9 @@
+query fetch {
+  queryAboutContents {
+    data: flatData {
+    title
+    description
+    address
+    }
+  }
+}

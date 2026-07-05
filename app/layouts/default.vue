@@ -1,5 +1,14 @@
 <script setup>
-import { provide, ref, watch } from 'vue'
+import { provide, ref, watch, computed } from 'vue'
+import quemSomos from "@/gql/quem-somos.gql"
+import parceiros from "@/gql/parceiros.gql"
+ 
+const { query } = useSquidex()
+const data = await query(quemSomos, { key: "about" })
+const partnerData = await query(parceiros, { key: "partner" })
+
+const aboutInfo = computed(() => data.value?.data.queryAboutContents?.[0]?.data)
+const partnerInfo = computed(() => partnerData.value?.data.queryPartnerContents?.[0]?.data)
 
 const route = useRoute()
 const activeSubItemId = ref(null)
@@ -21,19 +30,29 @@ watch(
   }
 )
 
+
+let loader = ref(true);
+onMounted(() => {
+  setTimeout(() => {
+    loader.value = false;
+  }, 3000);
+});
+
+
 provide('activeSubItemId', activeSubItemId)
 </script>
 
 <template>
-  <div class="new-layout">
+  <UiLoaderComponent v-if="loader" />
+  <div v-show="!loader" class="new-layout">
     <UiHeaderComponent @toggle-menu="toggleMenu" :menu-open="menuOpen" />
     <div class="mobile-overlay" :class="{ open: menuOpen }" aria-hidden="true" @click="closeMenu" />
     <div class="main-container">
-      <UiSideBarComponent class="sidebar-left">
-        <template #eyebrow">
+      <UiSideBarComponent :data="aboutInfo" class="sidebar-left">
+        <template #eyebrow>
           <slot name="sidebar-eyebrow" />
         </template>
-        <template #title">
+        <template #title>
           <slot name="sidebar-title" />
         </template>
         <slot name="sidebar-content" />
@@ -45,7 +64,7 @@ provide('activeSubItemId', activeSubItemId)
         @select-subitem="handleSelectSubItem" />
       <div class="carousel-spacer"></div>
       <div class="partner-carousel-wrapper">
-        <UiPartnerCarousel />
+        <UiPartnerCarousel :data="partnerInfo" />
       </div>
     </div>
   </div>

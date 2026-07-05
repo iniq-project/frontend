@@ -1,37 +1,69 @@
 <script setup lang="ts">
-import { inject, watch, ref, nextTick } from 'vue'
-import type { DocumentsType } from '~/constants/document-requirements'
-import { flattenDocumentSlots } from '~/constants/document-requirements'
+import { inject, watch, ref, nextTick } from "vue"
+import home from "@/gql/registro-cadastro/index.gql"
+import requisitosQuery from "@/gql/registro-cadastro/requisitos.gql"
+import Requisitos from "@/components/custom/Requisitos.vue"
+import type { DocumentsType } from "~/constants/document-requirements"
+import { flattenDocumentSlots } from "~/constants/document-requirements"
 
 definePageMeta({
-  layout: 'default',
+  layout: "default",
 })
 
 useHead({
-  title: 'INIQ — Registo e Cadastro',
+  title: "INIQ — Registo e Cadastro",
 })
 
-const documentSlots = flattenDocumentSlots('REGISTO_CADASTRO')
+const { query } = useSquidex()
+const data = await query(home, { key: "home" })
 
-// Inject active sub-item from layout
-const activeSubItemId = inject('activeSubItemId')
+const leader = computed(
+  () => data.value?.data.queryHomeregisterContents?.[0]?.data?.leader,
+)
 
-// Track if sub-item is selected
+const requisitosData = await query(requisitosQuery, { key: "queryRequirementregisterContents" })
+const requisitosContent = computed(() => {
+  const result = requisitosData.value?.data?.queryRequirementregisterContents?.[0]?.data?.requirement
+  return result
+})
+const requisitosTitle = computed(() => requisitosContent.value?.title)
+const requisitosDescription = computed(() => requisitosContent.value?.description)
+const requisitosList = computed(() => {
+  const rules = requisitosContent.value?.rules || []
+  return rules.map((rule: any, index: number) => ({
+    num: index + 1,
+    text: rule?.title
+  }))
+})
+const downloadInfo = computed(() => {
+  const model = requisitosContent.value?.model?.[0]
+  if (!model) return null
+  return {
+    title: model.title,
+    description: model.description,
+    link: model.url?.[0]?.url,
+    buttonText: "Baixar"
+  }
+})
+
+
+const documentSlots = flattenDocumentSlots("REGISTO_CADASTRO")
+
+const activeSubItemId = inject("activeSubItemId")
+
 const isSubItemSelected = ref(false)
 const showForm = ref(false)
 const formSubmitted = ref(false)
 const isSubmitting = ref(false)
-const submitError = ref('')
-const referenceNumber = ref('')
+const submitError = ref("")
+const referenceNumber = ref("")
 const errors = ref<Record<string, boolean>>({})
 
-// Ref for first input
 const nomeInput = ref<HTMLInputElement | null>(null)
 
-// Form data
 const formData = ref({
-  nome: '',
-  email: '',
+  nome: "",
+  email: "",
   files: Object.fromEntries(
     documentSlots.map((slot) => [slot.type, null]),
   ) as Record<DocumentsType, File | null>,
@@ -39,15 +71,15 @@ const formData = ref({
 
 function resetForm() {
   formData.value = {
-    nome: '',
-    email: '',
+    nome: "",
+    email: "",
     files: Object.fromEntries(
       documentSlots.map((slot) => [slot.type, null]),
     ) as Record<DocumentsType, File | null>,
   }
   errors.value = {}
-  submitError.value = ''
-  referenceNumber.value = ''
+  submitError.value = ""
+  referenceNumber.value = ""
   formSubmitted.value = false
 }
 
@@ -56,11 +88,10 @@ watch(showForm, async (newValue) => {
   if (newValue) {
     await nextTick()
     if (nomeInput.value) {
-      const formSection = document.querySelector('.form-section') as HTMLElement
+      const formSection = document.querySelector(".form-section") as HTMLElement
       if (formSection) {
-        formSection.scrollIntoView({ behavior: 'smooth', block: 'start' })
+        formSection.scrollIntoView({ behavior: "smooth", block: "start" })
       }
-      // Small delay to let the section scroll, then focus
       setTimeout(() => {
         nomeInput.value?.focus()
       }, 300)
@@ -70,9 +101,13 @@ watch(showForm, async (newValue) => {
 
 // Sync with layout
 if (activeSubItemId) {
-  watch(activeSubItemId, (newId) => {
-    isSubItemSelected.value = !!newId
-  }, { immediate: true })
+  watch(
+    activeSubItemId,
+    (newId) => {
+      isSubItemSelected.value = !!newId
+    },
+    { immediate: true },
+  )
 }
 
 function handleFileChange(event: Event, docType: DocumentsType) {
@@ -92,7 +127,10 @@ function validateForm(): boolean {
     newErrors.nome = true
   }
 
-  if (!formData.value.email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.value.email)) {
+  if (
+    !formData.value.email.trim() ||
+    !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.value.email)
+  ) {
     newErrors.email = true
   }
 
@@ -106,9 +144,11 @@ function validateForm(): boolean {
 
   if (Object.keys(newErrors).length > 0) {
     const firstErrorField = Object.keys(newErrors)[0]
-    const fieldElement = document.querySelector(`[name="${firstErrorField}"]`) as HTMLElement
+    const fieldElement = document.querySelector(
+      `[name="${firstErrorField}"]`,
+    ) as HTMLElement
     if (fieldElement) {
-      fieldElement.scrollIntoView({ behavior: 'smooth', block: 'center' })
+      fieldElement.scrollIntoView({ behavior: "smooth", block: "center" })
       fieldElement.focus()
     }
     return false
@@ -118,7 +158,7 @@ function validateForm(): boolean {
 }
 
 async function handleSubmit() {
-  submitError.value = ''
+  submitError.value = ""
 
   if (!validateForm()) {
     return
@@ -128,23 +168,23 @@ async function handleSubmit() {
 
   try {
     const payload = new FormData()
-    payload.append('name', formData.value.nome.trim())
-    payload.append('email', formData.value.email.trim())
-    payload.append('serviceType', 'REGISTO_CADASTRO')
+    payload.append("name", formData.value.nome.trim())
+    payload.append("email", formData.value.email.trim())
+    payload.append("serviceType", "REGISTO_CADASTRO")
 
     for (const slot of documentSlots) {
       const file = formData.value.files[slot.type]
       if (file) {
-        payload.append('types', slot.type)
-        payload.append('files', file)
+        payload.append("types", slot.type)
+        payload.append("files", file)
       }
     }
 
     const response = await $fetch<{
       referenceNumber: string
       receiptNote?: { message: string }
-    }>('/api/processes/init', {
-      method: 'POST',
+    }>("/api/processes/init", {
+      method: "POST",
       body: payload,
       timeout: 120_000,
     })
@@ -157,10 +197,10 @@ async function handleSubmit() {
       statusMessage?: string
     }
     submitError.value =
-      fetchError.data?.statusMessage
-      ?? fetchError.statusMessage
-      ?? fetchError.data?.message
-      ?? 'Não foi possível submeter o processo. Tente novamente.'
+      fetchError.data?.statusMessage ??
+      fetchError.statusMessage ??
+      fetchError.data?.message ??
+      "Não foi possível submeter o processo. Tente novamente."
   } finally {
     isSubmitting.value = false
   }
@@ -174,107 +214,20 @@ function handleBackFromForm() {
 
 <template>
   <div class="combined-card">
-    <!-- Top info - only show when no sub-item is selected -->
     <template v-if="!isSubItemSelected">
-      <div class="dg-top">
-        <div class="dg-photo-wrapper">
-          <img
-            class="dg-photo"
-            src="/perfis/02.jpg"
-            alt="Chefe do Departamento de Acreditação"
-          />
-          <div class="dg-details">
-            <h3>Dr. Joaquim Mateus</h3>
-            <p class="role">Chefe do Departamento de Acreditação</p>
-          </div>
-        </div>
-        <div class="dg-message">
-          <h4>Mensagem do Responsável</h4>
-          <p>
-            “A acreditação dá confiança ao mercado: reconhece formalmente quem tem
-            competência técnica para avaliar a conformidade.”
-          </p>
-        </div>
-      </div>
-
-      <div class="quality-policy-section mb-10">
-        <h4>Política de Acreditação</h4>
-        <p>
-          A acreditação é o nível mais elevado de garantia da qualidade: avalia quem
-          avalia. Ao reconhecer a competência dos organismos, o INIQ assegura que
-          ensaios, certificados e relatórios emitidos em Angola merecem confiança no
-          mercado nacional e internacional.
-        </p>
-      </div>
+      <CustomHero :data="leader" />
     </template>
 
-    <!-- Sub-item content - only show when "Ver Requisitos" is selected -->
     <template v-if="isSubItemSelected">
       <template v-if="!showForm">
-        <section class="mt-12">
-          <div class="container">
-            <div class="panel-head">
-              <span class="eyebrow">Requisitos</span>
-              <h2>Documentação Necessária</h2>
-              <p>
-                Lista de documentos que deverá preparar para submeter o seu pedido de registo e cadastro.
-              </p>
-            </div>
-
-            <div class="requisitos-list">
-              <div class="requisito-item">
-                <span class="requisito-num">1</span>
-                <span class="requisito-text">Ofício dirigido ao INIQ (modelo Anexo 1)</span>
-              </div>
-              <div class="requisito-item">
-                <span class="requisito-num">2</span>
-                <span class="requisito-text">Relatório de Análise Técnica e Diagnóstico</span>
-              </div>
-              <div class="requisito-item">
-                <span class="requisito-num">3</span>
-                <span class="requisito-text">Formulários preenchidos + documentos de identificação + CV do técnico responsável</span>
-              </div>
-              <div class="requisito-item">
-                <span class="requisito-num">4</span>
-                <span class="requisito-text">Cópias da documentação legal (Certidão de Registo Comercial, Alvará Comercial, NIF)</span>
-              </div>
-              <div class="requisito-item">
-                <span class="requisito-num">5</span>
-                <span class="requisito-text">Apresentação da organização</span>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section class="mt-12">
-          <div class="container">
-            <div class="download-section">
-              <div class="download-info">
-                <h3>Modelo do Ofício (Anexo 1)</h3>
-                <p>Faça o download do modelo de ofício para apresentar o seu pedido.</p>
-              </div>
-              <a href="/docs/Modelo do Ofício.pdf" download class="btn btn--download">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                  <polyline points="7 10 12 15 17 10"></polyline>
-                  <line x1="12" y1="15" x2="12" y2="3"></line>
-                </svg>
-                Baixar
-              </a>
-            </div>
-          </div>
-        </section>
-
-        <section class="mt-12">
-          <div class="container">
-            <button @click="showForm = true" class="btn btn--primary">
-              Submeter Processo
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M5 12h14M13 6l6 6-6 6"></path>
-              </svg>
-            </button>
-          </div>
-        </section>
+      <Requisitos
+          :requisitos="requisitosList"
+          :download-info="downloadInfo"
+          :title="requisitosTitle"
+          :description="requisitosDescription"
+          submit-button-text="Submeter Processo"
+          @submit="showForm = true"
+        />
       </template>
 
       <template v-if="showForm">
@@ -283,19 +236,30 @@ function handleBackFromForm() {
             <div class="form-section">
               <div class="form-header">
                 <h3>Submeter Processo de Registo e Cadastro</h3>
-                <button type="button" @click="handleBackFromForm" class="btn btn--ghost">
+                <button
+                  type="button"
+                  @click="handleBackFromForm"
+                  class="btn btn--ghost"
+                >
                   Voltar
                 </button>
               </div>
 
               <div v-if="formSubmitted" class="success-message">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2.4"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
                   <path d="M20 6 9 17l-5-5"></path>
                 </svg>
                 <span>
                   <b>Processo submetido com sucesso!</b>
-                  Referência: <strong>{{ referenceNumber }}</strong>.
-                  A equipa do INIQ irá analisar o seu pedido.
+                  Referência: <strong>{{ referenceNumber }}</strong
+                  >. A equipa do INIQ irá analisar o seu pedido.
                 </span>
               </div>
 
@@ -304,36 +268,48 @@ function handleBackFromForm() {
                   {{ submitError }}
                 </div>
                 <div class="field">
-                  <label for="nome">Nome completo <span class="req">*</span></label>
-                  <div class="input-wrapper" :class="{ 'has-error': errors.nome }">
-                    <input 
+                  <label for="nome"
+                    >Nome completo <span class="req">*</span></label
+                  >
+                  <div
+                    class="input-wrapper"
+                    :class="{ 'has-error': errors.nome }"
+                  >
+                    <input
                       ref="nomeInput"
-                      type="text" 
-                      id="nome" 
-                      name="nome" 
-                      required 
-                      placeholder="O seu nome completo" 
+                      type="text"
+                      id="nome"
+                      name="nome"
+                      required
+                      placeholder="O seu nome completo"
                       v-model="formData.nome"
                       @input="errors.nome = false"
                     />
                   </div>
-                  <span v-if="errors.nome" class="error-message">Por favor, informe seu nome completo</span>
+                  <span v-if="errors.nome" class="error-message"
+                    >Por favor, informe seu nome completo</span
+                  >
                 </div>
 
                 <div class="field">
                   <label for="email">E-mail <span class="req">*</span></label>
-                  <div class="input-wrapper" :class="{ 'has-error': errors.email }">
-                    <input 
-                      type="email" 
-                      id="email" 
-                      name="email" 
-                      required 
-                      placeholder="nome@exemplo.ao" 
+                  <div
+                    class="input-wrapper"
+                    :class="{ 'has-error': errors.email }"
+                  >
+                    <input
+                      type="email"
+                      id="email"
+                      name="email"
+                      required
+                      placeholder="nome@exemplo.ao"
                       v-model="formData.email"
                       @input="errors.email = false"
                     />
                   </div>
-                  <span v-if="errors.email" class="error-message">Por favor, informe um e-mail válido</span>
+                  <span v-if="errors.email" class="error-message"
+                    >Por favor, informe um e-mail válido</span
+                  >
                 </div>
 
                 <div
@@ -341,27 +317,49 @@ function handleBackFromForm() {
                   :key="slot.type"
                   class="field"
                 >
-                  <label :for="slot.type">{{ slot.label }} <span class="req">*</span></label>
-                  <div class="file-input-wrapper" :class="{ 'has-error': errors[slot.type] }">
+                  <label :for="slot.type"
+                    >{{ slot.label }} <span class="req">*</span></label
+                  >
+                  <div
+                    class="file-input-wrapper"
+                    :class="{ 'has-error': errors[slot.type] }"
+                  >
                     <input
                       type="file"
                       :id="slot.type"
                       :name="slot.type"
                       required
-                      :accept="slot.pdfOnly ? 'application/pdf' : '.pdf,.jpg,.jpeg,.png'"
+                      :accept="
+                        slot.pdfOnly
+                          ? 'application/pdf'
+                          : '.pdf,.jpg,.jpeg,.png'
+                      "
                       @change="handleFileChange($event, slot.type)"
                     />
-                    <span class="file-label">{{ formData.files[slot.type]?.name ?? 'Escolher arquivo' }}</span>
+                    <span class="file-label">{{
+                      formData.files[slot.type]?.name ?? "Escolher arquivo"
+                    }}</span>
                   </div>
-                  <span v-if="errors[slot.type]" class="error-message">Por favor, selecione este arquivo</span>
+                  <span v-if="errors[slot.type]" class="error-message"
+                    >Por favor, selecione este arquivo</span
+                  >
                 </div>
 
                 <div class="form-actions">
-                  <button type="button" @click="handleBackFromForm" class="btn btn--ghost" :disabled="isSubmitting">
+                  <button
+                    type="button"
+                    @click="handleBackFromForm"
+                    class="btn btn--ghost"
+                    :disabled="isSubmitting"
+                  >
                     Voltar
                   </button>
-                  <button type="submit" class="btn btn--primary" :disabled="isSubmitting">
-                    {{ isSubmitting ? 'A enviar…' : 'Enviar Processo' }}
+                  <button
+                    type="submit"
+                    class="btn btn--primary"
+                    :disabled="isSubmitting"
+                  >
+                    {{ isSubmitting ? "A enviar…" : "Enviar Processo" }}
                   </button>
                 </div>
               </form>
@@ -398,7 +396,7 @@ function handleBackFromForm() {
 
 .requisito-num {
   flex-shrink: 0;
-  font-family: 'Archivo', system-ui, sans-serif;
+  font-family: "Archivo", system-ui, sans-serif;
   font-weight: 800;
   font-size: 1.1rem;
   color: #5cb947;
@@ -603,7 +601,7 @@ function handleBackFromForm() {
   transition: all 0.2s;
   cursor: pointer;
   border: none;
-  font-family: 'IBM Plex Sans', system-ui, sans-serif;
+  font-family: "IBM Plex Sans", system-ui, sans-serif;
   font-size: 1rem;
 }
 
@@ -730,7 +728,7 @@ function handleBackFromForm() {
   padding: 0.9rem 1rem;
   border: 2px solid #e6eff6;
   border-radius: 10px;
-  font-family: 'IBM Plex Sans', system-ui, sans-serif;
+  font-family: "IBM Plex Sans", system-ui, sans-serif;
   font-size: 0.9375rem;
   color: #0a3a63;
   background: white;
@@ -797,7 +795,7 @@ function handleBackFromForm() {
   border-radius: 10px;
   background: linear-gradient(135deg, #f8fafc 0%, #eff6fc 100%);
   color: #0a3a63;
-  font-family: 'IBM Plex Sans', system-ui, sans-serif;
+  font-family: "IBM Plex Sans", system-ui, sans-serif;
   font-size: 0.9375rem;
   font-weight: 500;
   transition: all 0.2s;
