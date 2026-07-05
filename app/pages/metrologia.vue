@@ -1,15 +1,23 @@
 <script setup lang="ts">
-import { inject, watch, ref, nextTick } from 'vue'
+import { inject, watch, ref, nextTick } from "vue"
+import home from "@/gql/metrologia/index.gql"
 
 definePageMeta({
-  layout: 'default',
+  layout: "default",
 })
 
 useHead({
-  title: 'INIQ » Metrologia',
+  title: "INIQ » Metrologia",
 })
 
-const activeSubItemId = inject('activeSubItemId')
+const { query } = useSquidex()
+const data = await query(home, { key: "home" })
+
+const leader = computed(
+  () => data.value?.data.queryHomemetrologyContents?.[0]?.data?.leader,
+)
+
+const activeSubItemId = inject("activeSubItemId")
 
 const isSubItemSelected = ref(false)
 const showRequisitos = ref(false)
@@ -27,18 +35,22 @@ watch(showForm, async (newValue) => {
   if (newValue) {
     await nextTick()
     if (fileInput.value) {
-      const formSection = document.querySelector('.form-section') as HTMLElement
+      const formSection = document.querySelector(".form-section") as HTMLElement
       if (formSection) {
-        formSection.scrollIntoView({ behavior: 'smooth', block: 'start' })
+        formSection.scrollIntoView({ behavior: "smooth", block: "start" })
       }
     }
   }
 })
 
 if (activeSubItemId) {
-  watch(activeSubItemId, (newId) => {
-    isSubItemSelected.value = !!newId
-  }, { immediate: true })
+  watch(
+    activeSubItemId,
+    (newId) => {
+      isSubItemSelected.value = !!newId
+    },
+    { immediate: true },
+  )
 }
 
 function handleFileChange(event: Event, docKey: keyof typeof formData) {
@@ -53,23 +65,25 @@ function handleFileChange(event: Event, docKey: keyof typeof formData) {
 
 function validateForm(): boolean {
   const newErrors: Record<string, boolean> = {}
-  
+
   if (!formData.value.carta) {
     newErrors.carta = true
   }
-  
+
   errors.value = newErrors
-  
+
   if (Object.keys(newErrors).length > 0) {
     const firstErrorField = Object.keys(newErrors)[0]
-    const fieldElement = document.querySelector(`[name="${firstErrorField}"]`) as HTMLElement
+    const fieldElement = document.querySelector(
+      `[name="${firstErrorField}"]`,
+    ) as HTMLElement
     if (fieldElement) {
-      fieldElement.scrollIntoView({ behavior: 'smooth', block: 'center' })
+      fieldElement.scrollIntoView({ behavior: "smooth", block: "center" })
       fieldElement.focus()
     }
     return false
   }
-  
+
   return true
 }
 
@@ -77,7 +91,7 @@ function handleSubmit() {
   if (!validateForm()) {
     return
   }
-  
+
   formSubmitted.value = true
   setTimeout(() => {
     formSubmitted.value = false
@@ -91,234 +105,335 @@ function handleSubmit() {
 </script>
 
 <template>
-    <div class="combined-card">
-      <template v-if="!isSubItemSelected">
-        <div class="dg-top">
-          <div class="dg-photo-wrapper">
-            <img
-            class="dg-photo"
-            src="/perfis/03.jpg"
-            alt="Chefe do Departamento de Metrologia"
-          />
-            <div class="dg-details">
-              <h3>Eng.º António Bengui</h3>
-              <p class="role">Chefe do Departamento de Metrologia</p>
+  <div class="combined-card">
+    <template v-if="!isSubItemSelected">
+      <CustomHero :data="leader" />
+    </template>
+
+    <template v-if="isSubItemSelected">
+      <template v-if="!showRequisitos && !showForm">
+        <section class="mt-12">
+          <div class="container">
+            <div class="panel-head">
+              <span class="eyebrow">Serviços</span>
+              <h2>Serviços de metrologia ao seu dispor</h2>
             </div>
-          </div>
-          <div class="dg-message">
-            <h4>Mensagem do Responsável</h4>
-            <p>
-              “Medições fiáveis são a base do comércio justo e da indústria. Asseguramos a rastreabilidade de cada medição ao Sistema Internacional de Unidades.”
-            </p>
-          </div>
-        </div>
-
-        <div class="quality-policy-section mb-10">
-          <h4>Política de Qualidade para Metrologia</h4>
-          <p>
-            O INIQ compromete-se a garantir a fiabilidade e rastreabilidade das medições em Angola, alinhando-se com os padrões internacionais (BIPM, OIML) e promovendo a confiança no mercado, a proteção do consumidor e a competitividade industrial, com foco na melhoria contínua e excelência.
-          </p>
-        </div>
-      </template>
-
-      <template v-if="isSubItemSelected">
-        <template v-if="!showRequisitos && !showForm">
-          <section class="mt-12">
-            <div class="container">
-              <div class="panel-head">
-                <span class="eyebrow">Serviços</span>
-                <h2>Serviços de metrologia ao seu dispor</h2>
-              </div>
-              <div class="mserv">
-                <div class="mserv__item">
-                  <span class="chk">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
-                      <path d="M20 6 9 17l-5-5"></path>
-                    </svg>
-                  </span>
-                  <div><b>Calibração de instrumentos</b><p>Massa, volume, temperatura, pressão, dimensional e mais.</p></div>
-                </div>
-                <div class="mserv__item">
-                  <span class="chk">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
-                      <path d="M20 6 9 17l-5-5"></path>
-                    </svg>
-                  </span>
-                  <div><b>Verificação metrológica legal</b><p>Verificação inicial e periódica de instrumentos sujeitos a controlo.</p></div>
-                </div>
-                <div class="mserv__item">
-                  <span class="chk">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
-                      <path d="M20 6 9 17l-5-5"></path>
-                    </svg>
-                  </span>
-                  <div><b>Emissão de certificados</b><p>Certificados de calibração e de verificação com rastreabilidade ao SI.</p></div>
-                </div>
-                <div class="mserv__item">
-                  <span class="chk">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
-                      <path d="M20 6 9 17l-5-5"></path>
-                    </svg>
-                  </span>
-                  <div><b>Aprovação de modelo</b><p>Avaliação e aprovação de modelos de instrumentos de medição.</p></div>
-                </div>
-              </div>
-            </div>
-          </section>
-
-          <section class="mt-12">
-            <div class="container">
-              <div class="mserv-card">
-                <div class="mserv-card__header">
-                  <h3>Verificação Metrológica</h3>
-                  <p>Verificação inicial e periódica de instrumentos sujeitos a controlo metrológico legal.</p>
-                </div>
-                <div class="mserv-card__footer">
-                  <button @click="showRequisitos = true" class="btn btn--primary">
-                    Ver Requisitos
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                      <path d="M5 12h14M13 6l6 6-6 6"></path>
-                    </svg>
-                  </button>
-                </div>
-              </div>
-            </div>
-          </section>
-
-          <section class="section">
-            <div class="container">
-              <div class="cta-band">
+            <div class="mserv">
+              <div class="mserv__item">
+                <span class="chk">
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2.4"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <path d="M20 6 9 17l-5-5"></path>
+                  </svg>
+                </span>
                 <div>
-                  <h2>Precisa de calibrar ou verificar instrumentos?</h2>
-                  <p>Contacte o Laboratório Nacional de Metrologia do INIQ e solicite um orçamento para os seus equipamentos.</p>
+                  <b>Calibração de instrumentos</b>
+                  <p>
+                    Massa, volume, temperatura, pressão, dimensional e mais.
+                  </p>
                 </div>
-                <div class="cta-band__actions">
-                  <NuxtLink to="/contactos" class="btn btn--ghost">Solicitar calibração</NuxtLink>
+              </div>
+              <div class="mserv__item">
+                <span class="chk">
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2.4"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <path d="M20 6 9 17l-5-5"></path>
+                  </svg>
+                </span>
+                <div>
+                  <b>Verificação metrológica legal</b>
+                  <p>
+                    Verificação inicial e periódica de instrumentos sujeitos a
+                    controlo.
+                  </p>
+                </div>
+              </div>
+              <div class="mserv__item">
+                <span class="chk">
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2.4"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <path d="M20 6 9 17l-5-5"></path>
+                  </svg>
+                </span>
+                <div>
+                  <b>Emissão de certificados</b>
+                  <p>
+                    Certificados de calibração e de verificação com
+                    rastreabilidade ao SI.
+                  </p>
+                </div>
+              </div>
+              <div class="mserv__item">
+                <span class="chk">
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2.4"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <path d="M20 6 9 17l-5-5"></path>
+                  </svg>
+                </span>
+                <div>
+                  <b>Aprovação de modelo</b>
+                  <p>
+                    Avaliação e aprovação de modelos de instrumentos de medição.
+                  </p>
                 </div>
               </div>
             </div>
-          </section>
-        </template>
+          </div>
+        </section>
 
-        <template v-if="showRequisitos && !showForm">
-          <section class="mt-12">
-            <div class="container">
-              <div class="panel-head">
-                <span class="eyebrow">Requisitos</span>
-                <h2>Instruções para Carta ao DG</h2>
+        <section class="mt-12">
+          <div class="container">
+            <div class="mserv-card">
+              <div class="mserv-card__header">
+                <h3>Verificação Metrológica</h3>
                 <p>
-                  Elabore uma carta dirigida ao Director-Geral do INIQ solicitando a verificação metrológica dos seus instrumentos.
+                  Verificação inicial e periódica de instrumentos sujeitos a
+                  controlo metrológico legal.
                 </p>
               </div>
-
-              <div class="requisitos-list">
-                <div class="requisito-item">
-                  <span class="requisito-num">1</span>
-                  <span class="requisito-text">Identificação completa da entidade solicitante (nome, NIF, morada)</span>
-                </div>
-                <div class="requisito-item">
-                  <span class="requisito-num">2</span>
-                  <span class="requisito-text">Lista detalhada dos instrumentos de medição (tipo, modelo, número de série)</span>
-                </div>
-                <div class="requisito-item">
-                  <span class="requisito-num">3</span>
-                  <span class="requisito-text">Finalidade da verificação metrológica</span>
-                </div>
-                <div class="requisito-item">
-                  <span class="requisito-num">4</span>
-                  <span class="requisito-text">Contacto da pessoa responsável</span>
-                </div>
-              </div>
-            </div>
-          </section>
-
-          <section class="mt-12">
-            <div class="container">
-              <div class="download-section">
-                <div class="download-info">
-                  <h3>Modelo de Carta ao DG</h3>
-                  <p>Faça o download do modelo de carta para elaborar o seu pedido.</p>
-                </div>
-                <a href="/modelos/anexo-1-oficio.docx" download class="btn btn--download">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                    <polyline points="7 10 12 15 17 10"></polyline>
-                    <line x1="12" y1="15" x2="12" y2="3"></line>
-                  </svg>
-                  Baixar
-                </a>
-              </div>
-            </div>
-          </section>
-
-          <section class="mt-12">
-            <div class="container">
-              <div class="button-group">
-                <button @click="showRequisitos = false" class="btn btn--ghost">
-                  Voltar
-                </button>
-                <button @click="showForm = true; showRequisitos = false;" class="btn btn--primary">
-                  Submeter Carta ao DG
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <div class="mserv-card__footer">
+                <button @click="showRequisitos = true" class="btn btn--primary">
+                  Ver Requisitos
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2.2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
                     <path d="M5 12h14M13 6l6 6-6 6"></path>
                   </svg>
                 </button>
               </div>
             </div>
-          </section>
-        </template>
+          </div>
+        </section>
 
-        <template v-if="showForm">
-          <section class="mt-12">
-            <div class="container">
-              <div class="form-section">
-                <div class="form-header">
-                  <h3>Submeter Carta ao Director-Geral</h3>
-                  <button @click="showForm = false" class="btn btn--ghost">
-                    Voltar
-                  </button>
-                </div>
-
-                <div v-if="formSubmitted" class="success-message">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M20 6 9 17l-5-5"></path>
-                  </svg>
-                  <span><b>Carta submetida com sucesso!</b> A equipa do INIQ irá analisar o seu pedido.</span>
-                </div>
-
-                <form v-else @submit.prevent="handleSubmit" novalidate>
-                  <div class="field">
-                    <label for="carta">Carta ao Director-Geral (PDF) <span class="req">*</span></label>
-                    <div class="file-input-wrapper" :class="{ 'has-error': errors.carta }">
-                      <input
-                        ref="fileInput"
-                        type="file"
-                        id="carta"
-                        name="carta"
-                        accept=".pdf"
-                        required
-                        @change="handleFileChange($event, 'carta')"
-                      />
-                      <span class="file-label">{{ formData.carta ? formData.carta.name : 'Selecionar ficheiro PDF' }}</span>
-                    </div>
-                    <span v-if="errors.carta" class="error-message">Por favor, selecione o ficheiro da carta em formato PDF</span>
-                  </div>
-
-                  <div class="form-actions">
-                    <button type="button" @click="showForm = false" class="btn btn--ghost">
-                      Voltar
-                    </button>
-                    <button type="submit" class="btn btn--primary">
-                      Enviar Carta
-                    </button>
-                  </div>
-                </form>
+        <section class="section">
+          <div class="container">
+            <div class="cta-band">
+              <div>
+                <h2>Precisa de calibrar ou verificar instrumentos?</h2>
+                <p>
+                  Contacte o Laboratório Nacional de Metrologia do INIQ e
+                  solicite um orçamento para os seus equipamentos.
+                </p>
+              </div>
+              <div class="cta-band__actions">
+                <NuxtLink to="/contactos" class="btn btn--ghost"
+                  >Solicitar calibração</NuxtLink
+                >
               </div>
             </div>
-          </section>
-        </template>
+          </div>
+        </section>
       </template>
-    </div>
+
+      <template v-if="showRequisitos && !showForm">
+        <section class="mt-12">
+          <div class="container">
+            <div class="panel-head">
+              <span class="eyebrow">Requisitos</span>
+              <h2>Instruções para Carta ao DG</h2>
+              <p>
+                Elabore uma carta dirigida ao Director-Geral do INIQ solicitando
+                a verificação metrológica dos seus instrumentos.
+              </p>
+            </div>
+
+            <div class="requisitos-list">
+              <div class="requisito-item">
+                <span class="requisito-num">1</span>
+                <span class="requisito-text"
+                  >Identificação completa da entidade solicitante (nome, NIF,
+                  morada)</span
+                >
+              </div>
+              <div class="requisito-item">
+                <span class="requisito-num">2</span>
+                <span class="requisito-text"
+                  >Lista detalhada dos instrumentos de medição (tipo, modelo,
+                  número de série)</span
+                >
+              </div>
+              <div class="requisito-item">
+                <span class="requisito-num">3</span>
+                <span class="requisito-text"
+                  >Finalidade da verificação metrológica</span
+                >
+              </div>
+              <div class="requisito-item">
+                <span class="requisito-num">4</span>
+                <span class="requisito-text"
+                  >Contacto da pessoa responsável</span
+                >
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="mt-12">
+          <div class="container">
+            <div class="download-section">
+              <div class="download-info">
+                <h3>Modelo de Carta ao DG</h3>
+                <p>
+                  Faça o download do modelo de carta para elaborar o seu pedido.
+                </p>
+              </div>
+              <a
+                href="/modelos/anexo-1-oficio.docx"
+                download
+                class="btn btn--download"
+              >
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                  <polyline points="7 10 12 15 17 10"></polyline>
+                  <line x1="12" y1="15" x2="12" y2="3"></line>
+                </svg>
+                Baixar
+              </a>
+            </div>
+          </div>
+        </section>
+
+        <section class="mt-12">
+          <div class="container">
+            <div class="button-group">
+              <button @click="showRequisitos = false" class="btn btn--ghost">
+                Voltar
+              </button>
+              <button
+                @click=";(showForm = true), (showRequisitos = false)"
+                class="btn btn--primary"
+              >
+                Submeter Carta ao DG
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2.2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="M5 12h14M13 6l6 6-6 6"></path>
+                </svg>
+              </button>
+            </div>
+          </div>
+        </section>
+      </template>
+
+      <template v-if="showForm">
+        <section class="mt-12">
+          <div class="container">
+            <div class="form-section">
+              <div class="form-header">
+                <h3>Submeter Carta ao Director-Geral</h3>
+                <button @click="showForm = false" class="btn btn--ghost">
+                  Voltar
+                </button>
+              </div>
+
+              <div v-if="formSubmitted" class="success-message">
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2.4"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="M20 6 9 17l-5-5"></path>
+                </svg>
+                <span
+                  ><b>Carta submetida com sucesso!</b> A equipa do INIQ irá
+                  analisar o seu pedido.</span
+                >
+              </div>
+
+              <form v-else @submit.prevent="handleSubmit" novalidate>
+                <div class="field">
+                  <label for="carta"
+                    >Carta ao Director-Geral (PDF)
+                    <span class="req">*</span></label
+                  >
+                  <div
+                    class="file-input-wrapper"
+                    :class="{ 'has-error': errors.carta }"
+                  >
+                    <input
+                      ref="fileInput"
+                      type="file"
+                      id="carta"
+                      name="carta"
+                      accept=".pdf"
+                      required
+                      @change="handleFileChange($event, 'carta')"
+                    />
+                    <span class="file-label">{{
+                      formData.carta
+                        ? formData.carta.name
+                        : "Selecionar ficheiro PDF"
+                    }}</span>
+                  </div>
+                  <span v-if="errors.carta" class="error-message"
+                    >Por favor, selecione o ficheiro da carta em formato
+                    PDF</span
+                  >
+                </div>
+
+                <div class="form-actions">
+                  <button
+                    type="button"
+                    @click="showForm = false"
+                    class="btn btn--ghost"
+                  >
+                    Voltar
+                  </button>
+                  <button type="submit" class="btn btn--primary">
+                    Enviar Carta
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </section>
+      </template>
+    </template>
+  </div>
 </template>
 
 
@@ -442,7 +557,7 @@ function handleSubmit() {
 
 .requisito-num {
   flex-shrink: 0;
-  font-family: 'Archivo', system-ui, sans-serif;
+  font-family: "Archivo", system-ui, sans-serif;
   font-weight: 700;
   font-size: 1.1rem;
   color: #5cb947;
@@ -523,7 +638,7 @@ function handleSubmit() {
   transition: all 0.2s;
   cursor: pointer;
   border: none;
-  font-family: 'IBM Plex Sans', system-ui, sans-serif;
+  font-family: "IBM Plex Sans", system-ui, sans-serif;
   font-size: 1rem;
 }
 
@@ -670,7 +785,7 @@ function handleSubmit() {
   border-radius: 10px;
   background: linear-gradient(135deg, #f8fafc 0%, #eff6fc 100%);
   color: #0a3a63;
-  font-family: 'IBM Plex Sans', system-ui, sans-serif;
+  font-family: "IBM Plex Sans", system-ui, sans-serif;
   font-size: 0.9375rem;
   font-weight: 500;
   transition: all 0.2s;

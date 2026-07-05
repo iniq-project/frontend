@@ -11,7 +11,7 @@ defineProps({
   <div class="combined-card">
     <div class="dg-top">
       <div class="dg-photo-wrapper">
-        <img class="dg-photo" :src="data.image?.[0]?.url" :alt="data.name" />
+        <img class="dg-photo" :src="data?.image?.[0]?.url" :alt="data?.name" />
 
         <div class="dg-details">
           <h3>{{ data?.name }}</h3>
@@ -21,14 +21,14 @@ defineProps({
       </div>
 
       <div class="dg-message">
-        <h4>Mensagem do Director-Geral</h4>
-        <div class="message-content" v-html="data.message" />
+        <h4>{{ data?.titleresponsible }}</h4>
+        <div class="message-content" v-html="data?.message" />
       </div>
     </div>
 
     <div class="quality-policy-section">
-      <h4>Política da Qualidade</h4>
-      <div class="policy-content" v-html="data.qualityPolicy" />
+      <h4>{{ data?.titlequalityPolicy }}</h4>
+      <div class="policy-content" v-html="data?.qualityPolicy" />
     </div>
   </div>
 </template>

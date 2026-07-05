@@ -1,5 +1,4 @@
 <script setup>
-import { homeData } from "~/data/home"
 import home from "@/gql/home.gql"
 
 useHead({
@@ -20,6 +19,6 @@ const leader = computed(
 
 <template>
   <section>
-    <CustomHomeHero :data="leader" />
+    <CustomHero :data="leader" />
   </section>
 </template>

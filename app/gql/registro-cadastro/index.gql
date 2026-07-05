@@ -1,5 +1,5 @@
 query fetch {
-  queryHomeresponsibleContents {
+  queryHomeregisterContents {
     data: flatData {
       leader {
         image {

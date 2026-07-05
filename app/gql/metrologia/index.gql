@@ -1,5 +1,5 @@
 query fetch {
-  queryHomeresponsibleContents {
+  queryHomemetrologyContents {
     data: flatData {
       leader {
         image {
@@ -8,10 +8,10 @@ query fetch {
         name
         position
         phoneNumber
-        titleresponsible
-       message
-       titlequalityPolicy
-       qualityPolicy
+      titleresponsible
+      message
+      titlequalityPolicy
+      qualityPolicy
       }
     }
   }
