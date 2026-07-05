@@ -1,4 +1,4 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 import { ref, computed, watch, onMounted } from "vue"
 import { useRoute, useRouter } from "vue-router"
 import { services, type Service } from "~/data/services"
@@ -11,7 +11,7 @@ const activeServiceId = ref<string | null>(null)
 const activeSubItemId = ref<string | null>(null)
 const showSubItems = ref(false)
 
-const emit = defineEmits(["select-service", "select-subitem"])
+const emit = defineEmits(["select-service", "select-subitem", "close"])
 
 const selectService = (service: Service) => {
   if (service.disabled) return
@@ -23,6 +23,7 @@ const selectService = (service: Service) => {
 
   activeSubItemId.value = null
   emit("select-service", service.id)
+  emit("close")
 }
 
 const goBackToServices = () => {
@@ -34,6 +35,7 @@ const goBackToServices = () => {
 const selectSubItem = (serviceId: string, subItemId: string) => {
   activeSubItemId.value = subItemId
   emit("select-subitem", serviceId, subItemId)
+  emit("close")
 }
 
 const goHome = () => {
@@ -98,6 +100,11 @@ watch(
 
 <template>
   <aside class="sidebar-right">
+    <button class="drawer-close" @click="emit('close')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+        <path d="M18 6L6 18M6 6l12 12" />
+      </svg>
+    </button>
     <NuxtLink v-if="!isHomePage && !showSubItems" to="/" class="back-btn" @click="goHome">← Voltar à Página Inicial
     </NuxtLink>
     <h2>Serviços e Processos</h2>
@@ -125,7 +132,7 @@ watch(
       </template>
     </nav>
     <div class="area-reservada-wrapper">
-      <a href="https://reliable-haupia-87ded0.netlify.app/admin" target="_blank" rel="noopener noreferrer"
+      <a href="https://backoffice-iniq.netlify.app/login" target="_blank" rel="noopener noreferrer"
         class="area-reservada">
         Área Reservada
       </a>

@@ -1,5 +1,5 @@
-<script setup>
-import { provide, ref, watch, computed } from 'vue'
+﻿<script setup>
+import { provide, ref, watch, computed } from "vue"
 import quemSomos from "@/gql/quem-somos.gql"
 import parceiros from "@/gql/parceiros.gql"
  
@@ -12,6 +12,15 @@ const partnerInfo = computed(() => partnerData.value?.data.queryPartnerContents?
 
 const route = useRoute()
 const activeSubItemId = ref(null)
+const menuOpen = ref(false)
+
+const toggleMenu = () => {
+  menuOpen.value = !menuOpen.value
+}
+
+const closeMenu = () => {
+  menuOpen.value = false
+}
 
 const handleSelectService = (serviceId) => {
   activeSubItemId.value = null
@@ -24,7 +33,7 @@ const handleSelectSubItem = (serviceId, subItemId) => {
 watch(
   () => route.path,
   (newPath) => {
-    if (newPath === '/') {
+    if (newPath === "/") {
       activeSubItemId.value = null
     }
   }
@@ -39,7 +48,7 @@ onMounted(() => {
 });
 
 
-provide('activeSubItemId', activeSubItemId)
+provide("activeSubItemId", activeSubItemId)
 </script>
 
 <template>
@@ -60,8 +69,8 @@ provide('activeSubItemId', activeSubItemId)
       <main class="center-content">
         <slot />
       </main>
-      <UiNavigatorBarComponent class="sidebar-right" @select-service="handleSelectService"
-        @select-subitem="handleSelectSubItem" />
+      <UiNavigatorBarComponent class="sidebar-right" :class="{ open: menuOpen }" @select-service="handleSelectService"
+        @select-subitem="handleSelectSubItem" @close="closeMenu" />
       <div class="carousel-spacer"></div>
       <div class="partner-carousel-wrapper">
         <UiPartnerCarousel :data="partnerInfo" />
