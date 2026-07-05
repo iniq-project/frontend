@@ -30,19 +30,29 @@ watch(
   }
 )
 
+
+let loader = ref(true);
+onMounted(() => {
+  setTimeout(() => {
+    loader.value = false;
+  }, 3000);
+});
+
+
 provide('activeSubItemId', activeSubItemId)
 </script>
 
 <template>
-  <div class="new-layout">
+  <UiLoaderComponent v-if="loader" />
+  <div v-show="!loader" class="new-layout">
     <UiHeaderComponent @toggle-menu="toggleMenu" :menu-open="menuOpen" />
     <div class="mobile-overlay" :class="{ open: menuOpen }" aria-hidden="true" @click="closeMenu" />
     <div class="main-container">
       <UiSideBarComponent :data="aboutInfo" class="sidebar-left">
-        <template #eyebrow">
+        <template #eyebrow>
           <slot name="sidebar-eyebrow" />
         </template>
-        <template #title">
+        <template #title>
           <slot name="sidebar-title" />
         </template>
         <slot name="sidebar-content" />
