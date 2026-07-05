@@ -99,7 +99,6 @@ export const services: Service[] = [
   {
     id: "premio-qualidade",
     number: "08",
-    disabled: true,
     title: "Prémio Nacional da Qualidade",
     subItems: [
       { id: "solicitar-servico", number: "01", title: "Solicitar Serviço" }
