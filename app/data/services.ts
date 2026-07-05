@@ -29,8 +29,18 @@ export const services: Service[] = [
     number: "01",
     title: "Normalização",
     subItems: [
-      { id: "venda-normas", number: "01", title: "Venda de Normas" },
-      { id: "consulta-publica", number: "02", title: "Projectos em Consulta Pública" }
+      { id: "comissao-tecnica", number: "01", title: "Comissão Técnica" },
+      { id: "venda-normas", number: "02", title: "Venda de Normas" },
+      { id: "consulta-publica", number: "03", title: "Projectos em Consulta Pública" },
+      { id: "catalogo-livro", number: "04", title: "Catálogo de Livros Segulares" }
+    ],
+  },
+  {
+    id: "metrologia",
+    number: "02",
+    title: "Metrologia",
+    subItems: [
+      { id: "solicitar-servico", number: "01", title: "Solicitar Serviço" }
     ],
   },
   {
@@ -41,74 +51,109 @@ export const services: Service[] = [
       { id: "solicitar-servico", number: "01", title: "Ver Requisitos" }
     ]
   },
-  {
-    id: "certificacao",
+    {
+    id: "registo-cadastro",
     number: "03",
-    title: "Certificação",
+    title: "Registo, Cadastro e Acreditação",
+    subItems: [
+      { id: "solicitar-servico", number: "01", title: "Registos e Cadastros" },
+      { id: "acreditacao", number: "02", title: "Acreditação" }
+    ]
+  },
+    {
+    id: "importacao",
+    number: "04",
     disabled: true,
+    title: "Validação, Verificação e Certificação de Produtos e Serviços",
     subItems: [
       { id: "solicitar-servico", number: "01", title: "Solicitar Serviço" }
-    ],
+    ]
   },
-  {
-    id: "acreditacao",
-    number: "04",
-    title: "Acreditação",
+{
+    id: "formacao",
+    number: "05",
     disabled: true,
+    title: "Formação e Certificação de Especialistas para Qualidade",
+    subItems: [
+      { id: "solicitar-servico", number: "01", title: "Solicitar Curso" }
+    ]
+  },
+
+  {
+    id: "rotulos",
+    number: "06",
+    disabled: true,
+    title: "Validação e Certificação de Conformidade de Rótulos e Embalagens",
     subItems: [
       { id: "solicitar-servico", number: "01", title: "Solicitar Serviço" }
     ]
   },
    {
     id: "regulamentos",
-    number: "05",
+    number: "07",
     title: "Regulamentos Técnicos",
+    subItems: [
+      { id: "solicitar-servico", number: "01", title: "Solicitar Serviço" }
+    ]
+  },
+  {
+    id: "premio-qualidade",
+    number: "08",
     disabled: true,
+    title: "Prémio Nacional da Qualidade",
     subItems: [
       { id: "solicitar-servico", number: "01", title: "Solicitar Serviço" }
     ]
   },
     {
-    id: "registo-cadastro",
-    number: "06",
-    title: "Registo e Cadastro",
-    subItems: [
-      { id: "solicitar-servico", number: "01", title: "Ver Requisitos" }
-    ]
-  },
-  {
-    id: "metrologia",
-    number: "07",
-    title: "Metrologia",
+    id: "eventos",
+    number: "09",
+    disabled: true,
+    title: "Eventos",
     subItems: [
       { id: "solicitar-servico", number: "01", title: "Solicitar Serviço" }
-    ],
-  },
+    ]
+  }
+
+
+
+
+
+
+
 
   // {
-  //   id: "importacao",
+  //   id: "certificacao",
+  //   number: "03",
+  //   title: "Certificação",
+  //   disabled: true,
+  //   subItems: [
+  //     { id: "solicitar-servico", number: "01", title: "Solicitar Serviço" }
+  //   ],
+  // },
+  // {
+  //   id: "acreditacao",
   //   number: "04",
-  //   title: "Validação, Verificação e Certificação de Produtos a Importar",
+  //   title: "Acreditação",
+  //   disabled: true,
   //   subItems: [
   //     { id: "solicitar-servico", number: "01", title: "Solicitar Serviço" }
   //   ]
   // },
-  // {
-  //   id: "formacao",
-  //   number: "05",
-  //   title: "Formação e Qualificação em Qualidade",
-  //   subItems: [
-  //     { id: "solicitar-servico", number: "01", title: "Solicitar Curso" }
-  //   ]
-  // },
-  // {
-  //   id: "rotulos",
+  
+  //   {
+  //   id: "registo-cadastro",
   //   number: "06",
-  //   title: "Conformidade de Rótulos e Embalagens",
+  //   title: "Registo e Cadastro",
   //   subItems: [
-  //     { id: "solicitar-servico", number: "01", title: "Solicitar Serviço" }
+  //     { id: "solicitar-servico", number: "01", title: "Ver Requisitos" }
   //   ]
   // },
+  
+
+
+  
+  
   // {
   //   id: "regulamentos",
   //   number: "07",
