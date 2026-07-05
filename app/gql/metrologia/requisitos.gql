@@ -1,7 +1,7 @@
 query fetch {
-  queryRequirementregisterContents {
+  queryRequirementmetrologyContents {
     data: flatData {
-    requirement {
+    rules {
       title
       description
       rules {

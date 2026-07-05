@@ -1,6 +1,11 @@
 <script setup lang="ts">
-import { inject, watch, ref, nextTick } from "vue"
+import { inject, watch, ref, computed } from "vue"
 import home from "@/gql/metrologia/index.gql"
+import requisitosQuery from "@/gql/metrologia/requisitos.gql"
+import servicosQuery from "@/gql/metrologia/servicos.gql"
+import Requisitos from "@/components/custom/Requisitos.vue"
+import ServicosMetrologia from "@/components/custom/metrologia/ServicosMetrologia.vue"
+import MetrologiaForm from "@/components/custom/metrologia/MetrologiaForm.vue"
 
 definePageMeta({
   layout: "default",
@@ -11,37 +16,61 @@ useHead({
 })
 
 const { query } = useSquidex()
-const data = await query(home, { key: "home" })
+const data = await query(home, { key: "metrologia-home" })
+const requisitosData = await query(requisitosQuery, { key: "metrologia-requisitos" })
+const servicosData = await query(servicosQuery, { key: "metrologia-servicos" })
 
 const leader = computed(
   () => data.value?.data.queryHomemetrologyContents?.[0]?.data?.leader,
 )
+
+// Requisitos data
+const requisitosContent = computed(() => {
+  const result = requisitosData.value?.data?.queryRequirementmetrologyContents?.[0]?.data?.rules
+  return result
+})
+const requisitosTitle = computed(() => requisitosContent.value?.title)
+const requisitosDescription = computed(() => requisitosContent.value?.description)
+const requisitosList = computed(() => {
+  const rules = requisitosContent.value?.rules || []
+  return rules.map((rule: any, index: number) => ({
+    num: index + 1,
+    text: rule?.title
+  }))
+})
+const downloadInfo = computed(() => {
+  const model = requisitosContent.value?.model?.[0]
+  if (!model) return null
+  return {
+    title: model.title,
+    description: model.description,
+    link: model.url?.[0]?.url,
+    buttonText: "Baixar"
+  }
+})
+
+// Servicos data
+const servicosContent = computed(() => {
+  return servicosData.value?.data?.queryServicesmetrologyContents?.[0]?.data
+})
+const servicosTitle = computed(() => servicosContent.value?.title)
+const servicosList = computed(() => servicosContent.value?.services || [])
+const servicosCardTitle = computed(() => servicosContent.value?.cardTitle)
+const servicosCardDescription = computed(() => servicosContent.value?.cardDescription)
+const servicosCtaTitle = computed(() => servicosContent.value?.ctaTitle)
+const servicosCtaDescription = computed(() => servicosContent.value?.ctaDescription)
+const servicosCtaButtonText = computed(() => servicosContent.value?.ctaButtonText)
+const servicosRequisitosButtonText = computed(() => servicosContent.value?.requisitosButtonText)
 
 const activeSubItemId = inject("activeSubItemId")
 
 const isSubItemSelected = ref(false)
 const showRequisitos = ref(false)
 const showForm = ref(false)
-const formSubmitted = ref(false)
-const errors = ref<Record<string, boolean>>({})
 
-const fileInput = ref<HTMLInputElement | null>(null)
-
-const formData = ref({
-  carta: null as File | null,
-})
-
-watch(showForm, async (newValue) => {
-  if (newValue) {
-    await nextTick()
-    if (fileInput.value) {
-      const formSection = document.querySelector(".form-section") as HTMLElement
-      if (formSection) {
-        formSection.scrollIntoView({ behavior: "smooth", block: "start" })
-      }
-    }
-  }
-})
+function handleFormSubmit(formData: any) {
+  console.log("Form submitted with data:", formData)
+}
 
 if (activeSubItemId) {
   watch(
@@ -51,56 +80,6 @@ if (activeSubItemId) {
     },
     { immediate: true },
   )
-}
-
-function handleFileChange(event: Event, docKey: keyof typeof formData) {
-  const target = event.target as HTMLInputElement
-  if (target.files && target.files.length > 0) {
-    formData.value[docKey] = target.files[0]
-    if (errors.value[docKey]) {
-      errors.value[docKey] = false
-    }
-  }
-}
-
-function validateForm(): boolean {
-  const newErrors: Record<string, boolean> = {}
-
-  if (!formData.value.carta) {
-    newErrors.carta = true
-  }
-
-  errors.value = newErrors
-
-  if (Object.keys(newErrors).length > 0) {
-    const firstErrorField = Object.keys(newErrors)[0]
-    const fieldElement = document.querySelector(
-      `[name="${firstErrorField}"]`,
-    ) as HTMLElement
-    if (fieldElement) {
-      fieldElement.scrollIntoView({ behavior: "smooth", block: "center" })
-      fieldElement.focus()
-    }
-    return false
-  }
-
-  return true
-}
-
-function handleSubmit() {
-  if (!validateForm()) {
-    return
-  }
-
-  formSubmitted.value = true
-  setTimeout(() => {
-    formSubmitted.value = false
-    showForm.value = false
-    formData.value = {
-      carta: null,
-    }
-    errors.value = {}
-  }, 3000)
 }
 </script>
 
@@ -112,330 +91,48 @@ function handleSubmit() {
 
     <template v-if="isSubItemSelected">
       <template v-if="!showRequisitos && !showForm">
-        <section class="mt-12">
-          <div class="container">
-            <div class="panel-head">
-              <span class="eyebrow">Serviços</span>
-              <h2>Serviços de metrologia ao seu dispor</h2>
-            </div>
-            <div class="mserv">
-              <div class="mserv__item">
-                <span class="chk">
-                  <svg
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2.4"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  >
-                    <path d="M20 6 9 17l-5-5"></path>
-                  </svg>
-                </span>
-                <div>
-                  <b>Calibração de instrumentos</b>
-                  <p>
-                    Massa, volume, temperatura, pressão, dimensional e mais.
-                  </p>
-                </div>
-              </div>
-              <div class="mserv__item">
-                <span class="chk">
-                  <svg
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2.4"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  >
-                    <path d="M20 6 9 17l-5-5"></path>
-                  </svg>
-                </span>
-                <div>
-                  <b>Verificação metrológica legal</b>
-                  <p>
-                    Verificação inicial e periódica de instrumentos sujeitos a
-                    controlo.
-                  </p>
-                </div>
-              </div>
-              <div class="mserv__item">
-                <span class="chk">
-                  <svg
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2.4"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  >
-                    <path d="M20 6 9 17l-5-5"></path>
-                  </svg>
-                </span>
-                <div>
-                  <b>Emissão de certificados</b>
-                  <p>
-                    Certificados de calibração e de verificação com
-                    rastreabilidade ao SI.
-                  </p>
-                </div>
-              </div>
-              <div class="mserv__item">
-                <span class="chk">
-                  <svg
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2.4"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  >
-                    <path d="M20 6 9 17l-5-5"></path>
-                  </svg>
-                </span>
-                <div>
-                  <b>Aprovação de modelo</b>
-                  <p>
-                    Avaliação e aprovação de modelos de instrumentos de medição.
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section class="mt-12">
-          <div class="container">
-            <div class="mserv-card">
-              <div class="mserv-card__header">
-                <h3>Verificação Metrológica</h3>
-                <p>
-                  Verificação inicial e periódica de instrumentos sujeitos a
-                  controlo metrológico legal.
-                </p>
-              </div>
-              <div class="mserv-card__footer">
-                <button @click="showRequisitos = true" class="btn btn--primary">
-                  Ver Requisitos
-                  <svg
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2.2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  >
-                    <path d="M5 12h14M13 6l6 6-6 6"></path>
-                  </svg>
-                </button>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section class="section">
-          <div class="container">
-            <div class="cta-band">
-              <div>
-                <h2>Precisa de calibrar ou verificar instrumentos?</h2>
-                <p>
-                  Contacte o Laboratório Nacional de Metrologia do INIQ e
-                  solicite um orçamento para os seus equipamentos.
-                </p>
-              </div>
-              <div class="cta-band__actions">
-                <NuxtLink to="/contactos" class="btn btn--ghost"
-                  >Solicitar calibração</NuxtLink
-                >
-              </div>
-            </div>
-          </div>
-        </section>
+        <ServicosMetrologia
+          :title="servicosTitle"
+          :services="servicosList"
+          :card-title="servicosCardTitle"
+          :card-description="servicosCardDescription"
+          :cta-title="servicosCtaTitle"
+          :cta-description="servicosCtaDescription"
+          :cta-button-text="servicosCtaButtonText"
+          :requisitos-button-text="servicosRequisitosButtonText"
+          @ver-requisitos="showRequisitos = true"
+        />
       </template>
 
       <template v-if="showRequisitos && !showForm">
-        <section class="mt-12">
-          <div class="container">
-            <div class="panel-head">
-              <span class="eyebrow">Requisitos</span>
-              <h2>Instruções para Carta ao DG</h2>
-              <p>
-                Elabore uma carta dirigida ao Director-Geral do INIQ solicitando
-                a verificação metrológica dos seus instrumentos.
-              </p>
-            </div>
-
-            <div class="requisitos-list">
-              <div class="requisito-item">
-                <span class="requisito-num">1</span>
-                <span class="requisito-text"
-                  >Identificação completa da entidade solicitante (nome, NIF,
-                  morada)</span
-                >
-              </div>
-              <div class="requisito-item">
-                <span class="requisito-num">2</span>
-                <span class="requisito-text"
-                  >Lista detalhada dos instrumentos de medição (tipo, modelo,
-                  número de série)</span
-                >
-              </div>
-              <div class="requisito-item">
-                <span class="requisito-num">3</span>
-                <span class="requisito-text"
-                  >Finalidade da verificação metrológica</span
-                >
-              </div>
-              <div class="requisito-item">
-                <span class="requisito-num">4</span>
-                <span class="requisito-text"
-                  >Contacto da pessoa responsável</span
-                >
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section class="mt-12">
-          <div class="container">
-            <div class="download-section">
-              <div class="download-info">
-                <h3>Modelo de Carta ao DG</h3>
-                <p>
-                  Faça o download do modelo de carta para elaborar o seu pedido.
-                </p>
-              </div>
-              <a
-                href="/modelos/anexo-1-oficio.docx"
-                download
-                class="btn btn--download"
-              >
-                <svg
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                >
-                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                  <polyline points="7 10 12 15 17 10"></polyline>
-                  <line x1="12" y1="15" x2="12" y2="3"></line>
-                </svg>
-                Baixar
-              </a>
-            </div>
-          </div>
-        </section>
-
+        <Requisitos
+          :requisitos="requisitosList"
+          :download-info="downloadInfo"
+          :title="requisitosTitle"
+          :description="requisitosDescription"
+          :show-submit-button="true"
+          submit-button-text="Submeter Carta ao DG"
+          @submit="(showForm = true), (showRequisitos = false)"
+        />
         <section class="mt-12">
           <div class="container">
             <div class="button-group">
               <button @click="showRequisitos = false" class="btn btn--ghost">
                 Voltar
               </button>
-              <button
-                @click=";(showForm = true), (showRequisitos = false)"
-                class="btn btn--primary"
-              >
-                Submeter Carta ao DG
-                <svg
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2.2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                >
-                  <path d="M5 12h14M13 6l6 6-6 6"></path>
-                </svg>
-              </button>
             </div>
           </div>
         </section>
       </template>
 
-      <template v-if="showForm">
-        <section class="mt-12">
-          <div class="container">
-            <div class="form-section">
-              <div class="form-header">
-                <h3>Submeter Carta ao Director-Geral</h3>
-                <button @click="showForm = false" class="btn btn--ghost">
-                  Voltar
-                </button>
-              </div>
-
-              <div v-if="formSubmitted" class="success-message">
-                <svg
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2.4"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                >
-                  <path d="M20 6 9 17l-5-5"></path>
-                </svg>
-                <span
-                  ><b>Carta submetida com sucesso!</b> A equipa do INIQ irá
-                  analisar o seu pedido.</span
-                >
-              </div>
-
-              <form v-else @submit.prevent="handleSubmit" novalidate>
-                <div class="field">
-                  <label for="carta"
-                    >Carta ao Director-Geral (PDF)
-                    <span class="req">*</span></label
-                  >
-                  <div
-                    class="file-input-wrapper"
-                    :class="{ 'has-error': errors.carta }"
-                  >
-                    <input
-                      ref="fileInput"
-                      type="file"
-                      id="carta"
-                      name="carta"
-                      accept=".pdf"
-                      required
-                      @change="handleFileChange($event, 'carta')"
-                    />
-                    <span class="file-label">{{
-                      formData.carta
-                        ? formData.carta.name
-                        : "Selecionar ficheiro PDF"
-                    }}</span>
-                  </div>
-                  <span v-if="errors.carta" class="error-message"
-                    >Por favor, selecione o ficheiro da carta em formato
-                    PDF</span
-                  >
-                </div>
-
-                <div class="form-actions">
-                  <button
-                    type="button"
-                    @click="showForm = false"
-                    class="btn btn--ghost"
-                  >
-                    Voltar
-                  </button>
-                  <button type="submit" class="btn btn--primary">
-                    Enviar Carta
-                  </button>
-                </div>
-              </form>
-            </div>
-          </div>
-        </section>
-      </template>
+      <MetrologiaForm
+        :show="showForm"
+        @close="showForm = false"
+        @submit="handleFormSubmit"
+      />
     </template>
   </div>
 </template>
-
 
 <style scoped>
 .combined-card {
@@ -446,185 +143,19 @@ function handleSubmit() {
   z-index: 1;
 }
 
-.dg-top {
-  display: grid;
-  grid-template-columns: 300px 1fr;
-  gap: 2rem;
-  padding: 2rem 2rem 1.5rem 2rem;
-  border-bottom: 1px solid #e6eff6;
+.mt-12 {
+  margin-top: 3rem;
 }
 
-.dg-photo-wrapper {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-  align-items: flex-start;
+.container {
+  padding: 0 2rem 2rem 2rem;
 }
 
-.dg-photo {
-  width: 150px;
-  height: 150px;
-  border-radius: 10px;
-  object-fit: cover;
-  border: 3px solid #5cb947;
-  box-shadow: 0 4px 10px rgba(92, 185, 71, 0.15);
-}
-
-.dg-details {
-  display: flex;
-  flex-direction: column;
-  gap: 0.35rem;
-  align-items: flex-start;
-}
-
-.dg-details h3 {
-  margin: 0;
-  font-size: 1.35rem;
-  color: #0a3a63;
-  font-weight: 700;
-}
-
-.dg-details .role {
-  margin: 0;
-  font-size: 1rem;
-  color: #5cb947;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.03em;
-}
-
-.dg-message {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-  justify-content: flex-start;
-}
-
-.dg-message h4 {
-  margin: 0;
-  font-size: 1.35rem;
-  color: #0a3a63;
-  font-weight: 700;
-  border-left: 4px solid #5cb947;
-  padding-left: 0.75rem;
-}
-
-.dg-message p {
-  margin: 0;
-  font-size: 1.15rem;
-  color: #334155;
-  line-height: 1.7;
-  font-style: italic;
-  font-weight: 500;
-}
-
-.quality-policy-section {
-  padding: 1.5rem 2rem 0 2rem;
-  border-top: 1px solid #e6eff6;
-}
-
-.quality-policy-section h4 {
-  margin: 0 0 1rem 0;
-  font-size: 1.35rem;
-  color: #0a3a63;
-  font-weight: 700;
-  border-left: 4px solid #2ba9e0;
-  padding-left: 0.75rem;
-}
-
-.quality-policy-section p {
-  margin: 0;
-  font-size: 1.15rem;
-  color: #475569;
-  line-height: 1.8;
-}
-
-.requisitos-list {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.requisito-item {
+.button-group {
   display: flex;
   gap: 1rem;
-  padding: 1.25rem;
-  background: #f8fafc;
-  border: 1px solid #e6eff6;
-  border-radius: 10px;
-  align-items: center;
-}
-
-.requisito-num {
-  flex-shrink: 0;
-  font-family: "Archivo", system-ui, sans-serif;
-  font-weight: 700;
-  font-size: 1.1rem;
-  color: #5cb947;
-  background: white;
-  padding: 0.5rem 1rem;
-  border-radius: 8px;
-  border: 1px solid #e6eff6;
-}
-
-.requisito-text {
-  font-size: 1rem;
-  color: #0a3a63;
-  font-weight: 500;
-}
-
-.mserv-card {
-  background: #f8fafc;
-  border: 1px solid #e6eff6;
-  border-radius: 12px;
-  padding: 2rem;
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-}
-
-.mserv-card__header h3 {
-  margin: 0 0 0.5rem 0;
-  font-size: 1.4rem;
-  color: #0a3a63;
-  font-weight: 700;
-}
-
-.mserv-card__header p {
-  margin: 0;
-  color: #475569;
-  font-size: 1rem;
-}
-
-.mserv-card__footer {
-  display: flex;
   justify-content: flex-end;
-}
-
-.download-section {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: linear-gradient(135deg, #eff6fc 0%, #e6f3f9 50%, #f0f7f2 100%);
-  border-radius: 16px;
-  padding: 2.5rem 2rem;
-  gap: 2rem;
   flex-wrap: wrap;
-  box-shadow: 0 4px 16px rgba(10, 58, 99, 0.06);
-  border: 1px solid #e6eff6;
-}
-
-.download-info h3 {
-  margin: 0 0 0.5rem 0;
-  font-size: 1.4rem;
-  color: #0a3a63;
-  font-weight: 700;
-}
-
-.download-info p {
-  margin: 0;
-  color: #475569;
-  font-size: 1rem;
 }
 
 .btn {
@@ -642,42 +173,6 @@ function handleSubmit() {
   font-size: 1rem;
 }
 
-.btn--primary {
-  background: #0a3a63;
-  color: white;
-}
-
-.btn--primary:hover {
-  background: #082e4f;
-  transform: translateY(-1px);
-}
-
-.btn--download {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  padding: 1rem 1.75rem;
-  border-radius: 12px;
-  font-weight: 700;
-  text-decoration: none;
-  transition: all 0.2s;
-  cursor: pointer;
-  background: linear-gradient(135deg, #5cb947, #2ba9e0);
-  color: white;
-  border: none;
-  box-shadow: 0 4px 12px rgba(92, 185, 71, 0.2);
-}
-
-.btn--download:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(92, 185, 71, 0.3);
-}
-
-.btn--download svg {
-  width: 22px;
-  height: 22px;
-}
-
 .btn--ghost {
   background: white;
   color: #0a3a63;
@@ -687,266 +182,5 @@ function handleSubmit() {
 .btn--ghost:hover {
   background: #f8fafc;
   border-color: #2ba9e0;
-}
-
-.button-group {
-  display: flex;
-  gap: 1rem;
-  justify-content: flex-end;
-  flex-wrap: wrap;
-}
-
-.form-section {
-  margin-top: 2rem;
-  background: white;
-  border: 1px solid #e6eff6;
-  border-radius: 16px;
-  padding: 2.5rem;
-  box-shadow: 0 8px 32px rgba(10, 58, 99, 0.08);
-}
-
-.form-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 2rem;
-  padding-bottom: 1.5rem;
-  border-bottom: 2px solid #f0f7f2;
-}
-
-.form-header h3 {
-  margin: 0;
-  font-size: 1.5rem;
-  color: #0a3a63;
-  font-weight: 700;
-}
-
-.success-message {
-  display: flex;
-  gap: 1rem;
-  align-items: flex-start;
-  padding: 1.5rem;
-  background: rgba(92, 185, 71, 0.1);
-  border-radius: 10px;
-  color: #2e7d32;
-}
-
-.success-message svg {
-  width: 2rem;
-  height: 2rem;
-  flex: none;
-}
-
-.success-message b {
-  display: block;
-  font-size: 1.1rem;
-}
-
-.field {
-  margin-bottom: 1.25rem;
-}
-
-.field label {
-  display: block;
-  font-weight: 600;
-  font-size: 0.875rem;
-  margin-bottom: 0.6rem;
-  color: #0a3a63;
-}
-
-.field label .req {
-  color: #c0392b;
-}
-
-.file-input-wrapper {
-  position: relative;
-  width: 100%;
-}
-
-.file-input-wrapper input[type="file"] {
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  opacity: 0;
-  cursor: pointer;
-  z-index: 10;
-}
-
-.file-input-wrapper .file-label {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.75rem;
-  width: 100%;
-  padding: 0.9rem 1rem;
-  border: 2px dashed #cfe0ee;
-  border-radius: 10px;
-  background: linear-gradient(135deg, #f8fafc 0%, #eff6fc 100%);
-  color: #0a3a63;
-  font-family: "IBM Plex Sans", system-ui, sans-serif;
-  font-size: 0.9375rem;
-  font-weight: 500;
-  transition: all 0.2s;
-}
-
-.file-input-wrapper:hover .file-label {
-  border-color: #2ba9e0;
-  background: linear-gradient(135deg, #eff6fc 0%, #e6f3f9 100%);
-  transform: translateY(-1px);
-}
-
-.file-input-wrapper .file-label::before {
-  content: "";
-  display: inline-block;
-  width: 20px;
-  height: 20px;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%232ba9e0'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12' /%3E%3C/svg%3E");
-  background-size: contain;
-  background-repeat: no-repeat;
-}
-
-.file-input-wrapper.has-error .file-label {
-  border-color: #c0392b;
-  background: rgba(192, 57, 43, 0.05);
-}
-
-.error-message {
-  display: block;
-  margin-top: 0.5rem;
-  font-size: 0.875rem;
-  color: #c0392b;
-  font-weight: 500;
-}
-
-.form-actions {
-  display: flex;
-  gap: 1rem;
-  justify-content: flex-end;
-  margin-top: 1.5rem;
-  flex-wrap: wrap;
-}
-
-.panel-head {
-  margin-bottom: 1.5rem;
-}
-
-.panel-head .eyebrow {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-family: monospace;
-  font-size: 0.75rem;
-  text-transform: uppercase;
-  letter-spacing: 0.15em;
-  color: #2ba9e0;
-  margin-bottom: 0.5rem;
-  margin-top: 0;
-}
-
-.panel-head .eyebrow::before {
-  content: "";
-  width: 20px;
-  height: 2px;
-  background: linear-gradient(90deg, #5cb947, #2ba9e0);
-}
-
-.panel-head h2 {
-  font-size: 1.5rem;
-  color: #0a3a63;
-  margin: 0 0 0.5rem 0;
-  font-weight: 700;
-}
-
-.panel-head p {
-  margin: 0;
-  color: #475569;
-  font-size: 1rem;
-  line-height: 1.6;
-}
-
-.mt-12 {
-  margin-top: 3rem;
-}
-
-.container {
-  padding: 0 2rem 2rem 2rem;
-}
-
-.section {
-  padding-top: 2rem;
-}
-
-.cta-band {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: linear-gradient(135deg, #0a3a63, #1a4a73);
-  border-radius: 12px;
-  padding: 2rem;
-  gap: 2rem;
-  flex-wrap: wrap;
-}
-
-.cta-band h2 {
-  margin: 0 0 0.5rem 0;
-  color: white;
-  font-size: 1.5rem;
-  font-weight: 700;
-}
-
-.cta-band p {
-  margin: 0;
-  color: rgba(255, 255, 255, 0.9);
-  font-size: 1rem;
-}
-
-.cta-band__actions {
-  display: flex;
-  gap: 1rem;
-  position: relative;
-  z-index: 3;
-}
-
-.mserv {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 1.25rem;
-}
-
-.mserv__item {
-  background: white;
-  border: 1px solid #e6eff6;
-  border-radius: 10px;
-  padding: 1.5rem;
-  display: flex;
-  gap: 1rem;
-  align-items: flex-start;
-}
-
-.mserv__item .chk {
-  flex-shrink: 0;
-  width: 36px;
-  height: 36px;
-  border-radius: 8px;
-  background: linear-gradient(135deg, #eff6fc 0%, #f0f7f2 100%);
-  display: grid;
-  place-items: center;
-  color: #5cb947;
-}
-
-.mserv__item div b {
-  display: block;
-  color: #0a3a63;
-  font-size: 1.1rem;
-  margin-bottom: 0.35rem;
-}
-
-.mserv__item div p {
-  margin: 0;
-  color: #475569;
-  font-size: 0.95rem;
-  line-height: 1.5;
 }
 </style>

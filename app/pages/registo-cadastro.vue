@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { inject, watch, ref, nextTick } from "vue"
 import home from "@/gql/registro-cadastro/index.gql"
+import requisitosQuery from "@/gql/registro-cadastro/requisitos.gql"
+import Requisitos from "@/components/custom/Requisitos.vue"
 import type { DocumentsType } from "~/constants/document-requirements"
 import { flattenDocumentSlots } from "~/constants/document-requirements"
 
@@ -19,12 +21,36 @@ const leader = computed(
   () => data.value?.data.queryHomeregisterContents?.[0]?.data?.leader,
 )
 
+const requisitosData = await query(requisitosQuery, { key: "queryRequirementregisterContents" })
+const requisitosContent = computed(() => {
+  const result = requisitosData.value?.data?.queryRequirementregisterContents?.[0]?.data?.requirement
+  return result
+})
+const requisitosTitle = computed(() => requisitosContent.value?.title)
+const requisitosDescription = computed(() => requisitosContent.value?.description)
+const requisitosList = computed(() => {
+  const rules = requisitosContent.value?.rules || []
+  return rules.map((rule: any, index: number) => ({
+    num: index + 1,
+    text: rule?.title
+  }))
+})
+const downloadInfo = computed(() => {
+  const model = requisitosContent.value?.model?.[0]
+  if (!model) return null
+  return {
+    title: model.title,
+    description: model.description,
+    link: model.url?.[0]?.url,
+    buttonText: "Baixar"
+  }
+})
+
+
 const documentSlots = flattenDocumentSlots("REGISTO_CADASTRO")
 
-// Inject active sub-item from layout
 const activeSubItemId = inject("activeSubItemId")
 
-// Track if sub-item is selected
 const isSubItemSelected = ref(false)
 const showForm = ref(false)
 const formSubmitted = ref(false)
@@ -33,10 +59,8 @@ const submitError = ref("")
 const referenceNumber = ref("")
 const errors = ref<Record<string, boolean>>({})
 
-// Ref for first input
 const nomeInput = ref<HTMLInputElement | null>(null)
 
-// Form data
 const formData = ref({
   nome: "",
   email: "",
@@ -68,7 +92,6 @@ watch(showForm, async (newValue) => {
       if (formSection) {
         formSection.scrollIntoView({ behavior: "smooth", block: "start" })
       }
-      // Small delay to let the section scroll, then focus
       setTimeout(() => {
         nomeInput.value?.focus()
       }, 300)
@@ -197,102 +220,14 @@ function handleBackFromForm() {
 
     <template v-if="isSubItemSelected">
       <template v-if="!showForm">
-        <section class="mt-12">
-          <div class="container">
-            <div class="panel-head">
-              <span class="eyebrow">Requisitos</span>
-              <h2>Documentação Necessária</h2>
-              <p>
-                Lista de documentos que deverá preparar para submeter o seu
-                pedido de registo e cadastro.
-              </p>
-            </div>
-
-            <div class="requisitos-list">
-              <div class="requisito-item">
-                <span class="requisito-num">1</span>
-                <span class="requisito-text"
-                  >Ofício dirigido ao INIQ (modelo Anexo 1)</span
-                >
-              </div>
-              <div class="requisito-item">
-                <span class="requisito-num">2</span>
-                <span class="requisito-text"
-                  >Relatório de Análise Técnica e Diagnóstico</span
-                >
-              </div>
-              <div class="requisito-item">
-                <span class="requisito-num">3</span>
-                <span class="requisito-text"
-                  >Formulários preenchidos + documentos de identificação + CV do
-                  técnico responsável</span
-                >
-              </div>
-              <div class="requisito-item">
-                <span class="requisito-num">4</span>
-                <span class="requisito-text"
-                  >Cópias da documentação legal (Certidão de Registo Comercial,
-                  Alvará Comercial, NIF)</span
-                >
-              </div>
-              <div class="requisito-item">
-                <span class="requisito-num">5</span>
-                <span class="requisito-text">Apresentação da organização</span>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section class="mt-12">
-          <div class="container">
-            <div class="download-section">
-              <div class="download-info">
-                <h3>Modelo do Ofício (Anexo 1)</h3>
-                <p>
-                  Faça o download do modelo de ofício para apresentar o seu
-                  pedido.
-                </p>
-              </div>
-              <a
-                href="/docs/Modelo do Ofício.pdf"
-                download
-                class="btn btn--download"
-              >
-                <svg
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                >
-                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                  <polyline points="7 10 12 15 17 10"></polyline>
-                  <line x1="12" y1="15" x2="12" y2="3"></line>
-                </svg>
-                Baixar
-              </a>
-            </div>
-          </div>
-        </section>
-
-        <section class="mt-12">
-          <div class="container">
-            <button @click="showForm = true" class="btn btn--primary">
-              Submeter Processo
-              <svg
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2.2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              >
-                <path d="M5 12h14M13 6l6 6-6 6"></path>
-              </svg>
-            </button>
-          </div>
-        </section>
+      <Requisitos
+          :requisitos="requisitosList"
+          :download-info="downloadInfo"
+          :title="requisitosTitle"
+          :description="requisitosDescription"
+          submit-button-text="Submeter Processo"
+          @submit="showForm = true"
+        />
       </template>
 
       <template v-if="showForm">
