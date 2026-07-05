@@ -1,5 +1,5 @@
 query fetch {
-  queryRequirementContents {
+  queryRequirementregisterContents {
     data: flatData {
     rules {
       title

@@ -2,6 +2,7 @@
 import { inject, watch, ref, computed } from "vue"
 import avaliacaoConformidade from "@/gql/avaliacao-conformidade/index.gql"
 import requisitosQuery from "@/gql/avaliacao-conformidade/requisitos.gql"
+import Requisitos from "@/components/custom/Requisitos.vue"
 
 definePageMeta({
   layout: "default",
@@ -81,7 +82,6 @@ if (activeSubItemId) {
           @submit="showForm = true"
         />
       </template>
-
       <CustomRequisitosConformidadeForm
         :show="showForm"
         @close="showForm = false"
