@@ -1,4 +1,4 @@
-﻿<script setup>
+<script setup>
 import { provide, ref, watch, computed } from "vue"
 import quemSomos from "@/gql/quem-somos.gql"
 import parceiros from "@/gql/parceiros.gql"
@@ -119,6 +119,10 @@ provide("activeSubItemId", activeSubItemId)
 .sidebar-right {
   grid-column: 3 / 4;
   grid-row: 1 / 2;
+  padding: 2rem 2.5rem 0 2rem;
+  margin-top: 2rem; 
+  margin-right: 2rem;   
+  box-sizing: border-box;
 }
 
 .carousel-spacer {

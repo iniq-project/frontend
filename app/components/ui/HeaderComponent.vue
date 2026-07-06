@@ -11,6 +11,25 @@ defineProps<{
 const emit = defineEmits<{
   toggleMenu: []
 }>()
+
+const isHomePage = computed(() => route.path === "/")
+
+const pageTitles = {
+  "/": "Serviços e Processos",
+  "/normalizacao": "Normalização",
+  "/metrologia": "Metrologia",
+  "/registo-cadastro": "Registo e Cadastro",
+  "/importacao": "Validação, Verificação e Certificação de Produtos a Importar",
+  "/formacao": "Formação e Qualificação em Qualidade",
+  "/avaliacao-da-conformidade": "Avaliação da Conformidade",
+  "/regulamentos": "Regulamentos Técnicos",
+  "/premio-qualidade": "Prémio Nacional da Qualidade",
+  "/contactos": "Contactos",
+}
+
+const currentPageTitle = computed(
+  () => pageTitles[route.path as keyof typeof pageTitles] || "Serviços e Processos",
+)
 </script>
 
 <template>
@@ -34,7 +53,10 @@ const emit = defineEmits<{
       </NuxtLink>
     </div>
     <div class="header-center">
-      <h1>Instituto Nacional das Infra-Estruturas da Qualidade</h1>
+      <h1 :class="{ 'home-title': isHomePage, 'service-title': !isHomePage }">
+        Instituto Nacional das Infra-Estruturas da Qualidade
+      </h1>
+      <h2 v-if="!isHomePage" class="service-name">{{ currentPageTitle }}</h2>
     </div>
     <div class="logo-right">
       <a
@@ -55,7 +77,7 @@ const emit = defineEmits<{
   display: grid;
   grid-template-columns: 1fr 2fr 1fr;
   align-items: center;
-  padding: 1.25rem 2.5rem;
+  padding: 1.25rem 0;
   background: white;
   border-bottom: 1px solid #d0d9e3;
   box-shadow: 0 2px 8px rgba(10, 58, 99, 0.08);
@@ -88,27 +110,53 @@ const emit = defineEmits<{
 }
 
 .logo-right img {
-  height: 48px;
+  height: 40px;
   width: auto;
   max-height: 48px;
   object-fit: contain;
 }
 
+
 .logo-left {
   justify-content: flex-start;
+  padding-left: 4.40rem;
 }
 
 .logo-right {
   justify-content: flex-end;
+  padding-right: 7rem;
 }
 
+.logo-right a {
+  flex-shrink: 0;
+}
+
+.logo-right img {
+  flex-shrink: 0;
+  margin-left: auto;
+}
 .header-center {
-  text-align: center;
+  padding: 0 1rem;
 }
 
 .header-center h1 {
   margin: 0;
-  font-size: 1.2rem;
+  color: #0a3a63;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.header-center h1.home-title {
+  font-size: 1.5rem;
+}
+
+.header-center h1.service-title {
+  font-size: 1rem;
+}
+
+.header-center .service-name {
+  margin: 0.25rem 0 0 0;
+  font-size: 1.4rem;
   color: #0a3a63;
   font-weight: 700;
   line-height: 1.3;
@@ -182,15 +230,30 @@ const emit = defineEmits<{
     max-height: 36px;
   }
 
-  .header-center h1 {
-    font-size: clamp(0.75rem, 2.5vw, 1rem);
-    line-height: 1.25;
+  .header-center h1.home-title {
+    font-size: clamp(0.9rem, 3vw, 1.1rem);
+  }
+
+  .header-center h1.service-title {
+    font-size: clamp(0.7rem, 2.2vw, 0.9rem);
+  }
+
+  .header-center .service-name {
+    font-size: clamp(1rem, 3vw, 1.2rem);
   }
 }
 
 @media (max-width: 767px) {
-  .header-center h1 {
-    font-size: 0.8rem;
+  .header-center h1.home-title {
+    font-size: 0.9rem;
+  }
+
+  .header-center h1.service-title {
+    font-size: 0.75rem;
+  }
+
+  .header-center .service-name {
+    font-size: 1rem;
   }
 }
 </style>
