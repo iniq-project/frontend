@@ -1,4 +1,4 @@
-﻿<script setup lang="ts">
+<script setup lang="ts">
 import { ref, computed, watch, onMounted } from "vue"
 import { useRoute, useRouter } from "vue-router"
 import { services, type Service } from "~/data/services"
@@ -10,6 +10,23 @@ const isHomePage = computed(() => route.path === "/")
 const activeServiceId = ref<string | null>(null)
 const activeSubItemId = ref<string | null>(null)
 const showSubItems = ref(false)
+
+const pageTitles = {
+  "/": "Serviços e Processos",
+  "/normalizacao": "Normalização",
+  "/metrologia": "Metrologia",
+  "/registo-cadastro": "Registo e Cadastro",
+  "/importacao": "Validação, Verificação e Certificação de Produtos a Importar",
+  "/formacao": "Formação e Qualificação em Qualidade",
+  "/avaliacao-da-conformidade": "Avaliação da Conformidade",
+  "/regulamentos": "Regulamentos Técnicos",
+  "/premio-qualidade": "Prémio Nacional da Qualidade",
+  "/contactos": "Contactos",
+}
+
+const currentPageTitle = computed(
+  () => pageTitles[route.path as keyof typeof pageTitles] || "Serviços e Processos",
+)
 
 const emit = defineEmits(["select-service", "select-subitem", "close"])
 
@@ -107,7 +124,7 @@ watch(
     </button>
     <NuxtLink v-if="!isHomePage && !showSubItems" to="/" class="back-btn" @click="goHome">← Voltar à Página Inicial
     </NuxtLink>
-    <h2>Serviços e Processos</h2>
+    <h2>{{ currentPageTitle }}</h2>
     <nav class="services-list">
       <template v-if="!showSubItems">
         <button v-for="service in services" :key="service.id" class="service-item" :class="{

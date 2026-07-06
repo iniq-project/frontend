@@ -11,25 +11,6 @@ defineProps<{
 const emit = defineEmits<{
   toggleMenu: []
 }>()
-
-const pageTitles = {
-  "/": "Instituto Nacional das Infra-Estruturas da Qualidade",
-  "/normalizacao": "Normalização",
-  "/metrologia": "Metrologia",
-  "/registo-cadastro": "Registo e Cadastro ",
-  "/importacao": "Validação, Verificação e Certificação de Produtos a Importar",
-  "/formacao": "Formação e Qualificação em Qualidade",
-  "/avaliacao-da-conformidade": "Avaliação da Conformidade",
-  "/regulamentos": "Regulamentos Técnicos",
-  "/premio-qualidade": "Prémio Nacional da Qualidade",
-  "/contactos": "Contactos",
-}
-
-const pageTitle = computed(
-  () =>
-    pageTitles[route.path as keyof typeof pageTitles] ||
-    "Instituto Nacional das Infra-Estruturas da Qualidade",
-)
 </script>
 
 <template>
@@ -53,7 +34,7 @@ const pageTitle = computed(
       </NuxtLink>
     </div>
     <div class="header-center">
-      <h1>{{ pageTitle }}</h1>
+      <h1>Instituto Nacional das Infra-Estruturas da Qualidade</h1>
     </div>
     <div class="logo-right">
       <a
@@ -127,7 +108,7 @@ const pageTitle = computed(
 
 .header-center h1 {
   margin: 0;
-  font-size: 1.5rem;
+  font-size: 1.2rem;
   color: #0a3a63;
   font-weight: 700;
   line-height: 1.3;
@@ -202,14 +183,14 @@ const pageTitle = computed(
   }
 
   .header-center h1 {
-    font-size: clamp(0.85rem, 2.8vw, 1.15rem);
+    font-size: clamp(0.75rem, 2.5vw, 1rem);
     line-height: 1.25;
   }
 }
 
 @media (max-width: 767px) {
   .header-center h1 {
-    font-size: 0.9rem;
+    font-size: 0.8rem;
   }
 }
 </style>
