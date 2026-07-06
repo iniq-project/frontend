@@ -32,7 +32,7 @@ export const services: Service[] = [
       { id: "comissao-tecnica", number: "01", title: "Comissão Técnica" },
       { id: "venda-normas", number: "02", title: "Venda de Normas" },
       { id: "consulta-publica", number: "03", title: "Projectos em Consulta Pública" },
-      { id: "catalogo-livro", number: "04", title: "Catálogo de Livros Segulares" }
+      { id: "catalogo-livro", number: "04", title: "Catálogo Nacional de Normas" }
     ],
   },
   {
