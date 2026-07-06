@@ -332,6 +332,7 @@ const formatDate = (dateStr) => {
   flex-direction: column;
   gap: 0.75rem;
   justify-content: flex-start;
+  text-align: justify;
 }
 
 .dg-message h4 {
@@ -348,13 +349,13 @@ const formatDate = (dateStr) => {
   font-size: 1.15rem;
   color: #334155;
   line-height: 1.7;
-  font-style: italic;
   font-weight: 500;
 }
 
 .quality-policy-section {
   padding: 1.5rem 2rem 0 2rem;
   border-top: 1px solid #e6eff6;
+  text-align: justify;
 }
 
 .quality-policy-section h4 {

@@ -1,20 +1,20 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
-//  app: {
-//     head: {
-//       title: "",
-//       meta: [
-//         { charset: "utf-8" },
-//         { name: "author", content: "Hernany Simão" },
-//         { name: "keyword", content: "" },
-//         { name: "description", content: "" },
-//         { name: "viewport", content: "width=device-width, initial-scale=1" },
-//         { name: 'format-detection', content: 'telephone=no' },
-//         { property: 'og:description', content: '' },
-//         { property: 'og:locale', content: 'pt_AO' }
-//       ],
-//     },
-//   },
+ app: {
+    head: {
+      title: "",
+      meta: [
+        { charset: "utf-8" },
+        { name: "author", content: "Hernany Simão" },
+        { name: "keyword", content: "" },
+        { name: "description", content: "" },
+        { name: "viewport", content: "width=device-width, initial-scale=1" },
+        { name: 'format-detection', content: 'telephone=no' },
+        { property: 'og:description', content: '' },
+        { property: 'og:locale', content: 'pt_AO' }
+      ],
+    },
+  },
 
   devtools: {
     enabled: true
