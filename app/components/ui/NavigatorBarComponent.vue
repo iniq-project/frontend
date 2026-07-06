@@ -170,7 +170,7 @@ watch(
   margin-top: 0;
   overflow-y: auto;
   background: white;
-  border-radius: 0 0 0 12px;
+  border-radius: 12px 12px 12px 12px;
   box-shadow: none;
 }
 
