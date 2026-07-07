@@ -137,7 +137,6 @@ const currentPageTitle = computed(
 }
 .header-center {
   padding: 0 1rem;
-  text-align: center;
 }
 
 .header-center h1 {
