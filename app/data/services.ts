@@ -43,14 +43,14 @@ export const services: Service[] = [
       { id: "solicitar-servico", number: "01", title: "Solicitar Serviço" }
     ],
   },
-  {
-    id: "avaliacao-da-conformidade",
-    number: "02",
-    title: "Avaliação da Conformidade",
-    subItems: [
-      { id: "solicitar-servico", number: "01", title: "Ver Requisitos" }
-    ]
-  },
+  // {
+  //   id: "avaliacao-da-conformidade",
+  //   number: "02",
+  //   title: "Avaliação da Conformidade",
+  //   subItems: [
+  //     { id: "solicitar-servico", number: "01", title: "Ver Requisitos" }
+  //   ]
+  // },
     {
     id: "registo-cadastro",
     number: "03",
@@ -109,6 +109,15 @@ export const services: Service[] = [
     number: "09",
     disabled: true,
     title: "Eventos",
+    subItems: [
+      { id: "solicitar-servico", number: "01", title: "Solicitar Serviço" }
+    ]
+  },
+      {
+    id: "forum",
+    number: "10",
+    disabled: true,
+    title: "FIQ-CPLP / Fórum da I.E da Qualidade da CPLP",
     subItems: [
       { id: "solicitar-servico", number: "01", title: "Solicitar Serviço" }
     ]
