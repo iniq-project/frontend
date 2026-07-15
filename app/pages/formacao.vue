@@ -796,12 +796,17 @@ const handleSubmit = () => {
   padding: 0.5rem 1rem;
   flex: 1;
   min-width: 250px;
+  position: static;
 }
 
 .catalog-search svg {
   width: 20px;
   height: 20px;
   color: #64748b;
+  position: static;
+  top: auto;
+  left: auto;
+  transform: none;
 }
 
 .catalog-search input {

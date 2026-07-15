@@ -13,7 +13,7 @@ const props = defineProps({
   },
 })
 
-const emit = defineEmits(["open-modal", "back-to-comissoes"])
+const emit = defineEmits(["back-to-comissoes"])
 
 const {
   searchTerm,
@@ -40,10 +40,6 @@ watch(
   },
   { immediate: true },
 )
-
-const formatPrice = (price) => {
-  return (price ?? 0).toLocaleString("pt-PT")
-}
 </script>
 
 <template>
@@ -57,12 +53,12 @@ const formatPrice = (price) => {
       ← Voltar à Comissão Técnica
     </button>
     <div class="panel-head">
-      <span class="eyebrow">Venda de Normas</span>
-      <h2>Catálogo nacional de normas</h2>
+      <span class="eyebrow">Catálogo Nacional de Normas</span>
+      <h2>Referência completa das normas do INIQ</h2>
       <p>
-        Pesquise as normas em vigor e solicite a sua aquisição. Ao clicar em
-        <b>Comprar</b>, abre-se o formulário de pedido com pagamento por
-        Referência Multicaixa.
+        Consulte a listagem de referência de todas as normas, incluindo as já
+        revogadas. O preço de aquisição é apresentado apenas em
+        <b>Venda de Normas</b>, para as normas em vigor.
       </p>
     </div>
 
@@ -112,13 +108,12 @@ const formatPrice = (price) => {
         <div class="catalog-item-top">
           <div class="catalog-item-code">{{ norma.reference }}</div>
           <span class="badge badge--sector badge--green">{{ norma.categoria }}</span>
-          <div class="catalog-item-price">
-            <span class="price-value">{{ formatPrice(norma.price) }}</span>
-            <span class="price-currency">AOA</span>
-          </div>
-          <button class="btn btn--primary" @click="emit('open-modal', 'venda', norma)">
-            Comprar
-          </button>
+          <span
+            class="badge badge--estado"
+            :class="{ revogada: norma.estado === 'revogada' }"
+          >
+            {{ norma.estado === "revogada" ? "Revogada" : "Em vigor" }}
+          </span>
         </div>
         <h3 class="catalog-item-title">{{ norma.title }}</h3>
       </div>
@@ -304,6 +299,7 @@ const formatPrice = (price) => {
   align-items: center;
   gap: 1rem;
   margin-bottom: 1rem;
+  flex-wrap: wrap;
 }
 
 .catalog-item-code {
@@ -325,22 +321,20 @@ const formatPrice = (price) => {
   color: #5cb947;
 }
 
-.catalog-item-price {
+.badge--estado {
   margin-left: auto;
-  display: flex;
-  align-items: baseline;
-  gap: 0.25rem;
-}
-
-.price-value {
-  font-weight: 700;
+  font-family: monospace;
+  font-size: 0.8rem;
+  padding: 0.25rem 0.75rem;
+  border-radius: 100px;
+  background: #eff6fc;
   color: #0a3a63;
-  font-size: 1.25rem;
+  font-weight: 600;
 }
 
-.price-currency {
-  font-size: 0.85rem;
-  color: #64748b;
+.badge--estado.revogada {
+  background: #fef2f2;
+  color: #dc2626;
 }
 
 .catalog-item-title {
@@ -348,21 +342,6 @@ const formatPrice = (price) => {
   color: #0a3a63;
   font-size: 1.15rem;
   font-weight: 700;
-}
-
-.btn--primary {
-  padding: 0.65rem 1.25rem;
-  border-radius: 8px;
-  border: none;
-  background: #0a3a63;
-  color: white;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.btn--primary:hover {
-  background: #082e4f;
 }
 
 @media (max-width: 1199px) {
@@ -395,19 +374,11 @@ const formatPrice = (price) => {
   }
 
   .catalog-item-top {
-    flex-wrap: wrap;
     gap: 0.75rem;
   }
 
-  .catalog-item-price {
+  .badge--estado {
     margin-left: 0;
-    width: 100%;
-  }
-
-  .catalog-item-top .btn--primary {
-    display: flex;
-    width: 100%;
-    justify-content: center;
   }
 }
 
