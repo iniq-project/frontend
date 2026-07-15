@@ -260,5 +260,24 @@ const currentPageTitle = computed(
   .header-center .service-name {
     font-size: 1rem;
   }
+
+  .logo-left {
+    padding-left: 0.5rem;
+    min-width: 0;
+  }
+
+  .logo-right {
+    padding-right: 0.5rem;
+    min-width: 0;
+    overflow: hidden;
+  }
+
+  .logo-right img {
+    height: auto;
+    max-height: 20px;
+    width: auto;
+    min-width: 0;
+    flex-shrink: 1;
+  }
 }
 </style>
