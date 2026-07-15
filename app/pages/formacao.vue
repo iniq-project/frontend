@@ -1434,4 +1434,19 @@ const handleSubmit = () => {
   padding: 0.75rem 1.25rem;
   margin: 1.375rem 0;
 }
+
+@media (max-width: 767px) {
+  .modal__body {
+    padding: 1.25rem;
+  }
+
+  .modal__foot {
+    flex-direction: column;
+  }
+
+  .modal__foot .btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
 </style>

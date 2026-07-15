@@ -403,7 +403,7 @@ watch(
 }
 
 @media (max-width: 1199px) {
-  .sidebar-right {
+  aside.sidebar-right {
     position: fixed;
     top: 0;
     right: 0;
@@ -411,15 +411,16 @@ watch(
     width: min(88vw, 360px);
     height: 100vh;
     z-index: 100;
+    margin: 0;
     transform: translateX(100%);
     transition: transform 0.25s ease;
-    box-shadow: -8px 0 32px rgba(10, 58, 99, 0.15);
     border-radius: 0;
-    padding-top: 3.5rem;
+    padding: 3.5rem 1.5rem 0 1.5rem;
   }
 
-  .sidebar-right.open {
+  aside.sidebar-right.open {
     transform: translateX(0);
+    box-shadow: -8px 0 32px rgba(10, 58, 99, 0.15);
   }
 
   .drawer-close {
