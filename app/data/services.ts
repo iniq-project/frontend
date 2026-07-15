@@ -40,24 +40,28 @@ export const services: Service[] = [
     number: "02",
     title: "Metrologia",
     subItems: [
-      { id: "solicitar-servico", number: "01", title: "Solicitar Serviço" }
+      { id: "servicos", number: "01", title: "Serviços" },
+      { id: "controlo-metrologico-legal", number: "02", title: "Controlo Metrológico Legal" },
+      { id: "taxas-metrologia-legal", number: "03", title: "Taxas de Metrologia Legal" },
+      { id: "cooperacao-regional-internacional", number: "04", title: "Cooperação Regional e Internacional" },
+      { id: "metrologia-industrial", number: "05", title: "Metrologia Industrial" },
+      { id: "metrologia-cientifica", number: "06", title: "Metrologia Científica" },
     ],
   },
-  {
-    id: "avaliacao-da-conformidade",
-    number: "02",
-    title: "Avaliação da Conformidade",
-    subItems: [
-      { id: "solicitar-servico", number: "01", title: "Ver Requisitos" }
-    ]
-  },
+  // {
+  //   id: "avaliacao-da-conformidade",
+  //   number: "02",
+  //   title: "Avaliação da Conformidade",
+  //   subItems: [
+  //     { id: "solicitar-servico", number: "01", title: "Ver Requisitos" }
+  //   ]
+  // },
     {
     id: "registo-cadastro",
     number: "03",
     title: "Registo, Cadastro e Acreditação",
     subItems: [
-      { id: "solicitar-servico", number: "01", title: "Registos e Cadastros" },
-      { id: "acreditacao", number: "02", title: "Acreditação" }
+      { id: "solicitar-servico", number: "01", title: "Ver Requisitos" },
     ]
   },
     {
@@ -112,6 +116,15 @@ export const services: Service[] = [
     subItems: [
       { id: "solicitar-servico", number: "01", title: "Solicitar Serviço" }
     ]
+  },
+      {
+    id: "forum",
+    number: "10",
+    disabled: true,
+    title: "FIQ-CPLP / Fórum da I.E da Qualidade da CPLP",
+    subItems: [
+      { id: "solicitar-servico", number: "01", title: "Solicitar Serviço" }
+    ]
   }
 
 
@@ -139,7 +152,7 @@ export const services: Service[] = [
   //     { id: "solicitar-servico", number: "01", title: "Solicitar Serviço" }
   //   ]
   // },
-  
+
   //   {
   //   id: "registo-cadastro",
   //   number: "06",
@@ -148,11 +161,11 @@ export const services: Service[] = [
   //     { id: "solicitar-servico", number: "01", title: "Ver Requisitos" }
   //   ]
   // },
-  
 
 
-  
-  
+
+
+
   // {
   //   id: "regulamentos",
   //   number: "07",

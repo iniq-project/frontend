@@ -138,6 +138,10 @@ const currentPageTitle = computed(
 .header-center {
   padding: 0 1rem;
   text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
 .header-center h1 {

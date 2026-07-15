@@ -1,121 +1,126 @@
 <script setup>
+import { ref, watch } from "vue"
+
 const props = defineProps({
   open: {
     type: Boolean,
     default: false,
   },
-  eyebrow: {
-    type: String,
-    default: '',
-  },
-  title: {
-    type: String,
-    default: '',
-  },
-  ref: {
-    type: String,
-    default: '',
-  },
-  mode: {
-    type: String,
-    default: 'venda',
-  },
-  formSubmitted: {
-    type: Boolean,
-    default: false,
-  },
-  successTitle: {
-    type: String,
-    default: '',
-  },
-  successMsg: {
-    type: String,
-    default: '',
-  },
-  orderRef: {
-    type: String,
-    default: '',
-  },
-  formData: {
+  project: {
     type: Object,
-    default: () => ({}),
-  },
-  errors: {
-    type: Object,
-    default: () => ({}),
+    default: () => null,
   },
 })
 
-const emit = defineEmits(['close', 'submit'])
+const emit = defineEmits(["close"])
+
+const formData = ref({
+  nome: "",
+  email: "",
+  telefone: "",
+  comentario: "",
+})
+const errors = ref({})
+const formSubmitted = ref(false)
+
+watch(
+  () => props.open,
+  (isOpen) => {
+    if (isOpen) {
+      formData.value = { nome: "", email: "", telefone: "", comentario: "" }
+      errors.value = {}
+      formSubmitted.value = false
+    }
+  },
+)
+
+const validateForm = () => {
+  const newErrors = {}
+
+  if (!formData.value.nome.trim()) {
+    newErrors.nome = true
+  }
+
+  if (
+    !formData.value.email.trim() ||
+    !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.value.email)
+  ) {
+    newErrors.email = true
+  }
+
+  if (!formData.value.telefone.trim()) {
+    newErrors.telefone = true
+  }
+
+  if (!formData.value.comentario.trim()) {
+    newErrors.comentario = true
+  }
+
+  errors.value = newErrors
+  return Object.keys(newErrors).length === 0
+}
 
 const handleSubmit = () => {
-  emit('submit')
+  if (!validateForm()) {
+    return
+  }
+
+  formSubmitted.value = true
+}
+
+const handleClose = () => {
+  emit("close")
 }
 </script>
+
 <template>
-  <div v-if="open" class="modal" :class="{ open: open }" @click.self="$emit('close')">
-    <div class="modal-scrim" @click="$emit('close')"></div>
-    <div class="modal-panel" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+  <div v-if="open" class="modal" :class="{ open }" @click.self="handleClose">
+    <div class="modal-scrim" @click="handleClose"></div>
+    <div class="modal-panel" role="dialog" aria-modal="true" aria-labelledby="commentModalTitle">
       <div class="modal-head">
         <div>
-          <span class="eyebrow" id="modalEyebrow">{{ eyebrow }}</span>
-          <h3 id="modalTitle">{{ title }}</h3>
-          <div class="modal-ref" id="modalRef">{{ ref }}</div>
+          <span class="eyebrow">Consulta Pública</span>
+          <h3 id="commentModalTitle">Submeter Contribuição</h3>
+          <div class="modal-ref">{{ project?.code }} — {{ project?.title }}</div>
         </div>
-        <button class="modal-close" @click="$emit('close')" aria-label="Fechar">
+        <button class="modal-close" @click="handleClose" aria-label="Fechar">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
             <path d="M6 6l12 12M18 6 6 18"></path>
           </svg>
         </button>
       </div>
       <div class="modal-body">
-        <div v-if="!formSubmitted" class="form-wrap" id="formWrap">
+        <div v-if="!formSubmitted" class="form-wrap">
           <form @submit.prevent="handleSubmit">
             <div class="field">
-              <label for="f-nomeEntidade">Nome da Entidade <span class="req">*</span></label>
+              <label for="c-nome">Nome <span class="req">*</span></label>
               <input
                 type="text"
-                id="f-nomeEntidade"
-                name="nomeEntidade"
+                id="c-nome"
                 required
-                placeholder="Nome da entidade ou empresa"
-                v-model="formData.nomeEntidade"
-                :class="{ error: errors.nomeEntidade }"
+                placeholder="O seu nome"
+                v-model="formData.nome"
+                :class="{ error: errors.nome }"
               />
-              <span v-if="errors.nomeEntidade" class="error-text">Por favor, informe o nome da entidade</span>
+              <span v-if="errors.nome" class="error-text">Por favor, informe o seu nome</span>
             </div>
             <div class="field">
-              <label for="f-nif">NIF <span class="req">*</span></label>
-              <input
-                type="text"
-                id="f-nif"
-                name="nif"
-                required
-                placeholder="Número de Identificação Fiscal"
-                v-model="formData.nif"
-                :class="{ error: errors.nif }"
-              />
-              <span v-if="errors.nif" class="error-text">Por favor, informe o NIF</span>
-            </div>
-            <div class="field">
-              <label for="f-email">E-mail <span class="req">*</span></label>
+              <label for="c-email">E-mail <span class="req">*</span></label>
               <input
                 type="email"
-                id="f-email"
-                name="email"
+                id="c-email"
                 required
-                placeholder="nome@exemplo.ao"
+                placeholder="nome@exemplo.com"
                 v-model="formData.email"
                 :class="{ error: errors.email }"
               />
               <span v-if="errors.email" class="error-text">Por favor, informe um e-mail válido</span>
             </div>
             <div class="field">
-              <label for="f-tel">Número de Telefone <span class="req">*</span></label>
+              <label for="c-tel">Número de Telefone <span class="req">*</span></label>
               <input
                 type="tel"
-                id="f-tel"
-                name="telefone"
+                id="c-tel"
                 required
                 placeholder="+244 9XX XXX XXX"
                 v-model="formData.telefone"
@@ -123,19 +128,20 @@ const handleSubmit = () => {
               />
               <span v-if="errors.telefone" class="error-text">Por favor, informe o número de telefone</span>
             </div>
-            <div v-if="mode === 'contrib'" class="field" id="contribField">
-              <label for="f-contrib">A sua contribuição</label>
+            <div class="field">
+              <label for="c-comentario">Comentário <span class="req">*</span></label>
               <textarea
-                id="f-contrib"
-                name="contribuicao"
+                id="c-comentario"
                 placeholder="Indique o artigo/secção e a redacção alternativa proposta, com a respectiva fundamentação."
-                v-model="formData.contribuicao"
+                v-model="formData.comentario"
+                :class="{ error: errors.comentario }"
               ></textarea>
+              <span v-if="errors.comentario" class="error-text">Por favor, escreva o seu comentário</span>
             </div>
             <div class="modal-foot">
-              <button type="button" class="btn btn--ghost" @click="$emit('close')">Cancelar</button>
-              <button type="submit" class="btn btn--primary" id="submitBtn">
-                {{ mode === "contrib" ? "Enviar contribuição" : "Submeter pedido" }}
+              <button type="button" class="btn btn--ghost" @click="handleClose">Cancelar</button>
+              <button type="submit" class="btn btn--primary">
+                Enviar contribuição
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
                   <path d="M5 12h14M13 6l6 6-6 6"></path>
                 </svg>
@@ -144,17 +150,19 @@ const handleSubmit = () => {
           </form>
         </div>
 
-        <div v-if="formSubmitted" class="modal-success" id="successState">
+        <div v-if="formSubmitted" class="modal-success">
           <div class="ok">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
               <path d="M20 6 9 17l-5-5"></path>
             </svg>
           </div>
-          <h3 id="successTitle">{{ successTitle }}</h3>
-          <p id="successMsg">{{ successMsg }}</p>
-          <div class="order-ref" id="orderRef">{{ orderRef }}</div>
+          <h3>Contribuição enviada com sucesso</h3>
+          <p>
+            A sua contribuição foi registada e será analisada pela Comissão Técnica responsável.
+            Receberá por e-mail o resultado do tratamento.
+          </p>
           <div class="modal-foot" style="justify-content: center">
-            <button type="button" class="btn btn--primary" @click="$emit('close')">Concluir</button>
+            <button type="button" class="btn btn--primary" @click="handleClose">Concluir</button>
           </div>
         </div>
       </div>
@@ -163,7 +171,6 @@ const handleSubmit = () => {
 </template>
 
 <style scoped>
-/* Modal Styles */
 .modal {
   position: fixed;
   inset: 0;
@@ -280,7 +287,6 @@ const handleSubmit = () => {
 }
 
 .field input,
-.field select,
 .field textarea {
   width: 100%;
   padding: 12px 14px;
@@ -294,15 +300,18 @@ const handleSubmit = () => {
   box-sizing: border-box;
 }
 
+.field textarea {
+  resize: vertical;
+  min-height: 84px;
+}
+
 .field input.error,
-.field select.error,
 .field textarea.error {
   border-color: #dc2626;
   box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
 }
 
 .field input:focus,
-.field select:focus,
 .field textarea:focus {
   outline: none;
   border-color: #2ba9e0;
@@ -317,69 +326,45 @@ const handleSubmit = () => {
   font-weight: 500;
 }
 
-.field textarea {
-  resize: vertical;
-  min-height: 84px;
-}
-
-.field-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
-}
-
-.pay-options {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-}
-
-.pay-opt {
-  border: 1.5px solid #d0d9e3;
-  border-radius: 6px;
-  padding: 14px;
-  cursor: pointer;
-  display: flex;
-  gap: 12px;
-  align-items: flex-start;
-  transition: 0.15s;
-}
-
-.pay-opt:hover {
-  border-color: #2ba9e0;
-}
-
-.pay-opt input {
-  width: auto;
-  margin-top: 3px;
-  accent-color: #0a3a63;
-}
-
-.pay-opt.sel {
-  border-color: #0a3a63;
-  background: #eff6fc;
-}
-
-.pay-opt b {
-  font-size: 14.5px;
-  font-family: "Archivo", system-ui, sans-serif;
-  display: block;
-  color: #0a3a63;
-}
-
-.pay-opt span:last-child {
-  font-size: 12.5px;
-  color: #64748b;
-  margin-top: 2px;
-  display: block;
-}
-
 .modal-foot {
   display: flex;
   gap: 12px;
   justify-content: flex-end;
   margin-top: 8px;
   flex-wrap: wrap;
+}
+
+.btn--primary {
+  padding: 0.65rem 1.25rem;
+  border-radius: 8px;
+  border: none;
+  background: #0a3a63;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.btn--primary:hover {
+  background: #082e4f;
+}
+
+.btn--ghost {
+  padding: 0.65rem 1.25rem;
+  border-radius: 8px;
+  border: 1px solid #d0d9e3;
+  background: white;
+  color: #0a3a63;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn--ghost:hover {
+  border-color: #2ba9e0;
 }
 
 .modal-success {
@@ -416,24 +401,7 @@ const handleSubmit = () => {
   margin: 0 auto;
 }
 
-.order-ref {
-  display: inline-block;
-  font-family: monospace;
-  font-size: 14px;
-  color: #0a3a63;
-  background: #eff6fc;
-  border: 1px dashed #d0d9e3;
-  border-radius: 6px;
-  padding: 12px 20px;
-  margin: 22px 0;
-}
-
 @media (max-width: 1199px) {
-  .field-row,
-  .pay-options {
-    grid-template-columns: 1fr;
-  }
-
   .modal-panel {
     width: calc(100vw - 24px);
     max-height: calc(100vh - 32px);
