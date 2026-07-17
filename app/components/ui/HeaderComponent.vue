@@ -18,7 +18,8 @@ const pageTitles = {
   "/": "Serviços e Processos",
   "/normalizacao": "Normalização",
   "/metrologia": "Metrologia",
-  "/registo-cadastro": "Registo e Cadastro",
+  "/registo-cadastro":
+    "Acreditação, Registro e Cadastro, Regulamentos Técnicos",
   "/importacao": "Validação, Verificação e Certificação de Produtos a Importar",
   "/formacao": "Formação e Qualificação em Qualidade",
   "/avaliacao-da-conformidade": "Avaliação da Conformidade",
@@ -28,7 +29,8 @@ const pageTitles = {
 }
 
 const currentPageTitle = computed(
-  () => pageTitles[route.path as keyof typeof pageTitles] || "Serviços e Processos",
+  () =>
+    pageTitles[route.path as keyof typeof pageTitles] || "Serviços e Processos",
 )
 </script>
 
@@ -43,7 +45,13 @@ const currentPageTitle = computed(
       aria-label="Abrir menu de serviços"
       @click="emit('toggleMenu')"
     >
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+      <svg
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+      >
         <path d="M4 7h16M4 12h16M4 17h16" />
       </svg>
     </button>
@@ -116,10 +124,9 @@ const currentPageTitle = computed(
   object-fit: contain;
 }
 
-
 .logo-left {
   justify-content: flex-start;
-  padding-left: 4.40rem;
+  padding-left: 4.4rem;
 }
 
 .logo-right {

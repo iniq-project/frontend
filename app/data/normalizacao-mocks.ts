@@ -13,6 +13,8 @@ export interface ComissaoTecnica {
   id: string
   nome: string
   sector: string
+  presidente: string
+  secretarioTecnico: string
   normaReferences: string[]
 }
 
@@ -275,6 +277,8 @@ export const comissoesTecnicas: ComissaoTecnica[] = [
     id: "ct-01",
     nome: "CT 01 — Alimentos e Agricultura",
     sector: "Alimentar",
+    presidente: "Eng.ª Filomena Sacadura",
+    secretarioTecnico: "Dr. Amável Chindungo",
     normaReferences: normas
       .filter((n) => n.comissaoTecnica === "CT 01 — Alimentos e Agricultura")
       .map((n) => n.reference),
@@ -283,6 +287,8 @@ export const comissoesTecnicas: ComissaoTecnica[] = [
     id: "ct-02",
     nome: "CT 02 — Construção Civil",
     sector: "Construção",
+    presidente: "Eng.º Custódio Bumba",
+    secretarioTecnico: "Eng.ª Domingas Xavier",
     normaReferences: normas
       .filter((n) => n.comissaoTecnica === "CT 02 — Construção Civil")
       .map((n) => n.reference),
@@ -291,6 +297,8 @@ export const comissoesTecnicas: ComissaoTecnica[] = [
     id: "ct-03",
     nome: "CT 03 — Petróleo e Gás",
     sector: "Petróleo",
+    presidente: "Dr. Salvador Muteka",
+    secretarioTecnico: "Eng.ª Belarmina Sozinho",
     normaReferences: normas
       .filter((n) => n.comissaoTecnica === "CT 03 — Petróleo e Gás")
       .map((n) => n.reference),
@@ -299,6 +307,8 @@ export const comissoesTecnicas: ComissaoTecnica[] = [
     id: "ct-04",
     nome: "CT 04 — Ambiente",
     sector: "Ambiente",
+    presidente: "Eng.ª Isaltina Camboa",
+    secretarioTecnico: "Dr. Osvaldo Sapalo",
     normaReferences: normas
       .filter((n) => n.comissaoTecnica === "CT 04 — Ambiente")
       .map((n) => n.reference),
@@ -307,6 +317,8 @@ export const comissoesTecnicas: ComissaoTecnica[] = [
     id: "ct-05",
     nome: "CT 05 — Gestão da Qualidade",
     sector: "Gestão",
+    presidente: "Dra. Guilhermina Neblu",
+    secretarioTecnico: "Eng.º Aparício Ditutala",
     normaReferences: normas
       .filter((n) => n.comissaoTecnica === "CT 05 — Gestão da Qualidade")
       .map((n) => n.reference),
