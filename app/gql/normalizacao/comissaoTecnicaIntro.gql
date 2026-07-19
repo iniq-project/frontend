@@ -1,0 +1,9 @@
+query fetch {
+  queryTechnicalcommitteeintroContents {
+    data: flatData {
+      title
+      description
+      informacoesGerais
+    }
+  }
+}

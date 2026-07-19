@@ -109,6 +109,14 @@ const formatPrice = (price) => {
           </button>
         </div>
         <h3 class="catalog-item-title">{{ regulamento.title }}</h3>
+        <a
+          v-if="regulamento.documentUrl"
+          :href="regulamento.documentUrl"
+          download
+          class="doc-link"
+        >
+          Descarregar documento (PDF)
+        </a>
       </div>
     </div>
   </div>
@@ -333,6 +341,19 @@ const formatPrice = (price) => {
   color: #0a3a63;
   font-size: 1.15rem;
   font-weight: 700;
+}
+
+.doc-link {
+  display: inline-flex;
+  margin-top: 0.5rem;
+  color: #2ba9e0;
+  font-weight: 600;
+  font-size: 0.9rem;
+  text-decoration: none;
+}
+
+.doc-link:hover {
+  text-decoration: underline;
 }
 
 .btn--primary {

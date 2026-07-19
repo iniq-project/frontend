@@ -4,6 +4,15 @@ defineProps({
     type: Array,
     default: () => [],
   },
+  title: {
+    type: String,
+    default: "Regulamentos reconhecidos pelo INIQ",
+  },
+  description: {
+    type: String,
+    default:
+      "Lista dos Regulamentos Técnicos de outros países ou organismos que o INIQ reconhece como equivalentes. Esta secção é apenas de consulta.",
+  },
 })
 </script>
 
@@ -11,11 +20,8 @@ defineProps({
   <div class="sub-panel">
     <div class="panel-head">
       <span class="eyebrow">Regulamentos Técnicos Equivalentes</span>
-      <h2>Regulamentos reconhecidos pelo INIQ</h2>
-      <p>
-        Lista dos Regulamentos Técnicos de outros países ou organismos que o INIQ reconhece
-        como equivalentes. Esta secção é apenas de consulta.
-      </p>
+      <h2>{{ title }}</h2>
+      <p>{{ description }}</p>
     </div>
 
     <div class="catalog">

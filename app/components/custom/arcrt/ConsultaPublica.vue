@@ -4,6 +4,15 @@ defineProps({
     type: Array,
     default: () => [],
   },
+  title: {
+    type: String,
+    default: "Participe na elaboração dos regulamentos",
+  },
+  description: {
+    type: String,
+    default:
+      "Os regulamentos abaixo estão em fase de desenvolvimento e abertos a consulta pública. Qualquer interessado pode submeter contribuições dentro do prazo indicado.",
+  },
 })
 
 const emit = defineEmits(["open-modal"])
@@ -13,11 +22,8 @@ const emit = defineEmits(["open-modal"])
   <div class="sub-panel">
     <div class="panel-head">
       <span class="eyebrow">Regulamentos Técnicos em Consulta Pública</span>
-      <h2>Participe na elaboração dos regulamentos</h2>
-      <p>
-        Os regulamentos abaixo estão em fase de desenvolvimento e abertos a consulta pública.
-        Qualquer interessado pode submeter contribuições dentro do prazo indicado.
-      </p>
+      <h2>{{ title }}</h2>
+      <p>{{ description }}</p>
     </div>
 
     <div class="consulta">
@@ -29,6 +35,14 @@ const emit = defineEmits(["open-modal"])
           </div>
           <h3>{{ project.title }}</h3>
           <p class="consulta-desc">{{ project.description }}</p>
+          <a
+            v-if="project.documentUrl"
+            :href="project.documentUrl"
+            download
+            class="doc-link"
+          >
+            Descarregar documento (PDF)
+          </a>
         </div>
         <div class="consulta-deadline">
           <span class="deadline-pill">Termina {{ project.deadline }}</span>
@@ -145,6 +159,19 @@ const emit = defineEmits(["open-modal"])
   color: #475569;
   font-size: 0.95rem;
   line-height: 1.6;
+}
+
+.doc-link {
+  display: inline-flex;
+  margin-top: 0.5rem;
+  color: #2ba9e0;
+  font-weight: 600;
+  font-size: 0.9rem;
+  text-decoration: none;
+}
+
+.doc-link:hover {
+  text-decoration: underline;
 }
 
 .consulta-deadline {

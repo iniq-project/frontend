@@ -2,10 +2,32 @@
 import { ref, computed, watch, onMounted } from "vue"
 import { useRoute, useRouter } from "vue-router"
 import { services, type Service } from "~/data/services"
+import menuQuery from "@/gql/menu/index.gql"
 
 const route = useRoute()
 const router = useRouter()
 const isHomePage = computed(() => route.path === "/")
+
+const { query } = useSquidex()
+const menuData = await query(menuQuery, { key: "menu-service" })
+const menuFieldByServiceId: Record<string, string> = {
+  normalizacao: "normalizacao",
+  metrologia: "metrologia",
+  "registo-cadastro": "registoCadastro",
+  importacao: "importacao",
+  formacao: "formacao",
+  rotulos: "rotulos",
+  "premio-qualidade": "premioQualidade",
+  eventos: "eventos",
+  forum: "forum",
+}
+const menuTitle = (service: Service) => {
+  const field = menuFieldByServiceId[service.id]
+  const value = field
+    ? menuData.value?.data?.queryMenuserviceContents?.[0]?.data?.[field]
+    : undefined
+  return value || service.title
+}
 
 const activeServiceId = ref<string | null>(null)
 const activeSubItemId = ref<string | null>(null)
@@ -129,7 +151,7 @@ watch(
           disabled: service.disabled,
         }" @click="selectService(service)">
           <span class="n">{{ service.number }}</span>
-          <span>{{ service.title }}</span>
+          <span>{{ menuTitle(service) }}</span>
         </button>
       </template>
       <template v-else>

@@ -2,6 +2,13 @@
 import { inject, watch, ref, computed } from "vue"
 import home from "@/gql/registro-cadastro/index.gql"
 import requisitosQuery from "@/gql/registro-cadastro/requisitos.gql"
+import tipologiasQuery from "@/gql/registro-cadastro/tipologias.gql"
+import orgaoLegisladorQuery from "@/gql/regulamentos/orgaoLegislador.gql"
+import acervoNacionalQuery from "@/gql/regulamentos/acervoNacional.gql"
+import consultaPublicaQuery from "@/gql/regulamentos/consultaPublica.gql"
+import equivalentesQuery from "@/gql/regulamentos/equivalentes.gql"
+import { formatDate } from "@/utils/formatDate"
+import { stripHtml } from "@/utils/stripHtml"
 
 definePageMeta({
   layout: "default",
@@ -41,6 +48,62 @@ const downloadInfo = computed(() => {
   }
 })
 
+const tipologiasData = await query(tipologiasQuery, { key: "registrationtype" })
+const tipologias = computed(() => {
+  const types = tipologiasData.value?.data?.queryRegistrationtypeContents?.[0]?.data?.types || []
+  return types.map((t: any) => ({ id: t.title, title: t.title }))
+})
+
+const orgaoLegisladorData = await query(orgaoLegisladorQuery, { key: "inforegulation" })
+const orgaoLegislador = computed(
+  () => orgaoLegisladorData.value?.data?.queryInforegulationContents?.[0]?.data,
+)
+
+const acervoNacionalData = await query(acervoNacionalQuery, { key: "regulations" })
+const acervoNacional = computed(() =>
+  (acervoNacionalData.value?.data?.queryRegulationsContents || []).map((item: any) => {
+    const d = item.data
+    return {
+      code: d.reference,
+      title: d.title,
+      areaTecnica: d.category?.[0]?.flatData?.title || "",
+      estado: (d.estado || "Em vigor").toLowerCase(),
+      price: d.price || 0,
+      documentUrl: d.document?.[0]?.url || "",
+    }
+  }),
+)
+
+const consultaPublicaData = await query(consultaPublicaQuery, { key: "regulationconsultation" })
+const consultaPublicaIntro = computed(
+  () => consultaPublicaData.value?.data?.queryRegulationconsultationContents?.[0]?.data,
+)
+const consultaPublicaProjects = computed(() =>
+  (consultaPublicaIntro.value?.projects || []).map((p: any) => ({
+    code: p.reference,
+    title: p.title,
+    areaTecnica: p.category?.[0]?.flatData?.title || "",
+    description: stripHtml(p.description),
+    deadline: formatDate(p.deadline),
+    documentUrl: p.document?.[0]?.url || "",
+  })),
+)
+
+const equivalentesData = await query(equivalentesQuery, { key: "regulationequivalent" })
+const equivalentesIntro = computed(
+  () => equivalentesData.value?.data?.queryRegulationequivalentContents?.[0]?.data,
+)
+const equivalentes = computed(() =>
+  (equivalentesIntro.value?.equivalents || []).map((e: any) => ({
+    code: e.reference,
+    title: e.title,
+    areaTecnica: e.category?.[0]?.flatData?.title || "",
+    paisOrigem: e.country,
+    organismoOrigem: e.organism,
+    estado: (e.estado || "Em vigor").toLowerCase(),
+  })),
+)
+
 const activeSubItemId = inject("activeSubItemId")
 const activeTab = ref<string | null>(null)
 const isSubItemSelected = ref(false)
@@ -69,13 +132,25 @@ if (activeSubItemId) {
       title="Acreditação"
     />
 
-    <CustomArcrtRegulamentosTecnicos v-if="activeTab === 'regulamentos-tecnicos'" />
+    <CustomArcrtRegulamentosTecnicos
+      v-if="activeTab === 'regulamentos-tecnicos'"
+      :orgao-legislador-title="orgaoLegislador?.title"
+      :orgao-legislador-description="stripHtml(orgaoLegislador?.description)"
+      :acervo-nacional="acervoNacional"
+      :consulta-publica-title="consultaPublicaIntro?.title"
+      :consulta-publica-description="stripHtml(consultaPublicaIntro?.description)"
+      :consulta-publica-projects="consultaPublicaProjects"
+      :equivalentes-title="equivalentesIntro?.title"
+      :equivalentes-description="stripHtml(equivalentesIntro?.description)"
+      :equivalentes="equivalentes"
+    />
 
     <CustomArcrtRegistroCadastro
       v-if="activeTab === 'registro-cadastro'"
       :requisitos-description="requisitosDescription"
       :requisitos-list="requisitosList"
       :download-info="downloadInfo"
+      :tipologias="tipologias"
     />
 
     <CustomArcrtPontoFocalSadcas

@@ -11,6 +11,15 @@ const props = defineProps({
     type: String,
     default: "",
   },
+  title: {
+    type: String,
+    default: "Referência completa das normas do INIQ",
+  },
+  description: {
+    type: String,
+    default:
+      "Consulte a listagem de referência de todas as normas, incluindo as já revogadas. O preço de aquisição é apresentado apenas em Venda de Normas, para as normas em vigor.",
+  },
 })
 
 const emit = defineEmits(["back-to-comissoes"])
@@ -54,12 +63,8 @@ watch(
     </button>
     <div class="panel-head">
       <span class="eyebrow">Catálogo Nacional de Normas</span>
-      <h2>Referência completa das normas do INIQ</h2>
-      <p>
-        Consulte a listagem de referência de todas as normas, incluindo as já
-        revogadas. O preço de aquisição é apresentado apenas em
-        <b>Venda de Normas</b>, para as normas em vigor.
-      </p>
+      <h2>{{ title }}</h2>
+      <p>{{ description }}</p>
     </div>
 
     <div class="catalog-toolbar">

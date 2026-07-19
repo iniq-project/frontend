@@ -4,6 +4,14 @@ defineProps({
     type: Array,
     default: () => [],
   },
+  title: {
+    type: String,
+    default: "Estruturas de que o INIQ é membro",
+  },
+  description: {
+    type: String,
+    default: "O INIQ participa nas seguintes estruturas internacionais de cooperação em metrologia.",
+  },
 })
 </script>
 
@@ -11,10 +19,8 @@ defineProps({
   <div class="tab-panel">
     <div class="panel-head">
       <span class="eyebrow">Cooperação Regional e Internacional</span>
-      <h2>Estruturas de que o INIQ é membro</h2>
-      <p>
-        O INIQ participa nas seguintes estruturas internacionais de cooperação em metrologia.
-      </p>
+      <h2>{{ title }}</h2>
+      <p>{{ description }}</p>
     </div>
 
     <div class="coop-list">

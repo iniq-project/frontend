@@ -39,12 +39,15 @@ const formatFee = (fee) => {
     <div v-if="leiDownloadInfo" class="lei-wrap">
       <h4>{{ leiDownloadInfo.title }}</h4>
       <p>{{ leiDownloadInfo.description }}</p>
-      <button
-        type="button"
+      <a
+        v-if="leiDownloadInfo.documentUrl"
+        :href="leiDownloadInfo.documentUrl"
+        download
         class="btn btn--ghost"
-        disabled
-        :title="leiDownloadInfo.unavailableCaption"
       >
+        {{ leiDownloadInfo.buttonText }}
+      </a>
+      <button v-else type="button" class="btn btn--ghost" disabled>
         {{ leiDownloadInfo.buttonText }}
       </button>
     </div>

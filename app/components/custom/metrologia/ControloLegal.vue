@@ -8,6 +8,15 @@ const props = defineProps({
     type: Array,
     default: () => [],
   },
+  title: {
+    type: String,
+    default: "O que é o controlo metrológico legal",
+  },
+  description: {
+    type: String,
+    default:
+      "O controlo metrológico legal garante a exactidão dos instrumentos de medição usados em transacções comerciais, operações fiscais, segurança, ambiente e saúde. É uma obrigação do Estado, executada pelo INIQ, e compreende as seguintes operações.",
+  },
 })
 
 const emit = defineEmits(["pedir-servico"])
@@ -21,13 +30,8 @@ const servicoDe = (servicoId) => {
   <div class="tab-panel">
     <div class="panel-head">
       <span class="eyebrow">Controlo Metrológico Legal</span>
-      <h2>O que é o controlo metrológico legal</h2>
-      <p>
-        O controlo metrológico legal garante a exactidão dos instrumentos de
-        medição usados em transacções comerciais, operações fiscais, segurança,
-        ambiente e saúde. É uma obrigação do Estado, executada pelo INIQ, e
-        compreende as seguintes operações.
-      </p>
+      <h2>{{ title }}</h2>
+      <p>{{ description }}</p>
     </div>
 
     <div class="operacoes">

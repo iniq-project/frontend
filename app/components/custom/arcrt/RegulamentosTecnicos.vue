@@ -1,10 +1,17 @@
 <script setup>
 import { ref } from "vue"
-import {
-  acervoNacional,
-  consultaPublicaRegulamentos,
-  regulamentosEquivalentes,
-} from "@/data/regulamentos-mocks"
+
+defineProps({
+  orgaoLegisladorTitle: { type: String, default: undefined },
+  orgaoLegisladorDescription: { type: String, default: undefined },
+  acervoNacional: { type: Array, default: () => [] },
+  consultaPublicaTitle: { type: String, default: undefined },
+  consultaPublicaDescription: { type: String, default: undefined },
+  consultaPublicaProjects: { type: Array, default: () => [] },
+  equivalentesTitle: { type: String, default: undefined },
+  equivalentesDescription: { type: String, default: undefined },
+  equivalentes: { type: Array, default: () => [] },
+})
 
 const activeView = ref("orgao-legislador")
 
@@ -64,7 +71,11 @@ const closeModal = () => {
       </button>
     </div>
 
-    <CustomArcrtOrgaoLegislador v-if="activeView === 'orgao-legislador'" />
+    <CustomArcrtOrgaoLegislador
+      v-if="activeView === 'orgao-legislador'"
+      :title="orgaoLegisladorTitle"
+      :description="orgaoLegisladorDescription"
+    />
     <CustomArcrtAcervoNacional
       v-if="activeView === 'acervo-nacional'"
       :regulamentos="acervoNacional"
@@ -72,12 +83,16 @@ const closeModal = () => {
     />
     <CustomArcrtConsultaPublica
       v-if="activeView === 'consulta-publica'"
-      :projects="consultaPublicaRegulamentos"
+      :title="consultaPublicaTitle"
+      :description="consultaPublicaDescription"
+      :projects="consultaPublicaProjects"
       @open-modal="openModal"
     />
     <CustomArcrtRegulamentosEquivalentes
       v-if="activeView === 'equivalentes'"
-      :regulamentos="regulamentosEquivalentes"
+      :title="equivalentesTitle"
+      :description="equivalentesDescription"
+      :regulamentos="equivalentes"
     />
   </div>
 

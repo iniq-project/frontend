@@ -2,7 +2,7 @@
 import { ref, nextTick, watch, type PropType } from "vue"
 import type { DocumentsType } from "~/constants/document-requirements"
 import { flattenDocumentSlots } from "~/constants/document-requirements"
-import { tipologiasRegistro, type TipologiaRegistro } from "@/data/regulamentos-mocks"
+import type { TipologiaRegistro } from "@/data/regulamentos-mocks"
 
 interface RequisitoItem {
   num: number
@@ -21,6 +21,10 @@ defineProps({
   downloadInfo: {
     type: Object as PropType<{ title: string; description: string; link: string; buttonText: string } | undefined>,
     default: undefined,
+  },
+  tipologias: {
+    type: Array as PropType<TipologiaRegistro[]>,
+    default: () => [],
   },
 })
 
@@ -195,7 +199,7 @@ async function handleSubmit() {
 
     <template v-if="step === 'typology'">
       <div class="tipologias">
-        <article class="tipologia-item" v-for="tipologia in tipologiasRegistro" :key="tipologia.id">
+        <article class="tipologia-item" v-for="tipologia in tipologias" :key="tipologia.id">
           <h3>{{ tipologia.title }}</h3>
           <button type="button" class="btn btn--primary" @click="chooseTypology(tipologia)">
             Registrar-se

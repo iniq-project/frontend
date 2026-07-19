@@ -11,6 +11,15 @@ const props = defineProps({
     type: String,
     default: "",
   },
+  title: {
+    type: String,
+    default: "Catálogo nacional de normas",
+  },
+  description: {
+    type: String,
+    default:
+      "Pesquise as normas em vigor e solicite a sua aquisição. Ao clicar em Comprar, abre-se o formulário de pedido com pagamento por Referência Multicaixa.",
+  },
 })
 
 const emit = defineEmits(["open-modal", "back-to-comissoes"])
@@ -58,12 +67,8 @@ const formatPrice = (price) => {
     </button>
     <div class="panel-head">
       <span class="eyebrow">Venda de Normas</span>
-      <h2>Catálogo nacional de normas</h2>
-      <p>
-        Pesquise as normas em vigor e solicite a sua aquisição. Ao clicar em
-        <b>Comprar</b>, abre-se o formulário de pedido com pagamento por
-        Referência Multicaixa.
-      </p>
+      <h2>{{ title }}</h2>
+      <p>{{ description }}</p>
     </div>
 
     <div class="catalog-toolbar">

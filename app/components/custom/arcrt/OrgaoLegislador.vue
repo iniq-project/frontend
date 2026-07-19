@@ -1,20 +1,23 @@
-<script setup></script>
+<script setup>
+defineProps({
+  title: {
+    type: String,
+    default: "Quem elabora os Regulamentos Técnicos",
+  },
+  description: {
+    type: String,
+    default:
+      "A elaboração e publicação dos Regulamentos Técnicos em Angola é da responsabilidade do Departamento de Regulamentação Técnica do INIQ, em articulação com os ministérios sectoriais tutelares de cada área regulamentada. O INIQ coordena o processo técnico de elaboração, consulta pública e revisão periódica dos regulamentos, garantindo que reflectem os interesses de todas as partes envolvidas — indústria, entidades reguladoras, academia e consumidores — antes da sua aprovação e entrada em vigor.",
+  },
+})
+</script>
 
 <template>
   <div class="sub-panel">
     <div class="panel-head">
       <span class="eyebrow">Órgão Legislador</span>
-      <h2>Quem elabora os Regulamentos Técnicos</h2>
-      <p>
-        A elaboração e publicação dos Regulamentos Técnicos em Angola é da
-        responsabilidade do Departamento de Regulamentação Técnica do INIQ, em
-        articulação com os ministérios sectoriais tutelares de cada área
-        regulamentada. O INIQ coordena o processo técnico de elaboração,
-        consulta pública e revisão periódica dos regulamentos, garantindo que
-        reflectem os interesses de todas as partes envolvidas — indústria,
-        entidades reguladoras, academia e consumidores — antes da sua aprovação
-        e entrada em vigor.
-      </p>
+      <h2>{{ title }}</h2>
+      <p>{{ description }}</p>
     </div>
   </div>
 </template>
