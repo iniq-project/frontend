@@ -2,6 +2,7 @@
 import { inject, watch, ref, computed } from "vue"
 import home from "@/gql/normalizacao/index.gql"
 import vendaNormasQuery from "@/gql/normalizacao/vendaNormas.gql"
+import catalogoNormasQuery from "@/gql/normalizacao/catalogoNormas.gql"
 import normasQuery from "@/gql/normalizacao/normas.gql"
 import comissaoTecnicaQuery from "@/gql/normalizacao/comissaoTecnica.gql"
 import comissaoTecnicaIntroQuery from "@/gql/normalizacao/comissaoTecnicaIntro.gql"
@@ -23,6 +24,11 @@ const leader = computed(
 const vendaNormasData = await query(vendaNormasQuery, { key: "salesrules" })
 const salesrulesIntro = computed(
   () => vendaNormasData.value?.data?.querySalesrulesContents?.[0]?.data,
+)
+
+const catalogoNormasData = await query(catalogoNormasQuery, { key: "nationalcatalog" })
+const catalogoNormasIntro = computed(
+  () => catalogoNormasData.value?.data?.queryNationalcatalogContents?.[0]?.data,
 )
 
 const normasData = await query(normasQuery, { key: "standard" })
@@ -179,8 +185,8 @@ const backToComissoes = () => {
       v-if="activeTab === 'catalogo-livro'"
       :normas="normas"
       :seed-search="seedSearchTerm"
-      :title="salesrulesIntro?.catalogTitle"
-      :description="stripHtml(salesrulesIntro?.catalogDescription)"
+      :title="catalogoNormasIntro?.title"
+      :description="stripHtml(catalogoNormasIntro?.description)"
       @back-to-comissoes="backToComissoes"
     />
   </div>
