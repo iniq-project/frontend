@@ -1,0 +1,8 @@
+query fetch {
+  queryNationalcatalogContents {
+    data: flatData {
+      title
+      description
+    }
+  }
+}

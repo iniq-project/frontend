@@ -1,0 +1,12 @@
+query fetch {
+  queryLegalfeeContents {
+    data: flatData {
+      title
+      description
+      buttonText
+      document {
+        url
+      }
+    }
+  }
+}

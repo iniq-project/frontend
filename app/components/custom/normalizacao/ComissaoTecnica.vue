@@ -1,4 +1,6 @@
 <script setup>
+import { ref } from "vue"
+
 const props = defineProps({
   comissoes: {
     type: Array,
@@ -8,9 +10,23 @@ const props = defineProps({
     type: Array,
     default: () => [],
   },
+  title: {
+    type: String,
+    default: "Comissões Técnicas de Normalização",
+  },
+  description: {
+    type: String,
+    default: "",
+  },
+  informacoesGerais: {
+    type: String,
+    default: "",
+  },
 })
 
 const emit = defineEmits(["view-norma"])
+
+const activeView = ref("info")
 
 const normasDaComissao = (comissao) => {
   return comissao.normaReferences
@@ -23,19 +39,40 @@ const normasDaComissao = (comissao) => {
   <div class="tab-panel">
     <div class="panel-head">
       <span class="eyebrow">Comissão Técnica</span>
-      <h2>Comissões Técnicas de Normalização</h2>
-      <p>
-        Consulte as Comissões Técnicas existentes e as normas já publicadas por
-        cada uma. Esta secção é apenas de consulta — não há candidatura ou
-        pedido de integração disponível na plataforma.
-      </p>
+      <h2>{{ title }}</h2>
+      <p v-if="description">{{ description }}</p>
     </div>
 
-    <div class="comissoes">
+    <div class="view-toggle">
+      <button
+        type="button"
+        class="toggle-btn"
+        :class="{ 'is-active': activeView === 'info' }"
+        @click="activeView = 'info'"
+      >
+        Ver Informações
+      </button>
+      <button
+        type="button"
+        class="toggle-btn"
+        :class="{ 'is-active': activeView === 'lista' }"
+        @click="activeView = 'lista'"
+      >
+        Lista de Comissões Técnicas
+      </button>
+    </div>
+
+    <div v-if="activeView === 'info'" class="info-block" v-html="informacoesGerais"></div>
+
+    <div v-if="activeView === 'lista'" class="comissoes">
       <article class="comissao-item" v-for="comissao in comissoes" :key="comissao.id">
         <div class="comissao-head">
           <h3>{{ comissao.nome }}</h3>
           <span class="badge badge--sector badge--green">{{ comissao.sector }}</span>
+        </div>
+        <div class="comissao-lideranca">
+          <span><b>Presidente:</b> {{ comissao.presidente }}</span>
+          <span><b>Secretário Técnico:</b> {{ comissao.secretarioTecnico }}</span>
         </div>
         <div class="normas-publicadas">
           <span class="normas-label">Normas publicadas</span>
@@ -113,6 +150,99 @@ const normasDaComissao = (comissao) => {
   line-height: 1.6;
 }
 
+.view-toggle {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.toggle-btn {
+  padding: 0.65rem 1.25rem;
+  border-radius: 8px;
+  border: 1px solid #d0d9e3;
+  background: white;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #475569;
+  transition: all 0.2s;
+}
+
+.toggle-btn:hover {
+  border-color: #0a3a63;
+}
+
+.toggle-btn.is-active {
+  background: #0a3a63;
+  border-color: #0a3a63;
+  color: white;
+}
+
+.info-block {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 1.75rem 2rem;
+}
+
+.info-block :deep(h3) {
+  margin: 0 0 1rem 0;
+  color: #0a3a63;
+  font-size: 1.3rem;
+  font-weight: 700;
+}
+
+.info-block :deep(h4) {
+  margin: 1.75rem 0 0.75rem 0;
+  color: #0a3a63;
+  font-size: 1.05rem;
+  font-weight: 700;
+  border-left: 4px solid #5cb947;
+  padding-left: 0.65rem;
+}
+
+.info-block :deep(h4:first-of-type) {
+  margin-top: 1.5rem;
+}
+
+.info-block :deep(p) {
+  margin: 0 0 0.75rem 0;
+  color: #475569;
+  font-size: 0.95rem;
+  line-height: 1.7;
+}
+
+.info-block :deep(ul) {
+  list-style: none;
+  margin: 0 0 0.75rem 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.info-block :deep(li) {
+  position: relative;
+  padding-left: 1.25rem;
+  color: #475569;
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+.info-block :deep(li)::before {
+  content: "•";
+  position: absolute;
+  left: 0;
+  color: #5cb947;
+  font-weight: bold;
+}
+
+.info-block :deep(li b),
+.info-block :deep(p b) {
+  color: #0a3a63;
+}
+
 .comissoes {
   display: flex;
   flex-direction: column;
@@ -131,7 +261,7 @@ const normasDaComissao = (comissao) => {
   align-items: center;
   gap: 1rem;
   flex-wrap: wrap;
-  margin-bottom: 1rem;
+  margin-bottom: 0.75rem;
 }
 
 .comissao-head h3 {
@@ -139,6 +269,21 @@ const normasDaComissao = (comissao) => {
   color: #0a3a63;
   font-size: 1.15rem;
   font-weight: 700;
+}
+
+.comissao-lideranca {
+  display: flex;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  margin-bottom: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #e6eff6;
+  font-size: 0.875rem;
+  color: #475569;
+}
+
+.comissao-lideranca b {
+  color: #0a3a63;
 }
 
 .badge--sector {
@@ -225,11 +370,20 @@ const normasDaComissao = (comissao) => {
   .tab-panel {
     padding: 1.25rem 1rem 1.5rem;
   }
+
+  .info-block {
+    padding: 1.5rem;
+  }
 }
 
 @media (max-width: 767px) {
   .panel-head h2 {
     font-size: 1.25rem;
+  }
+
+  .toggle-btn {
+    flex: 1 1 auto;
+    text-align: center;
   }
 
   .norma-link {
@@ -238,6 +392,11 @@ const normasDaComissao = (comissao) => {
 
   .badge--estado {
     margin-left: 0;
+  }
+
+  .comissao-lideranca {
+    flex-direction: column;
+    gap: 0.4rem;
   }
 }
 </style>

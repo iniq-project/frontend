@@ -3,14 +3,6 @@ query fetch {
    data: flatData {
     title
     description
-    rules {
-      title
-      price
-      reference
-      category {
-        id
-      }
-    }
   }
   }
 }

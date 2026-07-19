@@ -1,0 +1,23 @@
+query fetch {
+  queryRegulationconsultationContents {
+    data: flatData {
+      title
+      description
+      projects {
+        title
+        description
+        reference
+        deadline
+        document {
+          url
+        }
+        category {
+          id
+          flatData {
+            title
+          }
+        }
+      }
+    }
+  }
+}

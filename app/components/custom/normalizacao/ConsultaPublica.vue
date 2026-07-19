@@ -6,6 +6,15 @@ defineProps({
     type: Array,
     default: () => [],
   },
+  title: {
+    type: String,
+    default: "Participe na elaboração das normas",
+  },
+  description: {
+    type: String,
+    default:
+      "Os projectos abaixo estão em fase de consulta pública. Qualquer interessado pode ler o documento do projecto e submeter contribuições dentro do prazo indicado, sem necessidade de conta ou autenticação.",
+  },
 })
 
 const emit = defineEmits(["open-modal"])
@@ -29,12 +38,8 @@ const backToList = () => {
     <template v-if="viewMode === 'list'">
       <div class="panel-head">
         <span class="eyebrow">Projectos-Normas em Consulta Pública</span>
-        <h2>Participe na elaboração das normas</h2>
-        <p>
-          Os projectos abaixo estão em fase de consulta pública. Qualquer
-          interessado pode ler o documento do projecto e submeter contribuições
-          dentro do prazo indicado, sem necessidade de conta ou autenticação.
-        </p>
+        <h2>{{ title }}</h2>
+        <p>{{ description }}</p>
       </div>
       <div class="consulta">
         <article class="consulta-item" v-for="project in projects" :key="project.code">
@@ -45,9 +50,6 @@ const backToList = () => {
             </div>
             <h3>{{ project.title }}</h3>
             <p class="consulta-desc">{{ project.description }}</p>
-            <div class="consulta-bar">
-              <span :style="{ width: project.progress + '%' }"></span>
-            </div>
           </div>
           <div class="consulta-deadline">
             <span :class="['deadline-pill', { urgent: project.urgent }]">
@@ -79,11 +81,19 @@ const backToList = () => {
       <div class="documento-wrap">
         <h4>Documento do projecto</h4>
         <p class="documento-text">{{ selectedProject.documento }}</p>
-        <button type="button" class="btn btn--ghost" disabled title="Download indisponível nesta demonstração">
+        <a
+          v-if="selectedProject.documentUrl"
+          :href="selectedProject.documentUrl"
+          download
+          class="btn btn--ghost"
+        >
+          Descarregar documento (PDF)
+        </a>
+        <button v-else type="button" class="btn btn--ghost" disabled>
           Descarregar documento (PDF)
         </button>
-        <p class="documento-caption">
-          Documento anexado pela Comissão Técnica responsável — download indisponível nesta demonstração.
+        <p v-if="!selectedProject.documentUrl" class="documento-caption">
+          Documento ainda não foi carregado pela Comissão Técnica responsável.
         </p>
       </div>
 
@@ -199,21 +209,6 @@ const backToList = () => {
   color: #475569;
   font-size: 0.95rem;
   line-height: 1.6;
-}
-
-.consulta-bar {
-  height: 6px;
-  background: #e2e8f0;
-  border-radius: 3px;
-  overflow: hidden;
-  width: 100%;
-}
-
-.consulta-bar span {
-  display: block;
-  height: 100%;
-  background: linear-gradient(90deg, #5cb947, #2ba9e0);
-  border-radius: 3px;
 }
 
 .consulta-deadline {

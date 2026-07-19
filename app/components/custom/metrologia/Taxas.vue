@@ -21,26 +21,35 @@ const formatFee = (fee) => {
       <span class="eyebrow">Taxas de Metrologia Legal</span>
       <h2>Emolumentos aplicáveis aos serviços de metrologia</h2>
       <p>
-        Valores conforme a Lei n.º 17/02, de 13 de Dezembro. Estes são os mesmos valores mostrados
-        no pedido em <b>Serviços</b>, para que o utente veja o custo sem ter de consultar esta
-        página à parte.
+        Valores conforme a Lei n.º 17/02, de 13 de Dezembro. Estes são os mesmos
+        valores mostrados no pedido em <b>Serviços</b>, para que o utente veja o
+        custo sem ter de consultar esta página à parte.
       </p>
     </div>
 
     <div class="taxas-list">
       <div class="taxa-item" v-for="servico in servicos" :key="servico.id">
         <span class="taxa-title">{{ servico.title }}</span>
-        <span class="taxa-fee">{{ formatFee(servico.fee) }} <small>AOA</small></span>
+        <span class="taxa-fee"
+          >{{ formatFee(servico.fee) }} <small>AOA</small></span
+        >
       </div>
     </div>
 
     <div v-if="leiDownloadInfo" class="lei-wrap">
       <h4>{{ leiDownloadInfo.title }}</h4>
       <p>{{ leiDownloadInfo.description }}</p>
-      <button type="button" class="btn btn--ghost" disabled :title="leiDownloadInfo.unavailableCaption">
+      <a
+        v-if="leiDownloadInfo.documentUrl"
+        :href="leiDownloadInfo.documentUrl"
+        download
+        class="btn btn--ghost"
+      >
+        {{ leiDownloadInfo.buttonText }}
+      </a>
+      <button v-else type="button" class="btn btn--ghost" disabled>
         {{ leiDownloadInfo.buttonText }}
       </button>
-      <p class="caption">{{ leiDownloadInfo.unavailableCaption }}</p>
     </div>
   </div>
 </template>

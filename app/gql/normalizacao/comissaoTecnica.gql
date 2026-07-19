@@ -1,0 +1,22 @@
+query fetch {
+  queryTechnicalcommitteeContents {
+    id
+    data: flatData {
+      nome
+      sector {
+        id
+        flatData {
+          title
+        }
+      }
+      presidente
+      secretarioTecnico
+      normas {
+        id
+        data: flatData {
+          reference
+        }
+      }
+    }
+  }
+}

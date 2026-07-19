@@ -1,11 +1,14 @@
 <script setup>
 import { inject, watch, ref, computed } from "vue"
 import home from "@/gql/normalizacao/index.gql"
-import {
-  normas,
-  comissoesTecnicas,
-  projetosConsulta,
-} from "@/data/normalizacao-mocks"
+import vendaNormasQuery from "@/gql/normalizacao/vendaNormas.gql"
+import catalogoNormasQuery from "@/gql/normalizacao/catalogoNormas.gql"
+import normasQuery from "@/gql/normalizacao/normas.gql"
+import comissaoTecnicaQuery from "@/gql/normalizacao/comissaoTecnica.gql"
+import comissaoTecnicaIntroQuery from "@/gql/normalizacao/comissaoTecnicaIntro.gql"
+import consultasPublicasQuery from "@/gql/normalizacao/consultasPublicas.gql"
+import { formatDate } from "@/utils/formatDate"
+import { stripHtml } from "@/utils/stripHtml"
 
 useHead({
   title: "INIQ » Normalização",
@@ -18,7 +21,88 @@ const leader = computed(
   () => data.value?.data.queryHomenormalizationContents?.[0]?.data?.leader,
 )
 
-const normasEmVigor = computed(() => normas.filter((n) => n.estado === "em vigor"))
+const vendaNormasData = await query(vendaNormasQuery, { key: "salesrules" })
+const salesrulesIntro = computed(
+  () => vendaNormasData.value?.data?.querySalesrulesContents?.[0]?.data,
+)
+
+const catalogoNormasData = await query(catalogoNormasQuery, { key: "nationalcatalog" })
+const catalogoNormasIntro = computed(
+  () => catalogoNormasData.value?.data?.queryNationalcatalogContents?.[0]?.data,
+)
+
+const normasData = await query(normasQuery, { key: "standard" })
+const rawNormas = computed(() => normasData.value?.data?.queryStandardContents || [])
+
+const comissaoTecnicaData = await query(comissaoTecnicaQuery, { key: "technicalcommittee" })
+const rawComissoes = computed(
+  () => comissaoTecnicaData.value?.data?.queryTechnicalcommitteeContents || [],
+)
+
+const comissaoTecnicaIntroData = await query(comissaoTecnicaIntroQuery, {
+  key: "technicalcommitteeintro",
+})
+const comissaoTecnicaIntro = computed(
+  () => comissaoTecnicaIntroData.value?.data?.queryTechnicalcommitteeintroContents?.[0]?.data,
+)
+
+const comissaoDeNorma = computed(() => {
+  const map = {}
+  for (const item of rawComissoes.value) {
+    for (const norma of item.data?.normas || []) {
+      map[norma.data.reference] = item.data.nome
+    }
+  }
+  return map
+})
+
+const normas = computed(() =>
+  rawNormas.value.map((item) => {
+    const n = item.data
+    return {
+      reference: n.reference,
+      title: n.title,
+      categoria: n.category?.[0]?.flatData?.title || "",
+      price: n.price || 0,
+      ics: n.ics || "",
+      ano: n.ano || 0,
+      comissaoTecnica: comissaoDeNorma.value[n.reference] || "",
+      estado: (n.estado || "Em vigor").toLowerCase(),
+    }
+  }),
+)
+
+const normasEmVigor = computed(() => normas.value.filter((n) => n.estado === "em vigor"))
+
+const comissoesTecnicas = computed(() =>
+  rawComissoes.value.map((item) => ({
+    id: item.id,
+    nome: item.data.nome,
+    sector: item.data.sector?.[0]?.flatData?.title || "",
+    presidente: item.data.presidente,
+    secretarioTecnico: item.data.secretarioTecnico,
+    normaReferences: (item.data.normas || []).map((n) => n.data.reference),
+  })),
+)
+
+const consultasPublicasData = await query(consultasPublicasQuery, { key: "publicconsultation" })
+const consultaPublicaIntro = computed(
+  () => consultasPublicasData.value?.data?.queryPublicconsultationContents?.[0]?.data,
+)
+const projetosConsulta = computed(() =>
+  (consultaPublicaIntro.value?.rules || []).map(
+    (p) => ({
+      code: p.reference,
+      title: p.title,
+      sector: p.category?.[0]?.flatData?.title || "",
+      description: stripHtml(p.description),
+      documento: stripHtml(p.description),
+      documentUrl: p.document?.[0]?.url || "",
+      deadline: formatDate(p.deadline),
+      urgent: !!p.urgent,
+    }),
+  ),
+)
 
 const activeSubItemId = inject("activeSubItemId")
 const activeTab = ref(null)
@@ -51,7 +135,7 @@ const closeModal = () => {
 }
 
 const handleViewNorma = (reference) => {
-  const norma = normas.find((n) => n.reference === reference)
+  const norma = normas.value.find((n) => n.reference === reference)
   if (!norma) return
 
   activeTab.value = norma.estado === "em vigor" ? "venda-normas" : "catalogo-livro"
@@ -73,6 +157,9 @@ const backToComissoes = () => {
       v-if="activeTab === 'comissao-tecnica'"
       :comissoes="comissoesTecnicas"
       :normas="normas"
+      :title="comissaoTecnicaIntro?.title"
+      :description="stripHtml(comissaoTecnicaIntro?.description)"
+      :informacoes-gerais="comissaoTecnicaIntro?.informacoesGerais"
       @view-norma="handleViewNorma"
     />
 
@@ -80,6 +167,8 @@ const backToComissoes = () => {
       v-if="activeTab === 'venda-normas'"
       :normas="normasEmVigor"
       :seed-search="seedSearchTerm"
+      :title="salesrulesIntro?.title"
+      :description="stripHtml(salesrulesIntro?.description)"
       @open-modal="openModal"
       @back-to-comissoes="backToComissoes"
     />
@@ -87,6 +176,8 @@ const backToComissoes = () => {
     <CustomNormalizacaoConsultaPublica
       v-if="activeTab === 'consulta-publica'"
       :projects="projetosConsulta"
+      :title="consultaPublicaIntro?.title"
+      :description="stripHtml(consultaPublicaIntro?.description)"
       @open-modal="openModal"
     />
 
@@ -94,6 +185,8 @@ const backToComissoes = () => {
       v-if="activeTab === 'catalogo-livro'"
       :normas="normas"
       :seed-search="seedSearchTerm"
+      :title="catalogoNormasIntro?.title"
+      :description="stripHtml(catalogoNormasIntro?.description)"
       @back-to-comissoes="backToComissoes"
     />
   </div>

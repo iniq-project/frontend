@@ -1,0 +1,13 @@
+query fetch {
+  queryLegalcontrolContents {
+    data: flatData {
+      title
+      description
+      operations {
+        title
+        description
+        servicoTitle
+      }
+    }
+  }
+}

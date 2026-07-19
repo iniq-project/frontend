@@ -1,54 +1,39 @@
 <script setup>
-import { ref, watch } from "vue"
-import { useNormaFilters } from "@/composables/useNormaFilters"
+import { ref, computed } from "vue"
 
 const props = defineProps({
-  normas: {
+  regulamentos: {
     type: Array,
     default: () => [],
   },
-  seedSearch: {
-    type: String,
-    default: "",
-  },
-  title: {
-    type: String,
-    default: "Catálogo nacional de normas",
-  },
-  description: {
-    type: String,
-    default:
-      "Pesquise as normas em vigor e solicite a sua aquisição. Ao clicar em Comprar, abre-se o formulário de pedido com pagamento por Referência Multicaixa.",
-  },
 })
 
-const emit = defineEmits(["open-modal", "back-to-comissoes"])
+const emit = defineEmits(["open-modal"])
 
-const {
-  searchTerm,
-  categoria,
-  ano,
-  comissaoTecnica,
-  categorias,
-  anos,
-  comissoes,
-  filteredNormas,
-  seedSearch: applySeedSearch,
-  resetFilters,
-} = useNormaFilters(() => props.normas)
+const searchTerm = ref("")
+const areaTecnica = ref("")
+const estado = ref("")
 
-const viaComissaoTecnica = ref(false)
-
-watch(
-  () => props.seedSearch,
-  (term) => {
-    if (term) {
-      applySeedSearch(term)
-      viaComissaoTecnica.value = true
-    }
-  },
-  { immediate: true },
+const areasTecnicas = computed(() =>
+  [...new Set(props.regulamentos.map((r) => r.areaTecnica))].sort(),
 )
+
+const filteredRegulamentos = computed(() => {
+  const term = searchTerm.value.trim().toLowerCase()
+
+  return props.regulamentos.filter((r) => {
+    const matchesSearch = !term || r.title.toLowerCase().includes(term)
+    const matchesArea = !areaTecnica.value || r.areaTecnica === areaTecnica.value
+    const matchesEstado = !estado.value || r.estado === estado.value
+    return matchesSearch && matchesArea && matchesEstado
+  })
+})
+
+const resetFilters = () => {
+  searchTerm.value = ""
+  areaTecnica.value = ""
+  estado.value = ""
+}
 
 const formatPrice = (price) => {
   return (price ?? 0).toLocaleString("pt-PT")
@@ -56,19 +41,14 @@ const formatPrice = (price) => {
 </script>
 
 <template>
-  <div class="tab-panel">
-    <button
-      v-if="viaComissaoTecnica"
-      type="button"
-      class="back-link"
-      @click="emit('back-to-comissoes')"
-    >
-      ← Voltar à Comissão Técnica
-    </button>
+  <div class="sub-panel">
     <div class="panel-head">
-      <span class="eyebrow">Venda de Normas</span>
-      <h2>{{ title }}</h2>
-      <p>{{ description }}</p>
+      <span class="eyebrow">Acervo Nacional Regulamentar</span>
+      <h2>Catálogo de Regulamentos Técnicos</h2>
+      <p>
+        Pesquise os Regulamentos Técnicos disponíveis e solicite a sua aquisição. Ao clicar em
+        <b>Comprar</b>, é gerado um RUPE para pagamento.
+      </p>
     </div>
 
     <div class="catalog-toolbar">
@@ -80,25 +60,22 @@ const formatPrice = (price) => {
         <input
           type="text"
           v-model="searchTerm"
-          placeholder="Pesquisar por título ou ICS…"
-          aria-label="Pesquisar normas"
+          placeholder="Pesquisar por título…"
+          aria-label="Pesquisar regulamentos"
         />
       </div>
       <div class="catalog-filter">
-        <select v-model="categoria" aria-label="Filtrar por categoria">
-          <option value="">Todas as categorias</option>
-          <option v-for="c in categorias" :key="c" :value="c">{{ c }}</option>
+        <select v-model="areaTecnica" aria-label="Filtrar por área técnica">
+          <option value="">Todas as áreas técnicas</option>
+          <option v-for="a in areasTecnicas" :key="a" :value="a">{{ a }}</option>
         </select>
-        <select v-model="ano" aria-label="Filtrar por ano">
-          <option value="">Todos os anos</option>
-          <option v-for="a in anos" :key="a" :value="String(a)">{{ a }}</option>
-        </select>
-        <select v-model="comissaoTecnica" aria-label="Filtrar por Comissão Técnica">
-          <option value="">Todas as Comissões Técnicas</option>
-          <option v-for="c in comissoes" :key="c" :value="c">{{ c }}</option>
+        <select v-model="estado" aria-label="Filtrar por estado">
+          <option value="">Todos os estados</option>
+          <option value="em vigor">Em vigor</option>
+          <option value="revogado">Revogado</option>
         </select>
         <button
-          v-if="searchTerm || categoria || ano || comissaoTecnica"
+          v-if="searchTerm || areaTecnica || estado"
           class="chip"
           type="button"
           @click="resetFilters"
@@ -108,55 +85,51 @@ const formatPrice = (price) => {
       </div>
     </div>
 
-    <p v-if="!filteredNormas.length" class="empty-state">
-      Nenhuma norma encontrada com os filtros seleccionados.
+    <p v-if="!filteredRegulamentos.length" class="empty-state">
+      Nenhum regulamento encontrado com os filtros seleccionados.
     </p>
 
     <div class="catalog">
-      <div class="catalog-item" v-for="norma in filteredNormas" :key="norma.reference">
+      <div class="catalog-item" v-for="regulamento in filteredRegulamentos" :key="regulamento.code">
         <div class="catalog-item-top">
-          <div class="catalog-item-code">{{ norma.reference }}</div>
-          <span class="badge badge--sector badge--green">{{ norma.categoria }}</span>
+          <div class="catalog-item-code">{{ regulamento.code }}</div>
+          <span class="badge badge--sector badge--green">{{ regulamento.areaTecnica }}</span>
+          <span
+            class="badge badge--estado"
+            :class="{ revogado: regulamento.estado === 'revogado' }"
+          >
+            {{ regulamento.estado === "revogado" ? "Revogado" : "Em vigor" }}
+          </span>
           <div class="catalog-item-price">
-            <span class="price-value">{{ formatPrice(norma.price) }}</span>
+            <span class="price-value">{{ formatPrice(regulamento.price) }}</span>
             <span class="price-currency">AOA</span>
           </div>
-          <button class="btn btn--primary" @click="emit('open-modal', 'venda', norma)">
+          <button class="btn btn--primary" @click="emit('open-modal', 'purchase', regulamento)">
             Comprar
           </button>
         </div>
-        <h3 class="catalog-item-title">{{ norma.title }}</h3>
+        <h3 class="catalog-item-title">{{ regulamento.title }}</h3>
+        <a
+          v-if="regulamento.documentUrl"
+          :href="regulamento.documentUrl"
+          download
+          class="doc-link"
+        >
+          Descarregar documento (PDF)
+        </a>
       </div>
     </div>
   </div>
 </template>
 
 <style scoped>
-.tab-panel {
-  display: block !important;
-  padding: 1.5rem 2rem 2rem 2rem;
+.sub-panel {
+  display: block;
+  padding-top: 1.5rem;
+  padding-bottom: 2rem;
   max-width: 100%;
   overflow-x: hidden;
   box-sizing: border-box;
-}
-
-.back-link {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  color: #0a3a63;
-  text-decoration: underline;
-  font-weight: 600;
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  padding: 0;
-  font-size: 0.95rem;
-  margin-bottom: 1.25rem;
-}
-
-.back-link:hover {
-  color: #5cb947;
 }
 
 .panel-head {
@@ -297,7 +270,6 @@ const formatPrice = (price) => {
   border: 1px solid #e2e8f0;
   border-radius: 10px;
   transition: all 0.2s;
-  margin-bottom: 0.25rem;
 }
 
 .catalog-item:hover {
@@ -309,6 +281,7 @@ const formatPrice = (price) => {
   align-items: center;
   gap: 1rem;
   margin-bottom: 1rem;
+  flex-wrap: wrap;
 }
 
 .catalog-item-code {
@@ -328,6 +301,21 @@ const formatPrice = (price) => {
 .badge--green {
   background: #eaf7e5;
   color: #5cb947;
+}
+
+.badge--estado {
+  font-family: monospace;
+  font-size: 0.75rem;
+  padding: 0.2rem 0.6rem;
+  border-radius: 100px;
+  background: #eff6fc;
+  color: #0a3a63;
+  font-weight: 600;
+}
+
+.badge--estado.revogado {
+  background: #fef2f2;
+  color: #dc2626;
 }
 
 .catalog-item-price {
@@ -355,6 +343,19 @@ const formatPrice = (price) => {
   font-weight: 700;
 }
 
+.doc-link {
+  display: inline-flex;
+  margin-top: 0.5rem;
+  color: #2ba9e0;
+  font-weight: 600;
+  font-size: 0.9rem;
+  text-decoration: none;
+}
+
+.doc-link:hover {
+  text-decoration: underline;
+}
+
 .btn--primary {
   padding: 0.65rem 1.25rem;
   border-radius: 8px;
@@ -371,8 +372,9 @@ const formatPrice = (price) => {
 }
 
 @media (max-width: 1199px) {
-  .tab-panel {
-    padding: 1.25rem 1rem 1.5rem;
+  .sub-panel {
+    padding-top: 1.25rem;
+    padding-bottom: 1.5rem;
   }
 
   .catalog-toolbar {
@@ -397,11 +399,6 @@ const formatPrice = (price) => {
 
   .catalog-filter select {
     flex: 1 1 auto;
-  }
-
-  .catalog-item-top {
-    flex-wrap: wrap;
-    gap: 0.75rem;
   }
 
   .catalog-item-price {

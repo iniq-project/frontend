@@ -59,9 +59,12 @@ export const services: Service[] = [
     {
     id: "registo-cadastro",
     number: "03",
-    title: "Registo, Cadastro e Acreditação",
+    title: "Acreditação, Registro e Cadastro, Regulamentos Técnicos",
     subItems: [
-      { id: "solicitar-servico", number: "01", title: "Ver Requisitos" },
+      { id: "acreditacao", number: "01", title: "Acreditação" },
+      { id: "regulamentos-tecnicos", number: "02", title: "Regulamentos Técnicos" },
+      { id: "registro-cadastro", number: "03", title: "Registro e Cadastro" },
+      { id: "ponto-focal-sadcas", number: "04", title: "Ponto Focal SADCAS" },
     ]
   },
     {
@@ -92,17 +95,10 @@ export const services: Service[] = [
       { id: "solicitar-servico", number: "01", title: "Solicitar Serviço" }
     ]
   },
-   {
-    id: "regulamentos",
-    number: "07",
-    title: "Regulamentos Técnicos",
-    subItems: [
-      { id: "solicitar-servico", number: "01", title: "Solicitar Serviço" }
-    ]
-  },
   {
     id: "premio-qualidade",
-    number: "08",
+    number: "07",
+    disabled: true,
     title: "Prémio Nacional da Qualidade",
     subItems: [
       { id: "solicitar-servico", number: "01", title: "Solicitar Serviço" }
@@ -110,7 +106,7 @@ export const services: Service[] = [
   },
     {
     id: "eventos",
-    number: "09",
+    number: "08",
     disabled: true,
     title: "Eventos",
     subItems: [
@@ -119,7 +115,7 @@ export const services: Service[] = [
   },
       {
     id: "forum",
-    number: "10",
+    number: "09",
     disabled: true,
     title: "FIQ-CPLP / Fórum da I.E da Qualidade da CPLP",
     subItems: [

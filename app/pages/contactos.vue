@@ -1,4 +1,7 @@
 <script setup lang="ts">
+import contactosQuery from "@/gql/contactos/index.gql"
+import { stripHtml } from "@/utils/stripHtml"
+
 definePageMeta({
   layout: 'default',
 })
@@ -6,6 +9,17 @@ definePageMeta({
 useHead({
   title: 'INIQ » Contactos',
 })
+
+const { query } = useSquidex()
+const data = await query(contactosQuery, { key: "contactos" })
+
+const contactInfo = computed(
+  () => data.value?.data?.queryContactinfoContents?.[0]?.data,
+)
+const departments = computed(
+  () => data.value?.data?.queryContactdepartmentContents?.[0]?.data?.departments || [],
+)
+const subjectOptions = computed(() => contactInfo.value?.subjectOptions || [])
 
 const formSubmitted = ref(false)
 const formData = ref({
@@ -42,7 +56,7 @@ function handleSubmit() {
               </svg>
             </div>
             <h3>Telefone</h3>
-            <p><a href="tel:+244222000000">+244 222 000 000</a><br>+244 923 000 000</p>
+            <p><a :href="`tel:${contactInfo?.phoneMain}`">{{ contactInfo?.phoneMain }}</a><br>{{ contactInfo?.phoneMobile }}</p>
           </div>
           <div class="ct-quick__item">
             <div class="ct-quick__ico">
@@ -52,7 +66,7 @@ function handleSubmit() {
               </svg>
             </div>
             <h3>E-mail</h3>
-            <p><a href="mailto:geral@iniq.gov.ao">geral@iniq.gov.ao</a><br><a href="mailto:normas@iniq.gov.ao">normas@iniq.gov.ao</a></p>
+            <p><a :href="`mailto:${contactInfo?.emailGeneral}`">{{ contactInfo?.emailGeneral }}</a><br><a :href="`mailto:${contactInfo?.emailStandards}`">{{ contactInfo?.emailStandards }}</a></p>
           </div>
           <div class="ct-quick__item">
             <div class="ct-quick__ico">
@@ -62,7 +76,7 @@ function handleSubmit() {
               </svg>
             </div>
             <h3>Sede</h3>
-            <p>Edifício Palácio do Vidro, Largo 17 de Setembro n.º 7 — 5.º Andar, Luanda</p>
+            <p v-html="contactInfo?.address"></p>
           </div>
         </div>
 
@@ -106,14 +120,7 @@ function handleSubmit() {
                 <label for="c-assunto">Assunto <span class="req">*</span></label>
                 <select id="c-assunto" name="assunto" required v-model="formData.assunto">
                   <option value="">Seleccione um assunto…</option>
-                  <option>Normas Técnicas / Normalização</option>
-                  <option>Metrologia</option>
-                  <option>Acreditação / Registo</option>
-                  <option>Certificação de produtos a importar</option>
-                  <option>Formação e Certificação</option>
-                  <option>Prémio Nacional da Qualidade</option>
-                  <option>Imprensa / Comunicação</option>
-                  <option>Outro assunto</option>
+                  <option v-for="option in subjectOptions" :key="option">{{ option }}</option>
                 </select>
               </div>
               <div class="field">
@@ -139,27 +146,27 @@ function handleSubmit() {
                   <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"></path>
                   <circle cx="12" cy="10" r="3"></circle>
                 </svg>
-                <div><div class="k">Morada</div><div class="v">Edifício Palácio do Vidro<br>Largo 17 de Setembro, n.º 7 — 5.º Andar<br>Luanda · República de Angola</div></div>
+                <div><div class="k">Morada</div><div class="v" v-html="contactInfo?.address"></div></div>
               </div>
               <div class="ct-line">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3-8.7A2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.4-1.2a2 2 0 0 1 2.1-.5c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2Z"></path>
                 </svg>
-                <div><div class="k">Telefone</div><div class="v"><a href="tel:+244222000000">+244 222 000 000</a></div></div>
+                <div><div class="k">Telefone</div><div class="v"><a :href="`tel:${contactInfo?.phoneMain}`">{{ contactInfo?.phoneMain }}</a></div></div>
               </div>
               <div class="ct-line">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <rect x="3" y="5" width="18" height="14" rx="2"></rect>
                   <path d="m3 7 9 6 9-6"></path>
                 </svg>
-                <div><div class="k">E-mail</div><div class="v"><a href="mailto:geral@iniq.gov.ao">geral@iniq.gov.ao</a></div></div>
+                <div><div class="k">E-mail</div><div class="v"><a :href="`mailto:${contactInfo?.emailGeneral}`">{{ contactInfo?.emailGeneral }}</a></div></div>
               </div>
               <div class="ct-line">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <circle cx="12" cy="12" r="9"></circle>
                   <path d="M12 7v5l3 2"></path>
                 </svg>
-                <div><div class="k">Horário</div><div class="v">Segunda a Sexta · 08h00 — 15h30</div></div>
+                <div><div class="k">Horário</div><div class="v">{{ contactInfo?.officeHours }}</div></div>
               </div>
             </div>
           </div>
@@ -171,35 +178,10 @@ function handleSubmit() {
             <h2 style="font-size:clamp(24px,3vw,34px);">Contactos por área</h2>
           </div>
           <div class="ct-dept">
-            <div class="dept">
-              <h4>Normalização</h4>
-              <div class="role">Normas técnicas · Comissões · Venda</div>
-              <p><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"></rect><path d="m3 7 9 6 9-6"></path></svg><a href="mailto:normas@iniq.gov.ao">normas@iniq.gov.ao</a></p>
-            </div>
-            <div class="dept">
-              <h4>Metrologia</h4>
-              <div class="role">Calibração · Verificação</div>
-              <p><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"></rect><path d="m3 7 9 6 9-6"></path></svg><a href="mailto:metrologia@iniq.gov.ao">metrologia@iniq.gov.ao</a></p>
-            </div>
-            <div class="dept">
-              <h4>Avaliação da Conformidade</h4>
-              <div class="role">Certificação · Importação</div>
-              <p><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"></rect><path d="m3 7 9 6 9-6"></path></svg><a href="mailto:conformidade@iniq.gov.ao">conformidade@iniq.gov.ao</a></p>
-            </div>
-            <div class="dept">
-              <h4>Formação</h4>
-              <div class="role">Cursos · Certificação de competências</div>
-              <p><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"></rect><path d="m3 7 9 6 9-6"></path></svg><a href="mailto:formacao@iniq.gov.ao">formacao@iniq.gov.ao</a></p>
-            </div>
-            <div class="dept">
-              <h4>Comunicação e Imprensa</h4>
-              <div class="role">Media · Eventos</div>
-              <p><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"></rect><path d="m3 7 9 6 9-6"></path></svg><a href="mailto:comunicacao@iniq.gov.ao">comunicacao@iniq.gov.ao</a></p>
-            </div>
-            <div class="dept">
-              <h4>Direcção-Geral</h4>
-              <div class="role">Secretariado executivo</div>
-              <p><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"></rect><path d="m3 7 9 6 9-6"></path></svg><a href="mailto:dg@iniq.gov.ao">dg@iniq.gov.ao</a></p>
+            <div class="dept" v-for="dept in departments" :key="dept.name">
+              <h4>{{ dept.name }}</h4>
+              <div class="role">{{ dept.area }}</div>
+              <p><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"></rect><path d="m3 7 9 6 9-6"></path></svg><a :href="`mailto:${dept.email}`">{{ dept.email }}</a></p>
             </div>
           </div>
         </div>

@@ -1,0 +1,14 @@
+query fetch {
+  queryInternationalcooperationContents {
+    data: flatData {
+      title
+      description
+      cooperations {
+        fullName
+        acronym
+        participationType
+        link
+      }
+    }
+  }
+}

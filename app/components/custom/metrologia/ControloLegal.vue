@@ -8,6 +8,15 @@ const props = defineProps({
     type: Array,
     default: () => [],
   },
+  title: {
+    type: String,
+    default: "O que é o controlo metrológico legal",
+  },
+  description: {
+    type: String,
+    default:
+      "O controlo metrológico legal garante a exactidão dos instrumentos de medição usados em transacções comerciais, operações fiscais, segurança, ambiente e saúde. É uma obrigação do Estado, executada pelo INIQ, e compreende as seguintes operações.",
+  },
 })
 
 const emit = defineEmits(["pedir-servico"])
@@ -21,16 +30,16 @@ const servicoDe = (servicoId) => {
   <div class="tab-panel">
     <div class="panel-head">
       <span class="eyebrow">Controlo Metrológico Legal</span>
-      <h2>O que é o controlo metrológico legal</h2>
-      <p>
-        O controlo metrológico legal garante a exactidão dos instrumentos de medição usados em
-        transacções comerciais, operações fiscais, segurança, ambiente e saúde. É uma obrigação do
-        Estado, executada pelo INIQ, e compreende as seguintes operações.
-      </p>
+      <h2>{{ title }}</h2>
+      <p>{{ description }}</p>
     </div>
 
     <div class="operacoes">
-      <article class="operacao-item" v-for="operacao in operacoes" :key="operacao.id">
+      <article
+        class="operacao-item"
+        v-for="operacao in operacoes"
+        :key="operacao.id"
+      >
         <div>
           <h3>{{ operacao.title }}</h3>
           <p class="operacao-desc">{{ operacao.description }}</p>
@@ -47,11 +56,6 @@ const servicoDe = (servicoId) => {
         </button>
       </article>
     </div>
-
-    <p class="note">
-      Esta secção é apenas informativa — não existe formulário de submissão de pedidos aqui. Toda a
-      submissão ocorre em <b>Serviços</b>.
-    </p>
   </div>
 </template>
 

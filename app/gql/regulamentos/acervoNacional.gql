@@ -1,25 +1,22 @@
 query fetch {
-  queryPublicconsultationContents {
-   data: flatData {
-    title
-    description
-    rules {
+  queryRegulationsContents {
+    data: flatData {
       title
       description
       reference
       date
-      deadline
-      urgent
-      document {
-        url
-      }
+      version
+      price
+      estado
       category {
         id
         flatData {
           title
         }
       }
+      document {
+        url
+      }
     }
-  }
   }
 }

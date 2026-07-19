@@ -1,0 +1,8 @@
+query fetch {
+  queryInforegulationContents {
+    data: flatData {
+      title
+      description
+    }
+  }
+}

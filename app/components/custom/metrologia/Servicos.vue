@@ -4,6 +4,19 @@ defineProps({
     type: Array,
     default: () => [],
   },
+  title: {
+    type: String,
+    default: "Serviços de metrologia ao seu dispor",
+  },
+  description: {
+    type: String,
+    default:
+      "Consulte os serviços actualmente prestados pela Metrologia e a taxa associada. Ao clicar em Solicitar serviço, preencha o formulário de pedido com os dados do instrumento e do requerente.",
+  },
+  modeloCarta: {
+    type: Object,
+    default: () => null,
+  },
 })
 
 const emit = defineEmits(["solicitar"])
@@ -17,12 +30,16 @@ const formatFee = (fee) => {
   <div class="tab-panel">
     <div class="panel-head">
       <span class="eyebrow">Serviços</span>
-      <h2>Serviços de metrologia ao seu dispor</h2>
-      <p>
-        Consulte os serviços actualmente prestados pela Metrologia e a taxa associada. Ao clicar em
-        <b>Solicitar serviço</b>, preencha o formulário de pedido com os dados do instrumento e do
-        requerente.
-      </p>
+      <h2>{{ title }}</h2>
+      <p>{{ description }}</p>
+      <a
+        v-if="modeloCarta?.documentUrl"
+        :href="modeloCarta.documentUrl"
+        download
+        class="btn--download-link"
+      >
+        Baixar modelo — {{ modeloCarta.title }}
+      </a>
     </div>
 
     <div class="catalog">
@@ -89,6 +106,18 @@ const formatFee = (fee) => {
   color: #475569;
   font-size: 1rem;
   line-height: 1.6;
+}
+
+.btn--download-link {
+  display: inline-block;
+  margin-top: 0.75rem;
+  color: #2ba9e0;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.btn--download-link:hover {
+  text-decoration: underline;
 }
 
 .catalog {
