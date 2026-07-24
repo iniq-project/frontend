@@ -33,22 +33,6 @@ const activeServiceId = ref<string | null>(null)
 const activeSubItemId = ref<string | null>(null)
 const showSubItems = ref(false)
 
-const pageTitles = {
-  "/": "Serviços e Processos",
-  "/normalizacao": "Normalização",
-  "/metrologia": "Metrologia",
-  "/registo-cadastro": "Acreditação, Registro e Cadastro, Regulamentos Técnicos",
-  "/importacao": "Validação, Verificação e Certificação de Produtos a Importar",
-  "/formacao": "Formação e Qualificação em Qualidade",
-  "/avaliacao-da-conformidade": "Avaliação da Conformidade",
-  "/premio-qualidade": "Prémio Nacional da Qualidade",
-  "/contactos": "Contactos",
-}
-
-const currentPageTitle = computed(
-  () => pageTitles[route.path as keyof typeof pageTitles] || "Serviços e Processos",
-)
-
 const emit = defineEmits(["select-service", "select-subitem", "close"])
 
 const selectService = (service: Service) => {
@@ -143,7 +127,7 @@ watch(
     </button>
     <NuxtLink v-if="!isHomePage && !showSubItems" to="/" class="back-btn" @click="goHome">← Voltar à Página Inicial
     </NuxtLink>
-    <h2>{{ currentPageTitle }}</h2>
+    <h2>{{ showSubItems ? "Processos" : "Serviços e Processos" }}</h2>
     <nav class="services-list">
       <template v-if="!showSubItems">
         <button v-for="service in services" :key="service.id" class="service-item" :class="{
