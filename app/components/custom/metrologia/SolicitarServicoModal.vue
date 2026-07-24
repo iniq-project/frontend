@@ -169,6 +169,7 @@ const handleClose = () => {
                   type="text"
                   id="m-marca"
                   name="marca"
+                  placeholder="Ex.: Mettler Toledo, Endress+Hauser…"
                   v-model="formData.marca"
                   :class="{ error: errors.marca }"
                 />
@@ -182,6 +183,7 @@ const handleClose = () => {
                   type="text"
                   id="m-modelo"
                   name="modelo"
+                  placeholder="Ex.: XPR205, PROline Promag W400…"
                   v-model="formData.modelo"
                   :class="{ error: errors.modelo }"
                 />
@@ -193,6 +195,7 @@ const handleClose = () => {
                   type="text"
                   id="m-serie"
                   name="numeroSerie"
+                  placeholder="Número de série do instrumento"
                   v-model="formData.numeroSerie"
                   :class="{ error: errors.numeroSerie }"
                 />
@@ -206,6 +209,7 @@ const handleClose = () => {
                 min="1"
                 id="m-qtd"
                 name="quantidade"
+                placeholder="Ex.: 1"
                 v-model="formData.quantidade"
                 :class="{ error: errors.quantidade }"
               />
@@ -219,6 +223,7 @@ const handleClose = () => {
                 type="text"
                 id="m-nome"
                 name="nomeRequerente"
+                placeholder="O seu nome completo"
                 v-model="formData.nomeRequerente"
                 :class="{ error: errors.nomeRequerente }"
               />
@@ -231,6 +236,7 @@ const handleClose = () => {
                   type="text"
                   id="m-nif"
                   name="nif"
+                  placeholder="Ex.: 5417123456"
                   v-model="formData.nif"
                   :class="{ error: errors.nif }"
                 />
