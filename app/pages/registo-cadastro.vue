@@ -29,6 +29,7 @@ const requisitosData = await query(requisitosQuery, { key: "queryRequirementregi
 const requisitosContent = computed(() => {
   return requisitosData.value?.data?.queryRequirementregisterContents?.[0]?.data?.requirement
 })
+const requisitosTitle = computed(() => requisitosContent.value?.title)
 const requisitosDescription = computed(() => requisitosContent.value?.description)
 const requisitosList = computed(() => {
   const rules = requisitosContent.value?.rules || []
@@ -147,6 +148,7 @@ if (activeSubItemId) {
 
     <CustomArcrtRegistroCadastro
       v-if="activeTab === 'registro-cadastro'"
+      :requisitos-title="requisitosTitle"
       :requisitos-description="requisitosDescription"
       :requisitos-list="requisitosList"
       :download-info="downloadInfo"

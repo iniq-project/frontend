@@ -33,6 +33,7 @@ const servicosMetrologia = computed(() =>
     (s: any) => ({
       id: slugify(s.title),
       title: s.title,
+      description: stripHtml(s.description),
       fee: s.fee || 0,
       requiresFichaTecnica: !!s.requiresFichaTecnica,
     }),
@@ -44,7 +45,6 @@ const modeloCarta = computed(() => {
   const d = modeloCartaData.value?.data?.queryRequirementmetrologyContents?.[0]?.data
   return {
     title: d?.title || "",
-    description: stripHtml(d?.description),
     documentUrl: d?.document?.[0]?.url || "",
   }
 })
