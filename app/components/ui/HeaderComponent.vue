@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useRoute } from "vue-router"
 import { computed } from "vue"
+import { services } from "~/data/services"
 
 const route = useRoute()
 
@@ -14,24 +15,34 @@ const emit = defineEmits<{
 
 const isHomePage = computed(() => route.path === "/")
 
-const pageTitles = {
-  "/": "Serviços e Processos",
-  "/normalizacao": "Normalização",
-  "/metrologia": "Metrologia",
-  "/registo-cadastro":
-    "Acreditação, Registro e Cadastro, Regulamentos Técnicos",
-  "/importacao": "Validação, Verificação e Certificação de Produtos a Importar",
-  "/formacao": "Formação e Qualificação em Qualidade",
-  "/avaliacao-da-conformidade": "Avaliação da Conformidade",
-  "/regulamentos": "Regulamentos Técnicos",
-  "/premio-qualidade": "Prémio Nacional da Qualidade",
-  "/contactos": "Contactos",
+const { getMenuTitle } = await useMenuTitles()
+
+const pathToServiceId: Record<string, string> = {
+  "/normalizacao": "normalizacao",
+  "/metrologia": "metrologia",
+  "/registo-cadastro": "registo-cadastro",
+  "/importacao": "importacao",
+  "/formacao": "formacao",
+  "/rotulos": "rotulos",
+  "/premio-qualidade": "premio-qualidade",
+  "/eventos": "eventos",
+  "/forum": "forum",
 }
 
-const currentPageTitle = computed(
-  () =>
-    pageTitles[route.path as keyof typeof pageTitles] || "Serviços e Processos",
-)
+const staticPageTitles: Record<string, string> = {
+  "/": "Serviços e Processos",
+  "/contactos": "Contactos",
+  "/avaliacao-da-conformidade": "Avaliação da Conformidade",
+}
+
+const currentPageTitle = computed(() => {
+  const serviceId = pathToServiceId[route.path]
+  if (serviceId) {
+    const fallback = services.find((s) => s.id === serviceId)?.title || ""
+    return getMenuTitle(serviceId, fallback)
+  }
+  return staticPageTitles[route.path] || "Serviços e Processos"
+})
 </script>
 
 <template>
@@ -83,7 +94,8 @@ const currentPageTitle = computed(
 <style scoped>
 .new-header {
   display: grid;
-  grid-template-columns: 1fr 2fr 1fr;
+  /* grid-template-columns: 1fr 2fr 1fr; */
+  grid-template-columns: 1.35fr 2fr 2fr;
   align-items: center;
   padding: 1.25rem 0;
   background: white;
@@ -126,7 +138,7 @@ const currentPageTitle = computed(
 
 .logo-left {
   justify-content: flex-start;
-  padding-left: 4.4rem;
+  padding-left: 6rem;
 }
 
 .logo-right {
