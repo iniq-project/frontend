@@ -10,6 +10,10 @@ interface RequisitoItem {
 }
 
 defineProps({
+  requisitosTitle: {
+    type: String,
+    default: "O que é?",
+  },
   requisitosDescription: {
     type: String,
     default: "",
@@ -189,7 +193,7 @@ async function handleSubmit() {
   <div class="tab-panel">
     <div class="panel-head">
       <span class="eyebrow">Registro e Cadastro</span>
-      <h2>O que é?</h2>
+      <h2>{{ requisitosTitle }}</h2>
       <div v-if="requisitosDescription" v-html="requisitosDescription"></div>
       <p v-else>
         O INIQ assegura o registo e o cadastro dos operadores económicos e entidades técnicas que

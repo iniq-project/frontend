@@ -51,6 +51,7 @@ const formatFee = (fee) => {
             <span class="fee-currency">AOA</span>
           </div>
         </div>
+        <p v-if="service.description" class="catalog-item-description">{{ service.description }}</p>
         <div class="catalog-item-actions">
           <button class="btn btn--primary" @click="emit('solicitar', service.id)">
             Solicitar serviço
@@ -151,6 +152,13 @@ const formatFee = (fee) => {
   color: #0a3a63;
   font-size: 1.15rem;
   font-weight: 700;
+}
+
+.catalog-item-description {
+  margin: 0 0 1rem 0;
+  color: #475569;
+  font-size: 0.9rem;
+  line-height: 1.6;
 }
 
 .catalog-item-fee {
