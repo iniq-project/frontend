@@ -2,52 +2,17 @@
 import { ref, computed, watch, onMounted } from "vue"
 import { useRoute, useRouter } from "vue-router"
 import { services, type Service } from "~/data/services"
-import menuQuery from "@/gql/menu/index.gql"
 
 const route = useRoute()
 const router = useRouter()
 const isHomePage = computed(() => route.path === "/")
 
-const { query } = useSquidex()
-const menuData = await query(menuQuery, { key: "menu-service" })
-const menuFieldByServiceId: Record<string, string> = {
-  normalizacao: "normalizacao",
-  metrologia: "metrologia",
-  "registo-cadastro": "registoCadastro",
-  importacao: "importacao",
-  formacao: "formacao",
-  rotulos: "rotulos",
-  "premio-qualidade": "premioQualidade",
-  eventos: "eventos",
-  forum: "forum",
-}
-const menuTitle = (service: Service) => {
-  const field = menuFieldByServiceId[service.id]
-  const value = field
-    ? menuData.value?.data?.queryMenuserviceContents?.[0]?.data?.[field]
-    : undefined
-  return value || service.title
-}
+const { getMenuTitle } = await useMenuTitles()
+const menuTitle = (service: Service) => getMenuTitle(service.id, service.title)
 
 const activeServiceId = ref<string | null>(null)
 const activeSubItemId = ref<string | null>(null)
 const showSubItems = ref(false)
-
-const pageTitles = {
-  "/": "Serviços e Processos",
-  "/normalizacao": "Normalização",
-  "/metrologia": "Metrologia",
-  "/registo-cadastro": "Acreditação, Registro e Cadastro, Regulamentos Técnicos",
-  "/importacao": "Validação, Verificação e Certificação de Produtos a Importar",
-  "/formacao": "Formação e Qualificação em Qualidade",
-  "/avaliacao-da-conformidade": "Avaliação da Conformidade",
-  "/premio-qualidade": "Prémio Nacional da Qualidade",
-  "/contactos": "Contactos",
-}
-
-const currentPageTitle = computed(
-  () => pageTitles[route.path as keyof typeof pageTitles] || "Serviços e Processos",
-)
 
 const emit = defineEmits(["select-service", "select-subitem", "close"])
 
@@ -143,7 +108,7 @@ watch(
     </button>
     <NuxtLink v-if="!isHomePage && !showSubItems" to="/" class="back-btn" @click="goHome">← Voltar à Página Inicial
     </NuxtLink>
-    <h2>{{ currentPageTitle }}</h2>
+    <h2>{{ showSubItems ? "Processos" : "Serviços e Processos" }}</h2>
     <nav class="services-list">
       <template v-if="!showSubItems">
         <button v-for="service in services" :key="service.id" class="service-item" :class="{

@@ -271,6 +271,7 @@ const formatDate = (dateStr: string) => {
                     <input
                       type="text"
                       id="organizationName"
+                      placeholder="Ex.: Laboratório Central de Ensaios, Lda."
                       v-model="form.organizationName"
                       :class="{ error: errors.organizationName }"
                     />
@@ -282,6 +283,7 @@ const formatDate = (dateStr: string) => {
                       <input
                         type="text"
                         id="nif"
+                        placeholder="Ex.: 5417123456"
                         v-model="form.nif"
                         :class="{ error: errors.nif }"
                       />
@@ -292,6 +294,7 @@ const formatDate = (dateStr: string) => {
                       <input
                         type="text"
                         id="sector"
+                        placeholder="Ex.: Metalomecânica, Alimentar, Construção…"
                         v-model="form.sector"
                         :class="{ error: errors.sector }"
                       />
@@ -304,6 +307,7 @@ const formatDate = (dateStr: string) => {
                       <input
                         type="email"
                         id="email"
+                        placeholder="nome@exemplo.ao"
                         v-model="form.email"
                         :class="{ error: errors.email }"
                       />
@@ -314,6 +318,7 @@ const formatDate = (dateStr: string) => {
                       <input
                         type="tel"
                         id="phone"
+                        placeholder="+244 9XX XXX XXX"
                         v-model="form.phone"
                         :class="{ error: errors.phone }"
                       />
