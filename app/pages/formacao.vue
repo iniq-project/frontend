@@ -796,12 +796,17 @@ const handleSubmit = () => {
   padding: 0.5rem 1rem;
   flex: 1;
   min-width: 250px;
+  position: static;
 }
 
 .catalog-search svg {
   width: 20px;
   height: 20px;
   color: #64748b;
+  position: static;
+  top: auto;
+  left: auto;
+  transform: none;
 }
 
 .catalog-search input {
@@ -1428,5 +1433,20 @@ const handleSubmit = () => {
   border-radius: 6px;
   padding: 0.75rem 1.25rem;
   margin: 1.375rem 0;
+}
+
+@media (max-width: 767px) {
+  .modal__body {
+    padding: 1.25rem;
+  }
+
+  .modal__foot {
+    flex-direction: column;
+  }
+
+  .modal__foot .btn {
+    width: 100%;
+    justify-content: center;
+  }
 }
 </style>

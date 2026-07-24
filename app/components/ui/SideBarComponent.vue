@@ -1,11 +1,20 @@
 <script setup lang="ts">
-defineProps({
+import { computed } from "vue"
+
+const props = defineProps({
   data: {
     type: Object,
     default: () => ({}),
     required: false
   },
 })
+
+// The CMS address content hardcodes <br> line breaks tuned for the narrow
+// desktop sidebar column; on mobile the sidebar spans the full width, so we
+// swap in a break-free version that lets the browser wrap it naturally.
+const addressNoBreaks = computed(() =>
+  (props.data?.address || "").replace(/<br\s*\/?>/gi, " "),
+)
 </script>
 
 <template>
@@ -21,7 +30,8 @@ defineProps({
       </div>
     </div>
     <div class="sidebar-footer">
-      <div class="gov-info" v-if="data?.address" v-html="data?.address"></div>
+      <div class="gov-info gov-info--desktop" v-if="data?.address" v-html="data?.address"></div>
+      <div class="gov-info gov-info--mobile" v-if="data?.address" v-html="addressNoBreaks"></div>
     </div>
   </aside>
 </template>
@@ -151,6 +161,10 @@ defineProps({
   width: 100%;
 }
 
+.gov-info--mobile {
+  display: none;
+}
+
 .gov-info__line {
   display: block;
 }
@@ -237,6 +251,14 @@ defineProps({
   .gov-info {
     font-size: 0.8rem;
     width: 100%;
+  }
+
+  .gov-info--desktop {
+    display: none;
+  }
+
+  .gov-info--mobile {
+    display: block;
   }
 }
 </style>

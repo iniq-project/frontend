@@ -213,6 +213,10 @@ a.partner-slide:hover {
     padding: 1.25rem 0.75rem;
   }
 
+  .parceiro-label {
+    display: none;
+  }
+
   a.partner-slide {
     width: 130px;
     height: 64px;

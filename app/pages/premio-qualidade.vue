@@ -10,11 +10,9 @@ useHead({
   title: 'INIQ » Prémio Nacional da Qualidade',
 })
 
-// Fetch data
 const { query } = useSquidex()
 const data = await query(gql, { key: 'premio' })
 
-// Mock data for testing
 const mockEditions = [
   {
     year: 2024,
@@ -68,20 +66,16 @@ const editions = computed(() => {
 const currentEdition = computed(() => editions.value.find(e => e.isOpen) || editions.value[0])
 const pastEditions = computed(() => editions.value.filter(e => !e.isOpen).sort((a, b) => b.year - a.year))
 
-// Inject active sub-item from layout
 const activeSubItemId = inject('activeSubItemId')
 
-// Track if sub-item is selected
 const isSubItemSelected = ref(false)
 
-// Sync with layout
 if (activeSubItemId) {
-  watch(activeSubItemId, (newId) => {
+  watch(activeSubItemId, (newId: any) => {
     isSubItemSelected.value = !!newId
   }, { immediate: true })
 }
 
-// Form state
 const showForm = ref(false)
 const showSuccess = ref(false)
 const registrationNumber = ref('')
@@ -96,7 +90,6 @@ const form = ref({
 const errors = ref<Record<string, string>>({})
 const submitted = ref(false)
 
-// File input
 const fileInput = ref<HTMLInputElement | null>(null)
 const handleFileChange = (e: Event) => {
   const target = e.target as HTMLInputElement
@@ -105,7 +98,6 @@ const handleFileChange = (e: Event) => {
   }
 }
 
-// Validation
 const validate = () => {
   const newErrors: Record<string, string> = {}
   if (!form.value.organizationName.trim()) newErrors.organizationName = "Nome da organização é obrigatório"
@@ -128,17 +120,14 @@ const validate = () => {
   return Object.keys(newErrors).length === 0
 }
 
-// Submit
 const handleSubmit = () => {
   submitted.value = true
   if (!validate()) return
-  // Generate registration number
   const num = Math.floor(100000 + Math.random() * 900000)
   registrationNumber.value = `PNQ-${currentEdition.value?.year}-${num}`
   showSuccess.value = true
 }
 
-// Reset form
 const resetForm = () => {
   showForm.value = false
   showSuccess.value = false
@@ -154,7 +143,6 @@ const resetForm = () => {
   submitted.value = false
 }
 
-// Format date
 const formatDate = (dateStr: string) => {
   if (!dateStr) return ""
   const date = new Date(dateStr)
@@ -283,6 +271,7 @@ const formatDate = (dateStr: string) => {
                     <input
                       type="text"
                       id="organizationName"
+                      placeholder="Ex.: Laboratório Central de Ensaios, Lda."
                       v-model="form.organizationName"
                       :class="{ error: errors.organizationName }"
                     />
@@ -294,6 +283,7 @@ const formatDate = (dateStr: string) => {
                       <input
                         type="text"
                         id="nif"
+                        placeholder="Ex.: 5417123456"
                         v-model="form.nif"
                         :class="{ error: errors.nif }"
                       />
@@ -304,6 +294,7 @@ const formatDate = (dateStr: string) => {
                       <input
                         type="text"
                         id="sector"
+                        placeholder="Ex.: Metalomecânica, Alimentar, Construção…"
                         v-model="form.sector"
                         :class="{ error: errors.sector }"
                       />
@@ -316,6 +307,7 @@ const formatDate = (dateStr: string) => {
                       <input
                         type="email"
                         id="email"
+                        placeholder="nome@exemplo.ao"
                         v-model="form.email"
                         :class="{ error: errors.email }"
                       />
@@ -326,6 +318,7 @@ const formatDate = (dateStr: string) => {
                       <input
                         type="tel"
                         id="phone"
+                        placeholder="+244 9XX XXX XXX"
                         v-model="form.phone"
                         :class="{ error: errors.phone }"
                       />

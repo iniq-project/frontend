@@ -1,0 +1,15 @@
+query fetch {
+  queryMenuserviceContents {
+    data: flatData {
+      normalizacao
+      metrologia
+      registoCadastro
+      importacao
+      formacao
+      rotulos
+      premioQualidade
+      eventos
+      forum
+    }
+  }
+}

@@ -163,6 +163,7 @@ provide("activeSubItemId", activeSubItemId)
 
   .sidebar-right {
     order: 0;
+    margin: 0;
   }
 
   .carousel-spacer {

@@ -1,0 +1,21 @@
+query fetch {
+  queryRegulationequivalentContents {
+    data: flatData {
+      title
+      description
+      equivalents {
+        title
+        reference
+        country
+        organism
+        estado
+        category {
+          id
+          flatData {
+            title
+          }
+        }
+      }
+    }
+  }
+}

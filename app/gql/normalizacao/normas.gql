@@ -1,0 +1,19 @@
+query fetch {
+  queryStandardContents {
+    id
+    data: flatData {
+      title
+      reference
+      price
+      ics
+      ano
+      estado
+      category {
+        id
+        flatData {
+          title
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,22 @@
+query fetch {
+  queryContactinfoContents {
+    data: flatData {
+      phoneMain
+      phoneMobile
+      emailGeneral
+      emailStandards
+      address
+      officeHours
+      subjectOptions
+    }
+  }
+  queryContactdepartmentContents {
+    data: flatData {
+      departments {
+        name
+        area
+        email
+      }
+    }
+  }
+}

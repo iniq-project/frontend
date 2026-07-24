@@ -1,0 +1,9 @@
+query fetch {
+  queryRegistrationtypeContents {
+    data: flatData {
+      types {
+        title
+      }
+    }
+  }
+}

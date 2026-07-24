@@ -1,44 +1,108 @@
 <script setup>
-const props = defineProps({
+import { ref } from "vue"
+
+defineProps({
   projects: {
     type: Array,
     default: () => [],
   },
   title: {
     type: String,
-    default: "",
+    default: "Participe na elaboração das normas",
   },
   description: {
     type: String,
-    default: "",
+    default:
+      "Os projectos abaixo estão em fase de consulta pública. Qualquer interessado pode ler o documento do projecto e submeter contribuições dentro do prazo indicado, sem necessidade de conta ou autenticação.",
   },
 })
 
-const emit = defineEmits(['open-modal'])
+const emit = defineEmits(["open-modal"])
+
+const viewMode = ref("list")
+const selectedProject = ref(null)
+
+const openDetail = (project) => {
+  selectedProject.value = project
+  viewMode.value = "detail"
+}
+
+const backToList = () => {
+  viewMode.value = "list"
+  selectedProject.value = null
+}
 </script>
+
 <template>
   <div class="tab-panel">
-    <div class="panel-head">
-      <h2 v-if="title">{{ title }}</h2>
-      <div v-if="description" class="panel-description" v-html="description"></div>
-    </div>
-    <div class="consulta">
-      <article class="consulta-item" v-for="project in projects" :key="project.code">
-        <div>
-          <div class="consulta-tags">
-            <span class="consulta-code">{{ project.code }}</span>
-            <span class="badge badge--sector badge--green">{{ project.sector }}</span>
+    <template v-if="viewMode === 'list'">
+      <div class="panel-head">
+        <span class="eyebrow">Projectos-Normas em Consulta Pública</span>
+        <h2>{{ title }}</h2>
+        <p>{{ description }}</p>
+      </div>
+      <div class="consulta">
+        <article class="consulta-item" v-for="project in projects" :key="project.code">
+          <div>
+            <div class="consulta-tags">
+              <span class="consulta-code">{{ project.code }}</span>
+              <span class="badge badge--sector badge--green">{{ project.sector }}</span>
+            </div>
+            <h3>{{ project.title }}</h3>
+            <p class="consulta-desc">{{ project.description }}</p>
           </div>
-          <h3>{{ project.title }}</h3>
-          <p class="consulta-desc" v-html="project.description"></p>
-         
+          <div class="consulta-deadline">
+            <span :class="['deadline-pill', { urgent: project.urgent }]">
+              Termina {{ project.deadline }}
+            </span>
+            <button class="btn btn--green" @click="openDetail(project)">
+              Ver projecto
+            </button>
+          </div>
+        </article>
+      </div>
+    </template>
+
+    <template v-else-if="viewMode === 'detail' && selectedProject">
+      <button type="button" class="back-link" @click="backToList">
+        ← Voltar à lista
+      </button>
+      <div class="panel-head">
+        <div class="consulta-tags">
+          <span class="consulta-code">{{ selectedProject.code }}</span>
+          <span class="badge badge--sector badge--green">{{ selectedProject.sector }}</span>
+          <span :class="['deadline-pill', { urgent: selectedProject.urgent }]">
+            Termina {{ selectedProject.deadline }}
+          </span>
         </div>
-        <div class="consulta-deadline">
-          <span :class="['deadline-pill', { urgent: project.urgent }]">Termina {{ project.deadline }}</span>
-          <button class="btn btn--green" @click="$emit('open-modal', 'contrib', project)">Contribuir</button>
-        </div>
-      </article>
-    </div>
+        <h2>{{ selectedProject.title }}</h2>
+      </div>
+
+      <div class="documento-wrap">
+        <h4>Documento do projecto</h4>
+        <p class="documento-text">{{ selectedProject.documento }}</p>
+        <a
+          v-if="selectedProject.documentUrl"
+          :href="selectedProject.documentUrl"
+          download
+          class="btn btn--ghost"
+        >
+          Descarregar documento (PDF)
+        </a>
+        <button v-else type="button" class="btn btn--ghost" disabled>
+          Descarregar documento (PDF)
+        </button>
+        <p v-if="!selectedProject.documentUrl" class="documento-caption">
+          Documento ainda não foi carregado pela Comissão Técnica responsável.
+        </p>
+      </div>
+
+      <div class="comentar-wrap">
+        <button class="btn btn--green" @click="emit('open-modal', 'contrib', selectedProject)">
+          Comentar
+        </button>
+      </div>
+    </template>
   </div>
 </template>
 
@@ -94,8 +158,7 @@ const emit = defineEmits(['open-modal'])
   font-weight: 700;
 }
 
-.panel-head p,
-.panel-head .panel-description {
+.panel-head p {
   margin: 0;
   color: #475569;
   font-size: 1rem;
@@ -124,6 +187,7 @@ const emit = defineEmits(['open-modal'])
   gap: 0.5rem;
   margin-bottom: 0.5rem;
   flex-wrap: wrap;
+  align-items: center;
 }
 
 .consulta-code {
@@ -145,21 +209,6 @@ const emit = defineEmits(['open-modal'])
   color: #475569;
   font-size: 0.95rem;
   line-height: 1.6;
-}
-
-.consulta-bar {
-  height: 6px;
-  background: #e2e8f0;
-  border-radius: 3px;
-  overflow: hidden;
-  width: 100%;
-}
-
-.consulta-bar span {
-  display: block;
-  height: 100%;
-  background: linear-gradient(90deg, #5cb947, #2ba9e0);
-  border-radius: 3px;
 }
 
 .consulta-deadline {
@@ -199,6 +248,76 @@ const emit = defineEmits(['open-modal'])
   background: #4aa838;
 }
 
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #0a3a63;
+  text-decoration: underline;
+  font-weight: 600;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  font-size: 0.95rem;
+  margin-bottom: 1.25rem;
+}
+
+.back-link:hover {
+  color: #5cb947;
+}
+
+.documento-wrap {
+  padding: 1.5rem;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  margin-bottom: 1.5rem;
+}
+
+.documento-wrap h4 {
+  margin: 0 0 0.75rem 0;
+  color: #0a3a63;
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+
+.documento-text {
+  margin: 0 0 1rem 0;
+  color: #475569;
+  font-size: 0.95rem;
+  line-height: 1.7;
+  white-space: pre-line;
+}
+
+.documento-caption {
+  margin: 0.5rem 0 0 0;
+  color: #64748b;
+  font-size: 0.85rem;
+  font-style: italic;
+}
+
+.btn--ghost {
+  padding: 0.65rem 1.25rem;
+  border-radius: 8px;
+  border: 1px solid #d0d9e3;
+  background: white;
+  color: #0a3a63;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn--ghost:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.comentar-wrap {
+  display: flex;
+  justify-content: flex-end;
+}
+
 @media (max-width: 1199px) {
   .tab-panel {
     padding: 1.25rem 1rem 1.5rem;
@@ -219,6 +338,12 @@ const emit = defineEmits(['open-modal'])
     display: flex;
     width: 100%;
     justify-content: center;
+  }
+
+  .comentar-wrap .btn--green {
+    width: 100%;
+    justify-content: center;
+    display: flex;
   }
 }
 

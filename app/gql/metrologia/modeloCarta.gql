@@ -1,0 +1,10 @@
+query fetch {
+  queryRequirementmetrologyContents {
+    data: flatData {
+      title
+      document {
+        url
+      }
+    }
+  }
+}

@@ -2,9 +2,12 @@ query fetch {
   queryServicesmetrologyContents {
     data: flatData {
     title
+    description
     services {
       title
       description
+      fee
+      requiresFichaTecnica
     }
   }
   }

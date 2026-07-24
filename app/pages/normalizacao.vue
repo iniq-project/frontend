@@ -2,183 +2,149 @@
 import { inject, watch, ref, computed } from "vue"
 import home from "@/gql/normalizacao/index.gql"
 import vendaNormasQuery from "@/gql/normalizacao/vendaNormas.gql"
+import catalogoNormasQuery from "@/gql/normalizacao/catalogoNormas.gql"
+import normasQuery from "@/gql/normalizacao/normas.gql"
+import comissaoTecnicaQuery from "@/gql/normalizacao/comissaoTecnica.gql"
+import comissaoTecnicaIntroQuery from "@/gql/normalizacao/comissaoTecnicaIntro.gql"
 import consultasPublicasQuery from "@/gql/normalizacao/consultasPublicas.gql"
-
+import { formatDate } from "@/utils/formatDate"
+import { stripHtml } from "@/utils/stripHtml"
 
 useHead({
   title: "INIQ » Normalização",
 })
 
 const { query } = useSquidex()
-
 const data = await query(home, { key: "normalization" })
+
 const leader = computed(
   () => data.value?.data.queryHomenormalizationContents?.[0]?.data?.leader,
 )
 
-const vendaNormasData = await query(vendaNormasQuery, { key: "vendaNormas" })
-const vendaNormasTitle = computed(() => vendaNormasData.value?.data.querySalesrulesContents?.[0]?.data?.title || "")
-const vendaNormasDescription = computed(() => vendaNormasData.value?.data.querySalesrulesContents?.[0]?.data?.description || "")
-const normas = computed(() => {
-  const rules = vendaNormasData.value?.data.querySalesrulesContents?.[0]?.data?.rules || []
-  return rules.map(rule => ({
-    code: rule.reference,
-    title: rule.title,
-    sector: rule.category?.id || "Geral",
-    price: rule.price || 0,
-  }))
+const vendaNormasData = await query(vendaNormasQuery, { key: "salesrules" })
+const salesrulesIntro = computed(
+  () => vendaNormasData.value?.data?.querySalesrulesContents?.[0]?.data,
+)
+
+const catalogoNormasData = await query(catalogoNormasQuery, { key: "nationalcatalog" })
+const catalogoNormasIntro = computed(
+  () => catalogoNormasData.value?.data?.queryNationalcatalogContents?.[0]?.data,
+)
+
+const normasData = await query(normasQuery, { key: "standard" })
+const rawNormas = computed(() => normasData.value?.data?.queryStandardContents || [])
+
+const comissaoTecnicaData = await query(comissaoTecnicaQuery, { key: "technicalcommittee" })
+const rawComissoes = computed(
+  () => comissaoTecnicaData.value?.data?.queryTechnicalcommitteeContents || [],
+)
+
+const comissaoTecnicaIntroData = await query(comissaoTecnicaIntroQuery, {
+  key: "technicalcommitteeintro",
+})
+const comissaoTecnicaIntro = computed(
+  () => comissaoTecnicaIntroData.value?.data?.queryTechnicalcommitteeintroContents?.[0]?.data,
+)
+
+const comissaoDeNorma = computed(() => {
+  const map = {}
+  for (const item of rawComissoes.value) {
+    for (const norma of item.data?.normas || []) {
+      map[norma.data.reference] = item.data.nome
+    }
+  }
+  return map
 })
 
-const consultasPublicasData = await query(consultasPublicasQuery, { key: "consultasPublicas" })
-const consultasPublicasTitle = computed(() => consultasPublicasData.value?.data.queryPublicconsultationContents?.[0]?.data?.title || "")
-const consultasPublicasDescription = computed(() => consultasPublicasData.value?.data.queryPublicconsultationContents?.[0]?.data?.description || "")
+const normas = computed(() =>
+  rawNormas.value.map((item) => {
+    const n = item.data
+    return {
+      reference: n.reference,
+      title: n.title,
+      categoria: n.category?.[0]?.flatData?.title || "",
+      price: n.price || 0,
+      ics: n.ics || "",
+      ano: n.ano || 0,
+      comissaoTecnica: comissaoDeNorma.value[n.reference] || "",
+      estado: (n.estado || "Em vigor").toLowerCase(),
+    }
+  }),
+)
 
-const formatDate = (dateString) => {
-  if (!dateString) return ""
-  const date = new Date(dateString)
-  return date.toLocaleDateString("pt-PT", {
-    day: "2-digit",
-    month: "short",
-    year: "numeric",
-  })
-}
+const normasEmVigor = computed(() => normas.value.filter((n) => n.estado === "em vigor"))
 
-const projetosConsulta = computed(() => {
-  const rules = consultasPublicasData.value?.data.queryPublicconsultationContents?.[0]?.data?.rules || []
-  return rules.map(rule => ({
-    code: rule.reference,
-    title: rule.title,
-    sector: rule.category?.id || "Geral",
-    description: rule.description || "",
-    deadline: formatDate(rule.date || ""),
-  }))
-})
+const comissoesTecnicas = computed(() =>
+  rawComissoes.value.map((item) => ({
+    id: item.id,
+    nome: item.data.nome,
+    sector: item.data.sector?.[0]?.flatData?.title || "",
+    presidente: item.data.presidente,
+    secretarioTecnico: item.data.secretarioTecnico,
+    normaReferences: (item.data.normas || []).map((n) => n.data.reference),
+  })),
+)
+
+const consultasPublicasData = await query(consultasPublicasQuery, { key: "publicconsultation" })
+const consultaPublicaIntro = computed(
+  () => consultasPublicasData.value?.data?.queryPublicconsultationContents?.[0]?.data,
+)
+const projetosConsulta = computed(() =>
+  (consultaPublicaIntro.value?.rules || []).map(
+    (p) => ({
+      code: p.reference,
+      title: p.title,
+      sector: p.category?.[0]?.flatData?.title || "",
+      description: stripHtml(p.description),
+      documento: stripHtml(p.description),
+      documentUrl: p.document?.[0]?.url || "",
+      deadline: formatDate(p.deadline),
+      urgent: !!p.urgent,
+    }),
+  ),
+)
 
 const activeSubItemId = inject("activeSubItemId")
-const activeTab = ref("venda")
+const activeTab = ref(null)
 const isSubItemSelected = ref(false)
+const seedSearchTerm = ref("")
 
 if (activeSubItemId) {
   watch(
     activeSubItemId,
     (newId) => {
       isSubItemSelected.value = !!newId
-
-      if (newId === "venda-normas") {
-        activeTab.value = "venda"
-      } else if (newId === "consulta-publica") {
-        activeTab.value = "consulta"
-      }
+      activeTab.value = newId
+      seedSearchTerm.value = ""
     },
     { immediate: true },
   )
 }
 
-const modalOpen = ref(false)
-const modalMode = ref("venda")
-const modalEyebrow = ref("Venda de Normas")
-const modalTitle = ref("Solicitar Norma")
-const modalRef = ref("")
-const formSubmitted = ref(false)
-const successTitle = ref("Pedido submetido com sucesso")
-const successMsg = ref(
-  "Receberá por e-mail os dados de pagamento (Referência Multicaixa). Após confirmação, a norma fica imediatamente disponível na sua área reservada.",
-)
-const orderRef = ref("")
-const errors = ref({})
-
-const formData = ref({
-  nomeEntidade: "",
-  nif: "",
-  email: "",
-  telefone: "",
-  contribuicao: "",
-})
+const modalMode = ref(null)
+const modalItem = ref(null)
 
 const openModal = (mode, item) => {
   modalMode.value = mode
-  formSubmitted.value = false
-  errors.value = {}
-
-  if (mode === "venda") {
-    modalEyebrow.value = "Venda de Normas"
-    modalTitle.value = "Solicitar Norma"
-    modalRef.value = `${item.code} — ${item.title}`
-    successTitle.value = "RUPE gerado com sucesso"
-    successMsg.value =
-      "Utilize o RUPE abaixo para efetuar o pagamento. Após confirmação do pagamento, o técnico/administrador irá validar e liberar o acesso à norma."
-  } else {
-    modalEyebrow.value = "Consulta Pública"
-    modalTitle.value = "Submeter Contribuição"
-    modalRef.value = `${item.code} — ${item.title}`
-    successTitle.value = "Contribuição enviada com sucesso"
-    successMsg.value =
-      "A sua contribuição foi registada e será analisada pela Comissão Técnica responsável. Receberá por e-mail o resultado do tratamento."
-  }
-
-  formData.value = {
-    nomeEntidade: "",
-    nif: "",
-    email: "",
-    telefone: "",
-    contribuicao: "",
-  }
-
-  modalOpen.value = true
+  modalItem.value = item
 }
 
 const closeModal = () => {
-  modalOpen.value = false
+  modalMode.value = null
+  modalItem.value = null
 }
 
-const validateForm = () => {
-  if (modalMode.value === "venda") {
-    const newErrors = {}
+const handleViewNorma = (reference) => {
+  const norma = normas.value.find((n) => n.reference === reference)
+  if (!norma) return
 
-    if (!formData.value.nomeEntidade.trim()) {
-      newErrors.nomeEntidade = true
-    }
-
-    if (!formData.value.nif.trim()) {
-      newErrors.nif = true
-    }
-
-    if (
-      !formData.value.email.trim() ||
-      !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.value.email)
-    ) {
-      newErrors.email = true
-    }
-
-    if (!formData.value.telefone.trim()) {
-      newErrors.telefone = true
-    }
-
-    errors.value = newErrors
-    return Object.keys(newErrors).length === 0
-  }
-  return true
+  activeTab.value = norma.estado === "em vigor" ? "venda-normas" : "catalogo-livro"
+  seedSearchTerm.value = norma.title
 }
 
-const generateRUPE = () => {
-  const year = new Date().getFullYear()
-  const randomNum = Math.floor(100000 + Math.random() * 899999)
-  return `RUPE-${year}-${randomNum}`
-}
-
-const handleSubmit = () => {
-  if (!validateForm()) {
-    return
-  }
-
-  if (modalMode.value === "venda") {
-    orderRef.value = generateRUPE()
-  } else {
-    const refNumber = Math.floor(10000 + Math.random() * 89999)
-    orderRef.value = `REF: INIQ-2026-${refNumber}`
-  }
-
-  formSubmitted.value = true
+const backToComissoes = () => {
+  activeTab.value = "comissao-tecnica"
+  seedSearchTerm.value = ""
 }
 </script>
 <template>
@@ -187,37 +153,54 @@ const handleSubmit = () => {
       <CustomHero :data="leader" />
     </template>
 
-    <CustomNormalizacaoVendaNormas
-      v-if="isSubItemSelected && activeTab === 'venda'"
+    <CustomNormalizacaoComissaoTecnica
+      v-if="activeTab === 'comissao-tecnica'"
+      :comissoes="comissoesTecnicas"
       :normas="normas"
-      :title="vendaNormasTitle"
-      :description="vendaNormasDescription"
+      :title="comissaoTecnicaIntro?.title"
+      :description="stripHtml(comissaoTecnicaIntro?.description)"
+      :informacoes-gerais="comissaoTecnicaIntro?.informacoesGerais"
+      @view-norma="handleViewNorma"
+    />
+
+    <CustomNormalizacaoVendaNormas
+      v-if="activeTab === 'venda-normas'"
+      :normas="normasEmVigor"
+      :seed-search="seedSearchTerm"
+      :title="salesrulesIntro?.title"
+      :description="stripHtml(salesrulesIntro?.description)"
       @open-modal="openModal"
+      @back-to-comissoes="backToComissoes"
     />
 
     <CustomNormalizacaoConsultaPublica
-      v-if="isSubItemSelected && activeTab === 'consulta'"
+      v-if="activeTab === 'consulta-publica'"
       :projects="projetosConsulta"
-      :title="consultasPublicasTitle"
-      :description="consultasPublicasDescription"
+      :title="consultaPublicaIntro?.title"
+      :description="stripHtml(consultaPublicaIntro?.description)"
       @open-modal="openModal"
+    />
+
+    <CustomNormalizacaoCatalogoNormas
+      v-if="activeTab === 'catalogo-livro'"
+      :normas="normas"
+      :seed-search="seedSearchTerm"
+      :title="catalogoNormasIntro?.title"
+      :description="stripHtml(catalogoNormasIntro?.description)"
+      @back-to-comissoes="backToComissoes"
     />
   </div>
 
-  <CustomNormalizacaoModal
-    :open="modalOpen"
-    :eyebrow="modalEyebrow"
-    :title="modalTitle"
-    :ref="modalRef"
-    :mode="modalMode"
-    :form-submitted="formSubmitted"
-    :success-title="successTitle"
-    :success-msg="successMsg"
-    :order-ref="orderRef"
-    :form-data="formData"
-    :errors="errors"
+  <CustomNormalizacaoPurchaseModal
+    :open="modalMode === 'venda'"
+    :norma="modalItem"
     @close="closeModal"
-    @submit="handleSubmit"
+  />
+
+  <CustomNormalizacaoCommentModal
+    :open="modalMode === 'contrib'"
+    :project="modalItem"
+    @close="closeModal"
   />
 </template>
 

@@ -7,26 +7,12 @@ const route = useRoute()
 const router = useRouter()
 const isHomePage = computed(() => route.path === "/")
 
+const { getMenuTitle } = await useMenuTitles()
+const menuTitle = (service: Service) => getMenuTitle(service.id, service.title)
+
 const activeServiceId = ref<string | null>(null)
 const activeSubItemId = ref<string | null>(null)
 const showSubItems = ref(false)
-
-const pageTitles = {
-  "/": "Serviços e Processos",
-  "/normalizacao": "Normalização",
-  "/metrologia": "Metrologia",
-  "/registo-cadastro": "Registo e Cadastro",
-  "/importacao": "Validação, Verificação e Certificação de Produtos a Importar",
-  "/formacao": "Formação e Qualificação em Qualidade",
-  "/avaliacao-da-conformidade": "Avaliação da Conformidade",
-  "/regulamentos": "Regulamentos Técnicos",
-  "/premio-qualidade": "Prémio Nacional da Qualidade",
-  "/contactos": "Contactos",
-}
-
-const currentPageTitle = computed(
-  () => pageTitles[route.path as keyof typeof pageTitles] || "Serviços e Processos",
-)
 
 const emit = defineEmits(["select-service", "select-subitem", "close"])
 
@@ -68,11 +54,9 @@ onMounted(() => {
   const pathToId: Record<string, string> = {
     "/normas-tecnicas": "normas-tecnicas",
     "/metrologia": "metrologia",
-    "/acreditacao": "acreditacao",
     "/importacao": "importacao",
     "/formacao": "formacao",
     "/rotulos": "rotulos",
-    "/regulamentos": "regulamentos",
     "/premio-qualidade": "premio-qualidade",
     "/certificacao": "certificacao",
     "/registo-cadastro": "registo-cadastro",
@@ -124,7 +108,7 @@ watch(
     </button>
     <NuxtLink v-if="!isHomePage && !showSubItems" to="/" class="back-btn" @click="goHome">← Voltar à Página Inicial
     </NuxtLink>
-    <h2>{{ currentPageTitle }}</h2>
+    <h2>{{ showSubItems ? "Processos" : "Serviços e Processos" }}</h2>
     <nav class="services-list">
       <template v-if="!showSubItems">
         <button v-for="service in services" :key="service.id" class="service-item" :class="{
@@ -132,7 +116,7 @@ watch(
           disabled: service.disabled,
         }" @click="selectService(service)">
           <span class="n">{{ service.number }}</span>
-          <span>{{ service.title }}</span>
+          <span>{{ menuTitle(service) }}</span>
         </button>
       </template>
       <template v-else>
@@ -403,7 +387,7 @@ watch(
 }
 
 @media (max-width: 1199px) {
-  .sidebar-right {
+  aside.sidebar-right {
     position: fixed;
     top: 0;
     right: 0;
@@ -411,15 +395,16 @@ watch(
     width: min(88vw, 360px);
     height: 100vh;
     z-index: 100;
+    margin: 0;
     transform: translateX(100%);
     transition: transform 0.25s ease;
-    box-shadow: -8px 0 32px rgba(10, 58, 99, 0.15);
     border-radius: 0;
-    padding-top: 3.5rem;
+    padding: 3.5rem 1.5rem 0 1.5rem;
   }
 
-  .sidebar-right.open {
+  aside.sidebar-right.open {
     transform: translateX(0);
+    box-shadow: -8px 0 32px rgba(10, 58, 99, 0.15);
   }
 
   .drawer-close {
