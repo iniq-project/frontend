@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from "vue"
+import { ref, computed, watch } from "vue"
 
 const props = defineProps({
   comissoes: {
@@ -33,6 +33,24 @@ const normasDaComissao = (comissao) => {
     .map((reference) => props.normas.find((n) => n.reference === reference))
     .filter(Boolean)
 }
+
+const selectedComissaoId = ref(null)
+
+const selectedComissao = computed(() =>
+  props.comissoes.find((c) => c.id === selectedComissaoId.value) || null,
+)
+
+const selectComissao = (comissao) => {
+  selectedComissaoId.value = comissao.id
+}
+
+const backToComissoes = () => {
+  selectedComissaoId.value = null
+}
+
+watch(activeView, () => {
+  selectedComissaoId.value = null
+})
 </script>
 
 <template>
@@ -40,7 +58,7 @@ const normasDaComissao = (comissao) => {
     <div class="panel-head">
       <span class="eyebrow">Comissão Técnica</span>
       <h2>{{ title }}</h2>
-      <p v-if="description">{{ description }}</p>
+      <div v-if="description" class="panel-desc" v-html="description"></div>
     </div>
 
     <div class="view-toggle">
@@ -50,7 +68,7 @@ const normasDaComissao = (comissao) => {
         :class="{ 'is-active': activeView === 'info' }"
         @click="activeView = 'info'"
       >
-        Ver Informações
+        Sobre Comissões Técnicas
       </button>
       <button
         type="button"
@@ -65,40 +83,66 @@ const normasDaComissao = (comissao) => {
     <div v-if="activeView === 'info'" class="info-block" v-html="informacoesGerais"></div>
 
     <div v-if="activeView === 'lista'" class="comissoes">
-      <article class="comissao-item" v-for="comissao in comissoes" :key="comissao.id">
-        <div class="comissao-head">
-          <h3>{{ comissao.nome }}</h3>
-          <span class="badge badge--sector badge--green">{{ comissao.sector }}</span>
-        </div>
-        <div class="comissao-lideranca">
-          <span><b>Presidente:</b> {{ comissao.presidente }}</span>
-          <span><b>Secretário Técnico:</b> {{ comissao.secretarioTecnico }}</span>
-        </div>
-        <div class="normas-publicadas">
-          <span class="normas-label">Normas publicadas</span>
-          <ul>
-            <li
-              v-for="norma in normasDaComissao(comissao)"
-              :key="norma.reference"
-            >
-              <button
-                type="button"
-                class="norma-link"
-                @click="emit('view-norma', norma.reference)"
+      <template v-if="!selectedComissao">
+        <article
+          class="comissao-item comissao-item--clickable"
+          v-for="comissao in comissoes"
+          :key="comissao.id"
+          @click="selectComissao(comissao)"
+        >
+          <div class="comissao-head">
+            <h3>{{ comissao.nome }}</h3>
+            <span class="badge badge--sector badge--green">{{ comissao.sector }}</span>
+          </div>
+          <div class="comissao-lideranca">
+            <span><b>Presidente:</b> {{ comissao.presidente }}</span>
+            <span><b>Secretário Técnico:</b> {{ comissao.secretarioTecnico }}</span>
+          </div>
+          <div class="comissao-count">
+            {{ comissao.normaReferences.length }} norma(s) publicada(s)
+          </div>
+        </article>
+      </template>
+
+      <template v-else>
+        <button type="button" class="back-link" @click="backToComissoes">
+          ← Voltar às Comissões Técnicas
+        </button>
+        <article class="comissao-item">
+          <div class="comissao-head">
+            <h3>{{ selectedComissao.nome }}</h3>
+            <span class="badge badge--sector badge--green">{{ selectedComissao.sector }}</span>
+          </div>
+          <div class="comissao-lideranca">
+            <span><b>Presidente:</b> {{ selectedComissao.presidente }}</span>
+            <span><b>Secretário Técnico:</b> {{ selectedComissao.secretarioTecnico }}</span>
+          </div>
+          <div class="normas-publicadas">
+            <span class="normas-label">Normas publicadas</span>
+            <ul>
+              <li
+                v-for="norma in normasDaComissao(selectedComissao)"
+                :key="norma.reference"
               >
-                <span class="norma-ref">{{ norma.reference }}</span>
-                <span class="norma-title">{{ norma.title }}</span>
-                <span
-                  class="badge badge--estado"
-                  :class="{ revogada: norma.estado === 'revogada' }"
+                <button
+                  type="button"
+                  class="norma-link"
+                  @click="emit('view-norma', norma.reference)"
                 >
-                  {{ norma.estado === "revogada" ? "Revogada" : "Em vigor" }}
-                </span>
-              </button>
-            </li>
-          </ul>
-        </div>
-      </article>
+                  <span class="norma-ref">{{ norma.reference }}</span>
+                  <span class="norma-title">{{ norma.title }}</span>
+                  <span
+                    class="badge badge--estado"
+                    :class="{ revogada: norma.estado === 'revogada' }"
+                  >
+                    {{ norma.estado === "revogada" ? "Revogada" : "Em vigor" }}
+                  </span>
+                </button>
+              </li>
+            </ul>
+          </div>
+        </article>
+      </template>
     </div>
   </div>
 </template>
@@ -148,6 +192,52 @@ const normasDaComissao = (comissao) => {
   color: #475569;
   font-size: 1rem;
   line-height: 1.6;
+}
+
+.panel-desc {
+  color: #475569;
+  font-size: 1rem;
+  line-height: 1.6;
+  text-align: justify;
+}
+
+.panel-desc :deep(p) {
+  margin: 0 0 0.75rem 0;
+}
+
+.panel-desc :deep(p:last-child) {
+  margin-bottom: 0;
+}
+
+.panel-desc :deep(b),
+.panel-desc :deep(strong) {
+  color: #0a3a63;
+}
+
+.panel-desc :deep(ul) {
+  list-style: none;
+  margin: 0 0 0.75rem 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.panel-desc :deep(li) {
+  position: relative;
+  padding-left: 1.25rem;
+}
+
+.panel-desc :deep(li p) {
+  margin: 0;
+}
+
+.panel-desc :deep(li)::before {
+  content: "•";
+  position: absolute;
+  left: 0;
+  color: #5cb947;
+  font-weight: bold;
 }
 
 .view-toggle {
@@ -254,6 +344,40 @@ const normasDaComissao = (comissao) => {
   background: white;
   border: 1px solid #e2e8f0;
   border-radius: 10px;
+}
+
+.comissao-item--clickable {
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.comissao-item--clickable:hover {
+  border-color: #2ba9e0;
+}
+
+.comissao-count {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #2ba9e0;
+}
+
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #0a3a63;
+  text-decoration: underline;
+  font-weight: 600;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  font-size: 0.95rem;
+  margin-bottom: 1.25rem;
+}
+
+.back-link:hover {
+  color: #5cb947;
 }
 
 .comissao-head {

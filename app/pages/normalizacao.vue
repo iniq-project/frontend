@@ -158,7 +158,7 @@ const backToComissoes = () => {
       :comissoes="comissoesTecnicas"
       :normas="normas"
       :title="comissaoTecnicaIntro?.title"
-      :description="stripHtml(comissaoTecnicaIntro?.description)"
+      :description="comissaoTecnicaIntro?.description"
       :informacoes-gerais="comissaoTecnicaIntro?.informacoesGerais"
       @view-norma="handleViewNorma"
     />

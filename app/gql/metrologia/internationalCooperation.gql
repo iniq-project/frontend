@@ -3,11 +3,13 @@ query fetch {
     data: flatData {
       title
       description
+      vinculoTitle
       cooperations {
         fullName
         acronym
         participationType
         link
+        iniqRelation
       }
     }
   }

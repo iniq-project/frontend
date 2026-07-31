@@ -21,6 +21,7 @@ export interface SubItem {
   id: string
   number: string
   title: string
+  disabled?: boolean
 }
 
 export const services: Service[] = [
@@ -29,9 +30,9 @@ export const services: Service[] = [
     number: "01",
     title: "Normalização",
     subItems: [
-      { id: "comissao-tecnica", number: "01", title: "Comissão Técnica" },
+      { id: "comissao-tecnica", number: "01", title: "Gestão de Comissões Técnicas" },
       { id: "venda-normas", number: "02", title: "Venda de Normas" },
-      { id: "consulta-publica", number: "03", title: "Projectos em Consulta Pública" },
+      { id: "consulta-publica", number: "03", title: "Projectos de Normas em Consulta Pública" },
       { id: "catalogo-livro", number: "04", title: "Catálogo Nacional de Normas" }
     ],
   },
@@ -40,12 +41,11 @@ export const services: Service[] = [
     number: "02",
     title: "Metrologia",
     subItems: [
-      { id: "servicos", number: "01", title: "Serviços" },
-      { id: "controlo-metrologico-legal", number: "02", title: "Controlo Metrológico Legal" },
-      { id: "taxas-metrologia-legal", number: "03", title: "Taxas de Metrologia Legal" },
-      { id: "cooperacao-regional-internacional", number: "04", title: "Cooperação Regional e Internacional" },
-      { id: "metrologia-industrial", number: "05", title: "Metrologia Industrial" },
-      { id: "metrologia-cientifica", number: "06", title: "Metrologia Científica" },
+      { id: "controlo-metrologico-legal", number: "01", title: "Controlo Metrológico Legal" },
+      { id: "taxas-metrologia-legal", number: "02", title: "Taxas de Metrologia Legal" },
+      { id: "cooperacao-regional-internacional", number: "03", title: "Cooperação Regional e Internacional" },
+      { id: "metrologia-industrial", number: "04", title: "Metrologia Industrial" },
+      { id: "metrologia-cientifica", number: "05", title: "Metrologia Científica" },
     ],
   },
   // {
@@ -98,10 +98,9 @@ export const services: Service[] = [
   {
     id: "premio-qualidade",
     number: "07",
-    disabled: true,
     title: "Prémio Nacional da Qualidade",
     subItems: [
-      { id: "solicitar-servico", number: "01", title: "Solicitar Serviço" }
+      { id: "solicitar-servico", number: "01", title: "Solicitar Serviço", disabled: true }
     ]
   },
     {

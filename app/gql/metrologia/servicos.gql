@@ -8,6 +8,8 @@ query fetch {
       description
       fee
       requiresFichaTecnica
+      requiresNif
+      requiresAlvara
     }
   }
   }

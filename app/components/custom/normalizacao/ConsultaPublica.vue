@@ -1,7 +1,8 @@
 <script setup>
 import { ref } from "vue"
+import { useCategoryGroups } from "@/composables/useCategoryGroups"
 
-defineProps({
+const props = defineProps({
   projects: {
     type: Array,
     default: () => [],
@@ -19,6 +20,14 @@ defineProps({
 
 const emit = defineEmits(["open-modal"])
 
+const {
+  groups,
+  selectedCategory,
+  itemsInCategory,
+  selectCategory,
+  backToCategories,
+} = useCategoryGroups(() => props.projects, "sector")
+
 const viewMode = ref("list")
 const selectedProject = ref(null)
 
@@ -35,18 +44,40 @@ const backToList = () => {
 
 <template>
   <div class="tab-panel">
-    <template v-if="viewMode === 'list'">
+    <template v-if="viewMode === 'list' && !selectedCategory">
       <div class="panel-head">
-        <span class="eyebrow">Projectos-Normas em Consulta Pública</span>
+        <span class="eyebrow">Projectos de Normas em Consulta Pública</span>
+        <h2>{{ title }}</h2>
+        <p>{{ description }}</p>
+      </div>
+      <UiCategoryTiles
+        :groups="groups"
+        item-label="projectos"
+        @select="selectCategory"
+      />
+    </template>
+
+    <template v-else-if="viewMode === 'list' && selectedCategory">
+      <button type="button" class="back-link" @click="backToCategories">
+        ← Voltar às categorias
+      </button>
+      <div class="panel-head">
+        <span class="eyebrow">{{ selectedCategory }}</span>
         <h2>{{ title }}</h2>
         <p>{{ description }}</p>
       </div>
       <div class="consulta">
-        <article class="consulta-item" v-for="project in projects" :key="project.code">
+        <article
+          class="consulta-item"
+          v-for="project in itemsInCategory"
+          :key="project.code"
+        >
           <div>
             <div class="consulta-tags">
               <span class="consulta-code">{{ project.code }}</span>
-              <span class="badge badge--sector badge--green">{{ project.sector }}</span>
+              <span class="badge badge--sector badge--green">{{
+                project.sector
+              }}</span>
             </div>
             <h3>{{ project.title }}</h3>
             <p class="consulta-desc">{{ project.description }}</p>
@@ -70,7 +101,9 @@ const backToList = () => {
       <div class="panel-head">
         <div class="consulta-tags">
           <span class="consulta-code">{{ selectedProject.code }}</span>
-          <span class="badge badge--sector badge--green">{{ selectedProject.sector }}</span>
+          <span class="badge badge--sector badge--green">{{
+            selectedProject.sector
+          }}</span>
           <span :class="['deadline-pill', { urgent: selectedProject.urgent }]">
             Termina {{ selectedProject.deadline }}
           </span>
@@ -98,7 +131,10 @@ const backToList = () => {
       </div>
 
       <div class="comentar-wrap">
-        <button class="btn btn--green" @click="emit('open-modal', 'contrib', selectedProject)">
+        <button
+          class="btn btn--green"
+          @click="emit('open-modal', 'contrib', selectedProject)"
+        >
           Comentar
         </button>
       </div>

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, watch, onMounted } from "vue"
 import { useRoute, useRouter } from "vue-router"
-import { services, type Service } from "~/data/services"
+import { services, type Service, type SubItem } from "~/data/services"
 
 const route = useRoute()
 const router = useRouter()
@@ -35,9 +35,11 @@ const goBackToServices = () => {
   emit("select-service", null)
 }
 
-const selectSubItem = (serviceId: string, subItemId: string) => {
-  activeSubItemId.value = subItemId
-  emit("select-subitem", serviceId, subItemId)
+const selectSubItem = (service: Service, subItem: SubItem) => {
+  if (subItem.disabled) return
+
+  activeSubItemId.value = subItem.id
+  emit("select-subitem", service.id, subItem.id)
   emit("close")
 }
 
@@ -125,7 +127,8 @@ watch(
         </button>
         <div v-if="activeService.subItems?.length" class="subitems-list">
           <button v-for="subItem in activeService.subItems" :key="subItem.id" class="subitem"
-            :class="{ active: activeSubItemId === subItem.id }" @click="selectSubItem(activeService.id, subItem.id)">
+            :class="{ active: activeSubItemId === subItem.id, disabled: subItem.disabled }"
+            @click="selectSubItem(activeService, subItem)">
             <span class="n">{{ subItem.number }}</span>
             <span>{{ subItem.title }}</span>
           </button>
@@ -313,6 +316,12 @@ watch(
 .subitem.active {
   background: #eff6fc;
   border-color: #cfe5f6;
+}
+
+.subitem.disabled {
+  opacity: 0.5;
+  pointer-events: none;
+  cursor: not-allowed;
 }
 
 .subitem .n {
