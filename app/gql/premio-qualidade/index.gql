@@ -7,34 +7,11 @@ query fetch {
         }
         name
         position
-      }
-      titleresponsible
-      message
-      titlequalitypolicy
-      qualitypolicy
-      panelhead {
-        eyebrow
-        title
-        description
-      }
-      awarddescription
-    }
-  }
-  queryPremioEditionsContents {
-    data: flatData {
-      editions {
-        year
-        title
-        description
-        isOpen
-        deadline
-        requirements
-        dossierDescription
-        winners {
-          organization
-          sector
-          year
-        }
+        phoneNumber
+        titleresponsible
+        message
+        titlequalityPolicy
+        qualityPolicy
       }
     }
   }

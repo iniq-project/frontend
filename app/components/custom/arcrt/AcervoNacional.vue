@@ -1,5 +1,6 @@
 <script setup>
 import { ref, computed } from "vue"
+import { useCategoryGroups } from "@/composables/useCategoryGroups"
 
 const props = defineProps({
   regulamentos: {
@@ -10,28 +11,24 @@ const props = defineProps({
 
 const emit = defineEmits(["open-modal"])
 
-const searchTerm = ref("")
-const areaTecnica = ref("")
-const estado = ref("")
+const { groups, selectedCategory, itemsInCategory, selectCategory, backToCategories } =
+  useCategoryGroups(() => props.regulamentos, "areaTecnica")
 
-const areasTecnicas = computed(() =>
-  [...new Set(props.regulamentos.map((r) => r.areaTecnica))].sort(),
-)
+const searchTerm = ref("")
+const estado = ref("")
 
 const filteredRegulamentos = computed(() => {
   const term = searchTerm.value.trim().toLowerCase()
 
-  return props.regulamentos.filter((r) => {
+  return itemsInCategory.value.filter((r) => {
     const matchesSearch = !term || r.title.toLowerCase().includes(term)
-    const matchesArea = !areaTecnica.value || r.areaTecnica === areaTecnica.value
     const matchesEstado = !estado.value || r.estado === estado.value
-    return matchesSearch && matchesArea && matchesEstado
+    return matchesSearch && matchesEstado
   })
 })
 
 const resetFilters = () => {
   searchTerm.value = ""
-  areaTecnica.value = ""
   estado.value = ""
 }
 
@@ -42,83 +39,92 @@ const formatPrice = (price) => {
 
 <template>
   <div class="sub-panel">
-    <div class="panel-head">
-      <span class="eyebrow">Acervo Nacional Regulamentar</span>
-      <h2>Catálogo de Regulamentos Técnicos</h2>
-      <p>
-        Pesquise os Regulamentos Técnicos disponíveis e solicite a sua aquisição. Ao clicar em
-        <b>Comprar</b>, é gerado um RUPE para pagamento.
-      </p>
-    </div>
-
-    <div class="catalog-toolbar">
-      <div class="catalog-search">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-          <circle cx="11" cy="11" r="7"></circle>
-          <path d="m21 21-4.3-4.3"></path>
-        </svg>
-        <input
-          type="text"
-          v-model="searchTerm"
-          placeholder="Pesquisar por título…"
-          aria-label="Pesquisar regulamentos"
-        />
+    <template v-if="!selectedCategory">
+      <div class="panel-head">
+        <span class="eyebrow">Acervo Nacional Regulamentar</span>
+        <h2>Catálogo de Regulamentos Técnicos</h2>
+        <p>
+          Pesquise os Regulamentos Técnicos disponíveis e solicite a sua aquisição. Ao clicar em
+          <b>Comprar</b>, é gerado um RUPE para pagamento.
+        </p>
       </div>
-      <div class="catalog-filter">
-        <select v-model="areaTecnica" aria-label="Filtrar por área técnica">
-          <option value="">Todas as áreas técnicas</option>
-          <option v-for="a in areasTecnicas" :key="a" :value="a">{{ a }}</option>
-        </select>
-        <select v-model="estado" aria-label="Filtrar por estado">
-          <option value="">Todos os estados</option>
-          <option value="em vigor">Em vigor</option>
-          <option value="revogado">Revogado</option>
-        </select>
-        <button
-          v-if="searchTerm || areaTecnica || estado"
-          class="chip"
-          type="button"
-          @click="resetFilters"
-        >
-          Limpar filtros
-        </button>
+      <UiCategoryTiles :groups="groups" item-label="regulamentos" @select="selectCategory" />
+    </template>
+
+    <template v-else>
+      <button type="button" class="back-link" @click="backToCategories">
+        ← Voltar às categorias
+      </button>
+      <div class="panel-head">
+        <span class="eyebrow">{{ selectedCategory }}</span>
+        <h2>Catálogo de Regulamentos Técnicos</h2>
       </div>
-    </div>
 
-    <p v-if="!filteredRegulamentos.length" class="empty-state">
-      Nenhum regulamento encontrado com os filtros seleccionados.
-    </p>
-
-    <div class="catalog">
-      <div class="catalog-item" v-for="regulamento in filteredRegulamentos" :key="regulamento.code">
-        <div class="catalog-item-top">
-          <div class="catalog-item-code">{{ regulamento.code }}</div>
-          <span class="badge badge--sector badge--green">{{ regulamento.areaTecnica }}</span>
-          <span
-            class="badge badge--estado"
-            :class="{ revogado: regulamento.estado === 'revogado' }"
+      <div class="catalog-toolbar">
+        <div class="catalog-search">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <circle cx="11" cy="11" r="7"></circle>
+            <path d="m21 21-4.3-4.3"></path>
+          </svg>
+          <input
+            type="text"
+            v-model="searchTerm"
+            placeholder="Pesquisar por título…"
+            aria-label="Pesquisar regulamentos"
+          />
+        </div>
+        <div class="catalog-filter">
+          <select v-model="estado" aria-label="Filtrar por estado">
+            <option value="">Todos os estados</option>
+            <option value="em vigor">Em vigor</option>
+            <option value="revogado">Revogado</option>
+          </select>
+          <button
+            v-if="searchTerm || estado"
+            class="chip"
+            type="button"
+            @click="resetFilters"
           >
-            {{ regulamento.estado === "revogado" ? "Revogado" : "Em vigor" }}
-          </span>
-          <div class="catalog-item-price">
-            <span class="price-value">{{ formatPrice(regulamento.price) }}</span>
-            <span class="price-currency">AOA</span>
-          </div>
-          <button class="btn btn--primary" @click="emit('open-modal', 'purchase', regulamento)">
-            Comprar
+            Limpar filtros
           </button>
         </div>
-        <h3 class="catalog-item-title">{{ regulamento.title }}</h3>
-        <a
-          v-if="regulamento.documentUrl"
-          :href="regulamento.documentUrl"
-          download
-          class="doc-link"
-        >
-          Descarregar documento (PDF)
-        </a>
       </div>
-    </div>
+
+      <p v-if="!filteredRegulamentos.length" class="empty-state">
+        Nenhum regulamento encontrado com os filtros seleccionados.
+      </p>
+
+      <div class="catalog">
+        <div class="catalog-item" v-for="regulamento in filteredRegulamentos" :key="regulamento.code">
+          <div class="catalog-item-top">
+            <div class="catalog-item-code">{{ regulamento.code }}</div>
+            <span class="badge badge--sector badge--green">{{ regulamento.areaTecnica }}</span>
+            <span
+              class="badge badge--estado"
+              :class="{ revogado: regulamento.estado === 'revogado' }"
+            >
+              {{ regulamento.estado === "revogado" ? "Revogado" : "Em vigor" }}
+            </span>
+            <div class="catalog-item-price">
+              <span class="price-value">{{ formatPrice(regulamento.price) }}</span>
+              <span class="price-currency">AOA</span>
+            </div>
+            <button class="btn btn--primary" @click="emit('open-modal', 'purchase', regulamento)">
+              Comprar
+            </button>
+          </div>
+          <h3 class="catalog-item-title">{{ regulamento.title }}</h3>
+          <a
+            v-if="regulamento.documentUrl"
+            :href="regulamento.documentUrl"
+            download
+            class="doc-link"
+          >
+            Descarregar documento (PDF)
+          </a>
+        </div>
+      </div>
+    </template>
   </div>
 </template>
 
@@ -130,6 +136,25 @@ const formatPrice = (price) => {
   max-width: 100%;
   overflow-x: hidden;
   box-sizing: border-box;
+}
+
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #0a3a63;
+  text-decoration: underline;
+  font-weight: 600;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  font-size: 0.95rem;
+  margin-bottom: 1.25rem;
+}
+
+.back-link:hover {
+  color: #5cb947;
 }
 
 .panel-head {

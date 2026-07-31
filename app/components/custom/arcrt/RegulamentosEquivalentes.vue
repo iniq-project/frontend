@@ -1,5 +1,7 @@
 <script setup>
-defineProps({
+import { useCategoryGroups } from "@/composables/useCategoryGroups"
+
+const props = defineProps({
   regulamentos: {
     type: Array,
     default: () => [],
@@ -14,34 +16,51 @@ defineProps({
       "Lista dos Regulamentos Técnicos de outros países ou organismos que o INIQ reconhece como equivalentes. Esta secção é apenas de consulta.",
   },
 })
+
+const { groups, selectedCategory, itemsInCategory, selectCategory, backToCategories } =
+  useCategoryGroups(() => props.regulamentos, "areaTecnica")
 </script>
 
 <template>
   <div class="sub-panel">
-    <div class="panel-head">
-      <span class="eyebrow">Regulamentos Técnicos Equivalentes</span>
-      <h2>{{ title }}</h2>
-      <p>{{ description }}</p>
-    </div>
-
-    <div class="catalog">
-      <div class="catalog-item" v-for="regulamento in regulamentos" :key="regulamento.code">
-        <div class="catalog-item-top">
-          <div class="catalog-item-code">{{ regulamento.code }}</div>
-          <span class="badge badge--sector badge--green">{{ regulamento.areaTecnica }}</span>
-          <span
-            class="badge badge--estado"
-            :class="{ revogado: regulamento.estado === 'revogado' }"
-          >
-            {{ regulamento.estado === "revogado" ? "Revogado" : "Em vigor" }}
-          </span>
-        </div>
-        <h3 class="catalog-item-title">{{ regulamento.title }}</h3>
-        <p class="catalog-item-origem">
-          Origem: <b>{{ regulamento.paisOrigem }}</b> — {{ regulamento.organismoOrigem }}
-        </p>
+    <template v-if="!selectedCategory">
+      <div class="panel-head">
+        <span class="eyebrow">Regulamentos Técnicos Equivalentes</span>
+        <h2>{{ title }}</h2>
+        <p>{{ description }}</p>
       </div>
-    </div>
+      <UiCategoryTiles :groups="groups" item-label="regulamentos" @select="selectCategory" />
+    </template>
+
+    <template v-else>
+      <button type="button" class="back-link" @click="backToCategories">
+        ← Voltar às categorias
+      </button>
+      <div class="panel-head">
+        <span class="eyebrow">{{ selectedCategory }}</span>
+        <h2>{{ title }}</h2>
+        <p>{{ description }}</p>
+      </div>
+
+      <div class="catalog">
+        <div class="catalog-item" v-for="regulamento in itemsInCategory" :key="regulamento.code">
+          <div class="catalog-item-top">
+            <div class="catalog-item-code">{{ regulamento.code }}</div>
+            <span class="badge badge--sector badge--green">{{ regulamento.areaTecnica }}</span>
+            <span
+              class="badge badge--estado"
+              :class="{ revogado: regulamento.estado === 'revogado' }"
+            >
+              {{ regulamento.estado === "revogado" ? "Revogado" : "Em vigor" }}
+            </span>
+          </div>
+          <h3 class="catalog-item-title">{{ regulamento.title }}</h3>
+          <p class="catalog-item-origem">
+            Origem: <b>{{ regulamento.paisOrigem }}</b> — {{ regulamento.organismoOrigem }}
+          </p>
+        </div>
+      </div>
+    </template>
   </div>
 </template>
 
@@ -53,6 +72,25 @@ defineProps({
   max-width: 100%;
   overflow-x: hidden;
   box-sizing: border-box;
+}
+
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #0a3a63;
+  text-decoration: underline;
+  font-weight: 600;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  font-size: 0.95rem;
+  margin-bottom: 1.25rem;
+}
+
+.back-link:hover {
+  color: #5cb947;
 }
 
 .panel-head {
