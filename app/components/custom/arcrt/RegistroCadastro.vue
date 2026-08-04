@@ -152,8 +152,7 @@ async function handleSubmit() {
     payload.append("name", formData.value.nome.trim())
     payload.append("email", formData.value.email.trim())
     payload.append("serviceType", "REGISTO_CADASTRO")
-    payload.append("category", selectedTypology.value?.title ?? "")
-    payload.append("typology", selectedTypology.value?.id ?? "")
+    payload.append("typology", selectedTypology.value?.title ?? "")
 
     for (const slot of documentSlots) {
       const file = formData.value.files[slot.type]
