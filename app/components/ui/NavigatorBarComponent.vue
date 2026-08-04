@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { ref, computed, watch, onMounted } from "vue"
 import { useRoute, useRouter } from "vue-router"
-import { services, type Service } from "~/data/services"
+import { services, type Service, type SubItem } from "~/data/services"
+import areaReservadaQuery from "@/gql/auxiliares/areaReservada.gql"
 
 const route = useRoute()
 const router = useRouter()
@@ -9,6 +10,18 @@ const isHomePage = computed(() => route.path === "/")
 
 const { getMenuTitle } = await useMenuTitles()
 const menuTitle = (service: Service) => getMenuTitle(service.id, service.title)
+
+const { query } = useSquidex()
+const areaReservadaData = await query(areaReservadaQuery, {
+  key: "reservedarea",
+})
+const areaReservada = computed(() => {
+  const d = areaReservadaData.value?.data?.queryReservedareaContents?.[0]?.data
+  return {
+    label: d?.label || "Área Reservada",
+    link: d?.link || "#",
+  }
+})
 
 const activeServiceId = ref<string | null>(null)
 const activeSubItemId = ref<string | null>(null)
@@ -35,9 +48,11 @@ const goBackToServices = () => {
   emit("select-service", null)
 }
 
-const selectSubItem = (serviceId: string, subItemId: string) => {
-  activeSubItemId.value = subItemId
-  emit("select-subitem", serviceId, subItemId)
+const selectSubItem = (service: Service, subItem: SubItem) => {
+  if (subItem.disabled) return
+
+  activeSubItemId.value = subItem.id
+  emit("select-subitem", service.id, subItem.id)
   emit("close")
 }
 
@@ -102,19 +117,36 @@ watch(
 <template>
   <aside class="sidebar-right">
     <button class="drawer-close" @click="emit('close')">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+      <svg
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+      >
         <path d="M18 6L6 18M6 6l12 12" />
       </svg>
     </button>
-    <NuxtLink v-if="!isHomePage && !showSubItems" to="/" class="back-btn" @click="goHome">← Voltar à Página Inicial
+    <NuxtLink
+      v-if="!isHomePage && !showSubItems"
+      to="/"
+      class="back-btn"
+      @click="goHome"
+      >← Voltar à Página Inicial
     </NuxtLink>
     <h2>{{ showSubItems ? "Processos" : "Serviços e Processos" }}</h2>
     <nav class="services-list">
       <template v-if="!showSubItems">
-        <button v-for="service in services" :key="service.id" class="service-item" :class="{
-          active: activeServiceId === service.id,
-          disabled: service.disabled,
-        }" @click="selectService(service)">
+        <button
+          v-for="service in services"
+          :key="service.id"
+          class="service-item"
+          :class="{
+            active: activeServiceId === service.id,
+            disabled: service.disabled,
+          }"
+          @click="selectService(service)"
+        >
           <span class="n">{{ service.number }}</span>
           <span>{{ menuTitle(service) }}</span>
         </button>
@@ -124,8 +156,16 @@ watch(
           ← Voltar para serviços
         </button>
         <div v-if="activeService.subItems?.length" class="subitems-list">
-          <button v-for="subItem in activeService.subItems" :key="subItem.id" class="subitem"
-            :class="{ active: activeSubItemId === subItem.id }" @click="selectSubItem(activeService.id, subItem.id)">
+          <button
+            v-for="subItem in activeService.subItems"
+            :key="subItem.id"
+            class="subitem"
+            :class="{
+              active: activeSubItemId === subItem.id,
+              disabled: subItem.disabled,
+            }"
+            @click="selectSubItem(activeService, subItem)"
+          >
             <span class="n">{{ subItem.number }}</span>
             <span>{{ subItem.title }}</span>
           </button>
@@ -133,9 +173,13 @@ watch(
       </template>
     </nav>
     <div class="area-reservada-wrapper">
-      <a href="https://backoffice-iniq.netlify.app/login" target="_blank" rel="noopener noreferrer"
-        class="area-reservada">
-        Área Reservada
+      <a
+        :href="areaReservada.link"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="area-reservada"
+      >
+        {{ areaReservada.label }}
       </a>
     </div>
   </aside>
@@ -313,6 +357,12 @@ watch(
 .subitem.active {
   background: #eff6fc;
   border-color: #cfe5f6;
+}
+
+.subitem.disabled {
+  opacity: 0.5;
+  pointer-events: none;
+  cursor: not-allowed;
 }
 
 .subitem .n {

@@ -1,5 +1,5 @@
 <script setup>
-import { ref, watch } from "vue"
+import { ref, computed, watch } from "vue"
 import { generateRupe } from "@/utils/rupe"
 
 const props = defineProps({
@@ -25,14 +25,21 @@ const formData = ref({
   nif: "",
   email: "",
   telefone: "",
+  apresentacao: "",
 })
 
 const files = ref({
-  cartaDG: null,
   nifDoc: null,
   alvara: null,
   fichaTecnica: null,
 })
+
+const hasAnyDocument = computed(
+  () =>
+    props.service?.requiresNif !== false ||
+    props.service?.requiresAlvara !== false ||
+    !!props.service?.requiresFichaTecnica,
+)
 
 const errors = ref({})
 const formSubmitted = ref(false)
@@ -52,8 +59,9 @@ watch(
         nif: "",
         email: "",
         telefone: "",
+        apresentacao: "",
       }
-      files.value = { cartaDG: null, nifDoc: null, alvara: null, fichaTecnica: null }
+      files.value = { nifDoc: null, alvara: null, fichaTecnica: null }
       errors.value = {}
       formSubmitted.value = false
       orderRef.value = ""
@@ -92,10 +100,10 @@ const validateForm = () => {
     newErrors.email = true
   }
   if (!formData.value.telefone.trim()) newErrors.telefone = true
+  if (!formData.value.apresentacao.trim()) newErrors.apresentacao = true
 
-  if (!files.value.cartaDG) newErrors.cartaDG = true
-  if (!files.value.nifDoc) newErrors.nifDoc = true
-  if (!files.value.alvara) newErrors.alvara = true
+  if (props.service?.requiresNif !== false && !files.value.nifDoc) newErrors.nifDoc = true
+  if (props.service?.requiresAlvara !== false && !files.value.alvara) newErrors.alvara = true
   if (props.service?.requiresFichaTecnica && !files.value.fichaTecnica) {
     newErrors.fichaTecnica = true
   }
@@ -267,28 +275,23 @@ const handleClose = () => {
               />
               <span v-if="errors.telefone" class="error-text">Por favor, informe o número de telefone</span>
             </div>
-
-            <h4 class="section-title">Documentos obrigatórios</h4>
             <div class="field">
-              <label for="m-cartaDG"
-                >Carta ao Director-Geral, indicando a quantidade de instrumentos a certificar
-                <span class="req">*</span></label
+              <label for="m-apresentacao"
+                >Apresentação e informações adicionais <span class="req">*</span></label
               >
-              <div class="file-input-wrapper" :class="{ 'has-error': errors.cartaDG }">
-                <input
-                  type="file"
-                  id="m-cartaDG"
-                  name="cartaDG"
-                  accept=".pdf"
-                  @change="handleFileChange($event, 'cartaDG')"
-                />
-                <span class="file-label">{{
-                  files.cartaDG ? files.cartaDG.name : "Selecionar ficheiro PDF"
-                }}</span>
-              </div>
-              <span v-if="errors.cartaDG" class="error-message">Por favor, anexe a carta ao Director-Geral</span>
+              <textarea
+                id="m-apresentacao"
+                name="apresentacao"
+                rows="4"
+                placeholder="Apresente-se brevemente e indique a quantidade de instrumentos a certificar."
+                v-model="formData.apresentacao"
+                :class="{ error: errors.apresentacao }"
+              ></textarea>
+              <span v-if="errors.apresentacao" class="error-text">Por favor, preencha esta informação</span>
             </div>
-            <div class="field">
+
+            <h4 v-if="hasAnyDocument" class="section-title">Documentos obrigatórios</h4>
+            <div v-if="service?.requiresNif !== false" class="field">
               <label for="m-nifDoc">NIF (documento) <span class="req">*</span></label>
               <div class="file-input-wrapper" :class="{ 'has-error': errors.nifDoc }">
                 <input
@@ -304,7 +307,7 @@ const handleClose = () => {
               </div>
               <span v-if="errors.nifDoc" class="error-message">Por favor, anexe o documento do NIF</span>
             </div>
-            <div class="field">
+            <div v-if="service?.requiresAlvara !== false" class="field">
               <label for="m-alvara">Alvará Comercial <span class="req">*</span></label>
               <div class="file-input-wrapper" :class="{ 'has-error': errors.alvara }">
                 <input
@@ -521,12 +524,28 @@ const handleClose = () => {
   box-sizing: border-box;
 }
 
-.field input.error {
+.field textarea {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid #d0d9e3;
+  border-radius: 6px;
+  font-family: "IBM Plex Sans", system-ui, sans-serif;
+  font-size: 15px;
+  color: #0f172a;
+  background: white;
+  transition: border-color 0.15s, box-shadow 0.15s;
+  box-sizing: border-box;
+  resize: vertical;
+}
+
+.field input.error,
+.field textarea.error {
   border-color: #dc2626;
   box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
 }
 
-.field input:focus {
+.field input:focus,
+.field textarea:focus {
   outline: none;
   border-color: #2ba9e0;
   box-shadow: 0 0 0 3px rgba(27, 143, 214, 0.15);

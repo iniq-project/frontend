@@ -158,7 +158,7 @@ const backToComissoes = () => {
       :comissoes="comissoesTecnicas"
       :normas="normas"
       :title="comissaoTecnicaIntro?.title"
-      :description="stripHtml(comissaoTecnicaIntro?.description)"
+      :description="comissaoTecnicaIntro?.description"
       :informacoes-gerais="comissaoTecnicaIntro?.informacoesGerais"
       @view-norma="handleViewNorma"
     />
@@ -178,7 +178,6 @@ const backToComissoes = () => {
       :projects="projetosConsulta"
       :title="consultaPublicaIntro?.title"
       :description="stripHtml(consultaPublicaIntro?.description)"
-      @open-modal="openModal"
     />
 
     <CustomNormalizacaoCatalogoNormas
@@ -194,12 +193,6 @@ const backToComissoes = () => {
   <CustomNormalizacaoPurchaseModal
     :open="modalMode === 'venda'"
     :norma="modalItem"
-    @close="closeModal"
-  />
-
-  <CustomNormalizacaoCommentModal
-    :open="modalMode === 'contrib'"
-    :project="modalItem"
     @close="closeModal"
   />
 </template>

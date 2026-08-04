@@ -1,6 +1,7 @@
 <script setup>
 import { ref, watch } from "vue"
 import { useNormaFilters } from "@/composables/useNormaFilters"
+import { useCategoryGroups } from "@/composables/useCategoryGroups"
 
 const props = defineProps({
   normas: {
@@ -25,17 +26,21 @@ const props = defineProps({
 const emit = defineEmits(["open-modal", "back-to-comissoes"])
 
 const {
+  groups,
+  selectedCategory,
+  itemsInCategory,
+  selectCategory,
+  backToCategories,
+} = useCategoryGroups(() => props.normas, "categoria")
+
+const {
   searchTerm,
-  categoria,
   ano,
-  comissaoTecnica,
-  categorias,
   anos,
-  comissoes,
   filteredNormas,
   seedSearch: applySeedSearch,
   resetFilters,
-} = useNormaFilters(() => props.normas)
+} = useNormaFilters(itemsInCategory)
 
 const viaComissaoTecnica = ref(false)
 
@@ -43,6 +48,8 @@ watch(
   () => props.seedSearch,
   (term) => {
     if (term) {
+      const match = props.normas.find((n) => n.title === term)
+      if (match) selectCategory(match.categoria)
       applySeedSearch(term)
       viaComissaoTecnica.value = true
     }
@@ -65,69 +72,89 @@ const formatPrice = (price) => {
     >
       ← Voltar à Comissão Técnica
     </button>
-    <div class="panel-head">
-      <span class="eyebrow">Venda de Normas</span>
-      <h2>{{ title }}</h2>
-      <p>{{ description }}</p>
-    </div>
-
-    <div class="catalog-toolbar">
-      <div class="catalog-search">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-          <circle cx="11" cy="11" r="7"></circle>
-          <path d="m21 21-4.3-4.3"></path>
-        </svg>
-        <input
-          type="text"
-          v-model="searchTerm"
-          placeholder="Pesquisar por título ou ICS…"
-          aria-label="Pesquisar normas"
-        />
+    <template v-if="!selectedCategory">
+      <div class="panel-head">
+        <h2>{{ title }}</h2>
+        <p>{{ description }}</p>
       </div>
-      <div class="catalog-filter">
-        <select v-model="categoria" aria-label="Filtrar por categoria">
-          <option value="">Todas as categorias</option>
-          <option v-for="c in categorias" :key="c" :value="c">{{ c }}</option>
-        </select>
-        <select v-model="ano" aria-label="Filtrar por ano">
-          <option value="">Todos os anos</option>
-          <option v-for="a in anos" :key="a" :value="String(a)">{{ a }}</option>
-        </select>
-        <select v-model="comissaoTecnica" aria-label="Filtrar por Comissão Técnica">
-          <option value="">Todas as Comissões Técnicas</option>
-          <option v-for="c in comissoes" :key="c" :value="c">{{ c }}</option>
-        </select>
-        <button
-          v-if="searchTerm || categoria || ano || comissaoTecnica"
-          class="chip"
-          type="button"
-          @click="resetFilters"
-        >
-          Limpar filtros
-        </button>
+      <UiCategoryTiles :groups="groups" item-label="normas" @select="selectCategory" />
+    </template>
+
+    <template v-else>
+      <button type="button" class="back-link" @click="backToCategories">
+        ← Voltar às categorias
+      </button>
+      <div class="panel-head">
+        <span class="eyebrow">{{ selectedCategory }}</span>
+        <h2>{{ title }}</h2>
+        <p>{{ description }}</p>
       </div>
-    </div>
 
-    <p v-if="!filteredNormas.length" class="empty-state">
-      Nenhuma norma encontrada com os filtros seleccionados.
-    </p>
-
-    <div class="catalog">
-      <div class="catalog-item" v-for="norma in filteredNormas" :key="norma.reference">
-        <div class="catalog-item-top">
-          <div class="catalog-item-code">{{ norma.reference }}</div>
-          <span class="badge badge--sector badge--green">{{ norma.categoria }}</span>
-          <div class="catalog-item-price">
-            <span class="price-value">{{ formatPrice(norma.price) }}</span>
-            <span class="price-currency">AOA</span>
-          </div>
-          <button class="btn btn--primary" @click="emit('open-modal', 'venda', norma)">
-            Comprar
+      <div class="catalog-toolbar">
+        <div class="catalog-search">
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+          >
+            <circle cx="11" cy="11" r="7"></circle>
+            <path d="m21 21-4.3-4.3"></path>
+          </svg>
+          <input
+            type="text"
+            v-model="searchTerm"
+            placeholder="Pesquisar por título ou ICS…"
+            aria-label="Pesquisar normas"
+          />
+        </div>
+        <div class="catalog-filter">
+          <select v-model="ano" aria-label="Filtrar por ano">
+            <option value="">Todos os anos</option>
+            <option v-for="a in anos" :key="a" :value="String(a)">{{ a }}</option>
+          </select>
+          <button
+            v-if="searchTerm || ano"
+            class="chip"
+            type="button"
+            @click="resetFilters"
+          >
+            Limpar filtros
           </button>
         </div>
-        <h3 class="catalog-item-title">{{ norma.title }}</h3>
       </div>
-    </div>
+
+      <p v-if="!filteredNormas.length" class="empty-state">
+        Nenhuma norma encontrada com os filtros seleccionados.
+      </p>
+
+      <div class="catalog">
+        <div
+          class="catalog-item"
+          v-for="norma in filteredNormas"
+          :key="norma.reference"
+        >
+          <div class="catalog-item-top">
+            <div class="catalog-item-code">{{ norma.reference }}</div>
+            <span class="badge badge--sector badge--green">{{
+              norma.categoria
+            }}</span>
+            <div class="catalog-item-price">
+              <span class="price-value">{{ formatPrice(norma.price) }}</span>
+              <span class="price-currency">AOA</span>
+            </div>
+            <button
+              class="btn btn--primary"
+              @click="emit('open-modal', 'venda', norma)"
+            >
+              Comprar
+            </button>
+          </div>
+          <h3 class="catalog-item-title">{{ norma.title }}</h3>
+        </div>
+      </div>
+    </template>
   </div>
 </template>
 

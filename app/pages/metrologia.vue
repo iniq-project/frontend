@@ -5,7 +5,6 @@ import servicosQuery from "@/gql/metrologia/servicos.gql"
 import legalControlQuery from "@/gql/metrologia/legalControl.gql"
 import internationalCooperationQuery from "@/gql/metrologia/internationalCooperation.gql"
 import legalFeeQuery from "@/gql/metrologia/legalFee.gql"
-import modeloCartaQuery from "@/gql/metrologia/modeloCarta.gql"
 import { slugify } from "@/utils/slugify"
 import { stripHtml } from "@/utils/stripHtml"
 
@@ -36,18 +35,11 @@ const servicosMetrologia = computed(() =>
       description: stripHtml(s.description),
       fee: s.fee || 0,
       requiresFichaTecnica: !!s.requiresFichaTecnica,
+      requiresNif: s.requiresNif !== false,
+      requiresAlvara: s.requiresAlvara !== false,
     }),
   ),
 )
-
-const modeloCartaData = await query(modeloCartaQuery, { key: "requirementmetrology" })
-const modeloCarta = computed(() => {
-  const d = modeloCartaData.value?.data?.queryRequirementmetrologyContents?.[0]?.data
-  return {
-    title: d?.title || "",
-    documentUrl: d?.document?.[0]?.url || "",
-  }
-})
 
 const legalControlData = await query(legalControlQuery, { key: "legalcontrol" })
 const legalControlIntro = computed(
@@ -75,6 +67,7 @@ const cooperacoesInternacionais = computed(() =>
     sigla: c.acronym,
     tipoParticipacao: c.participationType,
     link: c.link,
+    descricaoVinculo: stripHtml(c.iniqRelation),
   })),
 )
 
@@ -119,10 +112,6 @@ function closeSolicitarModal() {
   modalOpen.value = false
 }
 
-function handleLinkThroughServico(servicoId: string) {
-  activeTab.value = "servicos"
-  openSolicitarModal(servicoId)
-}
 </script>
 
 <template>
@@ -131,22 +120,15 @@ function handleLinkThroughServico(servicoId: string) {
       <CustomHero :data="leader" />
     </template>
 
-    <CustomMetrologiaServicos
-      v-if="activeTab === 'servicos'"
-      :services="servicosMetrologia"
-      :title="servicosIntro?.title"
-      :description="stripHtml(servicosIntro?.description)"
-      :modelo-carta="modeloCarta"
-      @solicitar="openSolicitarModal"
-    />
-
     <CustomMetrologiaControloLegal
       v-if="activeTab === 'controlo-metrologico-legal'"
       :operacoes="operacoesControloLegal"
       :servicos="servicosMetrologia"
       :title="legalControlIntro?.title"
       :description="stripHtml(legalControlIntro?.description)"
-      @pedir-servico="handleLinkThroughServico"
+      :servicos-title="servicosIntro?.title"
+      :servicos-description="stripHtml(servicosIntro?.description)"
+      @solicitar="openSolicitarModal"
     />
 
     <CustomMetrologiaTaxas
@@ -160,6 +142,7 @@ function handleLinkThroughServico(servicoId: string) {
       :cooperacoes="cooperacoesInternacionais"
       :title="internationalCooperationIntro?.title"
       :description="stripHtml(internationalCooperationIntro?.description)"
+      :vinculo-title="internationalCooperationIntro?.vinculoTitle"
     />
 
     <CustomMetrologiaEmDesenvolvimento

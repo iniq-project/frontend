@@ -1,5 +1,7 @@
 <script setup>
-defineProps({
+import { useCategoryGroups } from "@/composables/useCategoryGroups"
+
+const props = defineProps({
   projects: {
     type: Array,
     default: () => [],
@@ -16,42 +18,59 @@ defineProps({
 })
 
 const emit = defineEmits(["open-modal"])
+
+const { groups, selectedCategory, itemsInCategory, selectCategory, backToCategories } =
+  useCategoryGroups(() => props.projects, "areaTecnica")
 </script>
 
 <template>
   <div class="sub-panel">
-    <div class="panel-head">
-      <span class="eyebrow">Regulamentos Técnicos em Consulta Pública</span>
-      <h2>{{ title }}</h2>
-      <p>{{ description }}</p>
-    </div>
+    <template v-if="!selectedCategory">
+      <div class="panel-head">
+        <span class="eyebrow">Regulamentos Técnicos em Consulta Pública</span>
+        <h2>{{ title }}</h2>
+        <p>{{ description }}</p>
+      </div>
+      <UiCategoryTiles :groups="groups" item-label="regulamentos" @select="selectCategory" />
+    </template>
 
-    <div class="consulta">
-      <article class="consulta-item" v-for="project in projects" :key="project.code">
-        <div>
-          <div class="consulta-tags">
-            <span class="consulta-code">{{ project.code }}</span>
-            <span class="badge badge--sector badge--green">{{ project.areaTecnica }}</span>
+    <template v-else>
+      <button type="button" class="back-link" @click="backToCategories">
+        ← Voltar às categorias
+      </button>
+      <div class="panel-head">
+        <span class="eyebrow">{{ selectedCategory }}</span>
+        <h2>{{ title }}</h2>
+        <p>{{ description }}</p>
+      </div>
+
+      <div class="consulta">
+        <article class="consulta-item" v-for="project in itemsInCategory" :key="project.code">
+          <div>
+            <div class="consulta-tags">
+              <span class="consulta-code">{{ project.code }}</span>
+              <span class="badge badge--sector badge--green">{{ project.areaTecnica }}</span>
+            </div>
+            <h3>{{ project.title }}</h3>
+            <p class="consulta-desc">{{ project.description }}</p>
+            <a
+              v-if="project.documentUrl"
+              :href="project.documentUrl"
+              download
+              class="doc-link"
+            >
+              Descarregar documento (PDF)
+            </a>
           </div>
-          <h3>{{ project.title }}</h3>
-          <p class="consulta-desc">{{ project.description }}</p>
-          <a
-            v-if="project.documentUrl"
-            :href="project.documentUrl"
-            download
-            class="doc-link"
-          >
-            Descarregar documento (PDF)
-          </a>
-        </div>
-        <div class="consulta-deadline">
-          <span class="deadline-pill">Termina {{ project.deadline }}</span>
-          <button class="btn btn--green" @click="emit('open-modal', 'contrib', project)">
-            Contribuir
-          </button>
-        </div>
-      </article>
-    </div>
+          <div class="consulta-deadline">
+            <span class="deadline-pill">Termina {{ project.deadline }}</span>
+            <button class="btn btn--green" @click="emit('open-modal', 'contrib', project)">
+              Contribuir
+            </button>
+          </div>
+        </article>
+      </div>
+    </template>
   </div>
 </template>
 
@@ -63,6 +82,25 @@ const emit = defineEmits(["open-modal"])
   max-width: 100%;
   overflow-x: hidden;
   box-sizing: border-box;
+}
+
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #0a3a63;
+  text-decoration: underline;
+  font-weight: 600;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  font-size: 0.95rem;
+  margin-bottom: 1.25rem;
+}
+
+.back-link:hover {
+  color: #5cb947;
 }
 
 .panel-head {
