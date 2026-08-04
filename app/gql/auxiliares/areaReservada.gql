@@ -1,0 +1,8 @@
+query fetch {
+  queryReservedareaContents {
+    data: flatData {
+      label
+      link
+    }
+  }
+}
