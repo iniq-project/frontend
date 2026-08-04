@@ -153,6 +153,7 @@ async function handleSubmit() {
     payload.append("email", formData.value.email.trim())
     payload.append("serviceType", "REGISTO_CADASTRO")
     payload.append("category", selectedTypology.value?.title ?? "")
+    payload.append("typology", selectedTypology.value?.id ?? "")
 
     for (const slot of documentSlots) {
       const file = formData.value.files[slot.type]
@@ -226,7 +227,8 @@ async function handleSubmit() {
           </div>
 
           <div v-if="formSubmitted" class="success-message">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"
+              stroke-linejoin="round">
               <path d="M20 6 9 17l-5-5"></path>
             </svg>
             <span>
@@ -251,16 +253,8 @@ async function handleSubmit() {
               <div class="field">
                 <label for="nome">Nome completo <span class="req">*</span></label>
                 <div class="input-wrapper" :class="{ 'has-error': errors.nome }">
-                  <input
-                    ref="nomeInput"
-                    type="text"
-                    id="nome"
-                    name="nome"
-                    required
-                    placeholder="O seu nome completo"
-                    v-model="formData.nome"
-                    @input="errors.nome = false"
-                  />
+                  <input ref="nomeInput" type="text" id="nome" name="nome" required placeholder="O seu nome completo"
+                    v-model="formData.nome" @input="errors.nome = false" />
                 </div>
                 <span v-if="errors.nome" class="error-message">Por favor, informe seu nome completo</span>
               </div>
@@ -268,15 +262,8 @@ async function handleSubmit() {
               <div class="field">
                 <label for="email">E-mail <span class="req">*</span></label>
                 <div class="input-wrapper" :class="{ 'has-error': errors.email }">
-                  <input
-                    type="email"
-                    id="email"
-                    name="email"
-                    required
-                    placeholder="nome@exemplo.ao"
-                    v-model="formData.email"
-                    @input="errors.email = false"
-                  />
+                  <input type="email" id="email" name="email" required placeholder="nome@exemplo.ao"
+                    v-model="formData.email" @input="errors.email = false" />
                 </div>
                 <span v-if="errors.email" class="error-message">Por favor, informe um e-mail válido</span>
               </div>
@@ -284,14 +271,9 @@ async function handleSubmit() {
               <div v-for="slot in documentSlots" :key="slot.type" class="field">
                 <label :for="slot.type">{{ slot.label }} <span class="req">*</span></label>
                 <div class="file-input-wrapper" :class="{ 'has-error': errors[slot.type] }">
-                  <input
-                    type="file"
-                    :id="slot.type"
-                    :name="slot.type"
-                    required
+                  <input type="file" :id="slot.type" :name="slot.type" required
                     :accept="slot.pdfOnly ? 'application/pdf' : '.pdf,.jpg,.jpeg,.png'"
-                    @change="handleFileChange($event, slot.type)"
-                  />
+                    @change="handleFileChange($event, slot.type)" />
                   <span class="file-label">{{ formData.files[slot.type]?.name ?? "Escolher arquivo" }}</span>
                 </div>
                 <span v-if="errors[slot.type]" class="error-message">Por favor, selecione este arquivo</span>
