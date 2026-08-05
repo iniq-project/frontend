@@ -1,6 +1,5 @@
 <script setup>
 import { ref, watch } from "vue"
-import { generateRupe } from "@/utils/rupe"
 
 const props = defineProps({
   open: {
@@ -24,6 +23,10 @@ const formData = ref({
 const errors = ref({})
 const formSubmitted = ref(false)
 const orderRef = ref("")
+const processRef = ref("")
+const totalAmount = ref(0)
+const isSubmitting = ref(false)
+const submitError = ref("")
 
 watch(
   () => props.open,
@@ -33,6 +36,10 @@ watch(
       errors.value = {}
       formSubmitted.value = false
       orderRef.value = ""
+      processRef.value = ""
+      totalAmount.value = 0
+      isSubmitting.value = false
+      submitError.value = ""
     }
   },
 )
@@ -67,14 +74,49 @@ const validateForm = () => {
   return Object.keys(newErrors).length === 0
 }
 
-const handleSubmit = () => {
+const handleSubmit = async () => {
+  submitError.value = ""
+
   if (!validateForm()) {
     return
   }
 
-  const { reference } = generateRupe(props.item?.price)
-  orderRef.value = reference
-  formSubmitted.value = true
+  isSubmitting.value = true
+
+  try {
+    const response = await $fetch("/api/processes/regulamentos/purchase", {
+      method: "POST",
+      body: {
+        entityName: formData.value.entidade.trim(),
+        entityNif: formData.value.nif.trim(),
+        phone: formData.value.telefone.trim(),
+        email: formData.value.email.trim(),
+        regulamento: {
+          cmsId: props.item?.cmsId,
+          code: props.item?.code,
+          title: props.item?.title,
+          areaTecnica: props.item?.areaTecnica,
+          estado: props.item?.estado,
+          price: Number(props.item?.price ?? 0),
+          documentUrl: props.item?.documentUrl || undefined,
+        },
+      },
+    })
+
+    orderRef.value = response.rupe?.reference ?? ""
+    processRef.value = response.referenceNumber ?? ""
+    totalAmount.value = Number(response.totalAmount ?? props.item?.price ?? 0)
+    formSubmitted.value = true
+  } catch (error) {
+    const fetchError = error
+    submitError.value =
+      fetchError?.data?.statusMessage ??
+      fetchError?.statusMessage ??
+      fetchError?.data?.message ??
+      "Não foi possível concluir a compra. Tente novamente."
+  } finally {
+    isSubmitting.value = false
+  }
 }
 
 const handleClose = () => {
@@ -110,6 +152,7 @@ const handleClose = () => {
                 placeholder="Nome da entidade ou empresa"
                 v-model="formData.entidade"
                 :class="{ error: errors.entidade }"
+                :disabled="isSubmitting"
               />
               <span v-if="errors.entidade" class="error-text">Por favor, informe a entidade</span>
             </div>
@@ -122,6 +165,7 @@ const handleClose = () => {
                 placeholder="Número de Identificação Fiscal"
                 v-model="formData.nif"
                 :class="{ error: errors.nif }"
+                :disabled="isSubmitting"
               />
               <span v-if="errors.nif" class="error-text">Por favor, informe o NIF</span>
             </div>
@@ -134,6 +178,7 @@ const handleClose = () => {
                 placeholder="+244 9XX XXX XXX"
                 v-model="formData.telefone"
                 :class="{ error: errors.telefone }"
+                :disabled="isSubmitting"
               />
               <span v-if="errors.telefone" class="error-text">Por favor, informe o número de telefone</span>
             </div>
@@ -146,14 +191,28 @@ const handleClose = () => {
                 placeholder="nome@exemplo.ao"
                 v-model="formData.email"
                 :class="{ error: errors.email }"
+                :disabled="isSubmitting"
               />
               <span v-if="errors.email" class="error-text">Por favor, informe um e-mail válido</span>
             </div>
+
+            <p v-if="submitError" class="submit-error" role="alert">{{ submitError }}</p>
+
             <div class="modal-foot">
-              <button type="button" class="btn btn--ghost" @click="handleClose">Cancelar</button>
-              <button type="submit" class="btn btn--primary">
-                Comprar
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <button type="button" class="btn btn--ghost" :disabled="isSubmitting" @click="handleClose">
+                Cancelar
+              </button>
+              <button type="submit" class="btn btn--primary" :disabled="isSubmitting">
+                {{ isSubmitting ? "A processar…" : "Comprar" }}
+                <svg
+                  v-if="!isSubmitting"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2.2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
                   <path d="M5 12h14M13 6l6 6-6 6"></path>
                 </svg>
               </button>
@@ -169,11 +228,14 @@ const handleClose = () => {
           </div>
           <h3>RUPE gerado com sucesso</h3>
           <p>
-            Utilize o RUPE abaixo para efectuar o pagamento de {{ formatPrice(item?.price) }} AOA.
-            Após a confirmação automática do pagamento, o regulamento fica disponível para consulta e
-            download, e a compra é registada no seu histórico.
+            Utilize o RUPE abaixo para efectuar o pagamento de
+            <strong>{{ formatPrice(totalAmount || item?.price) }} AOA</strong>.
+            Após a confirmação automática do pagamento, aceda ao dashboard INIQ com este e-mail
+            para consultar e descarregar o regulamento em “Os Meus Regulamentos”.
+            Se for a primeira compra com este e-mail, as credenciais foram enviadas por mensagem.
           </p>
           <div class="order-ref">{{ orderRef }}</div>
+          <p v-if="processRef" class="process-ref">Processo: {{ processRef }}</p>
           <div class="modal-foot" style="justify-content: center">
             <button type="button" class="btn btn--primary" @click="handleClose">Concluir</button>
           </div>
@@ -198,85 +260,66 @@ const handleClose = () => {
 .modal-scrim {
   position: absolute;
   inset: 0;
-  background: rgba(16, 33, 48, 0.55);
-  backdrop-filter: blur(3px);
+  background: rgba(15, 23, 42, 0.55);
 }
 
 .modal-panel {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: min(640px, calc(100vw - 32px));
+  position: relative;
+  z-index: 1;
+  width: min(560px, calc(100vw - 32px));
   max-height: calc(100vh - 48px);
-  overflow-y: auto;
-  background: white;
-  border-radius: 16px;
-  box-shadow: 0 24px 56px -18px rgba(10, 58, 99, 0.3), 0 8px 20px -10px rgba(16, 33, 48, 0.12);
+  margin: 24px auto;
+  background: #fff;
+  border-radius: 14px;
+  overflow: auto;
+  box-shadow: 0 24px 64px rgba(15, 23, 42, 0.28);
 }
 
 .modal-head {
-  position: sticky;
-  top: 0;
-  background: white;
-  padding: 24px 28px 18px;
-  border-bottom: 1px solid #e2e8f0;
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
   gap: 16px;
-  z-index: 2;
+  padding: 24px 28px 0;
 }
 
-.modal-head .eyebrow {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-family: monospace;
-  font-size: 0.75rem;
+.eyebrow {
+  display: block;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
-  letter-spacing: 0.15em;
   color: #2ba9e0;
-  margin-bottom: 0.5rem;
-  margin-top: 0;
-}
-
-.modal-head .eyebrow::before {
-  content: "";
-  width: 20px;
-  height: 2px;
-  background: linear-gradient(90deg, #5cb947, #2ba9e0);
+  margin-bottom: 6px;
 }
 
 .modal-head h3 {
-  font-size: 22px;
   margin: 0;
+  font-size: 22px;
   color: #0a3a63;
 }
 
 .modal-ref {
-  font-family: monospace;
-  font-size: 13px;
-  color: #64748b;
   margin-top: 6px;
+  color: #64748b;
+  font-size: 14px;
 }
 
 .modal-close {
-  flex: none;
-  width: 38px;
-  height: 38px;
-  border-radius: 6px;
-  border: 1px solid #e2e8f0;
-  background: white;
+  width: 36px;
+  height: 36px;
+  border: none;
+  border-radius: 8px;
+  background: #f1f5f9;
+  color: #0f172a;
   cursor: pointer;
   display: grid;
   place-items: center;
-  color: #64748b;
+  flex-shrink: 0;
 }
 
-.modal-close:hover {
-  border-color: #2ba9e0;
-  color: #0a3a63;
+.modal-close svg {
+  width: 18px;
+  height: 18px;
 }
 
 .modal-body {
@@ -312,6 +355,11 @@ const handleClose = () => {
   box-sizing: border-box;
 }
 
+.field input:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
 .field input.error {
   border-color: #dc2626;
   box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
@@ -329,6 +377,15 @@ const handleClose = () => {
   font-size: 0.875rem;
   color: #dc2626;
   font-weight: 500;
+}
+
+.submit-error {
+  margin: 0 0 12px;
+  padding: 10px 12px;
+  border-radius: 6px;
+  background: #fef2f2;
+  color: #b91c1c;
+  font-size: 0.9rem;
 }
 
 .modal-foot {
@@ -353,8 +410,14 @@ const handleClose = () => {
   gap: 0.4rem;
 }
 
-.btn--primary:hover {
+.btn--primary:hover:not(:disabled) {
   background: #082e4f;
+}
+
+.btn--primary:disabled,
+.btn--ghost:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
 }
 
 .btn--ghost {
@@ -368,7 +431,7 @@ const handleClose = () => {
   transition: all 0.2s;
 }
 
-.btn--ghost:hover {
+.btn--ghost:hover:not(:disabled) {
   border-color: #2ba9e0;
 }
 
@@ -415,7 +478,13 @@ const handleClose = () => {
   border: 1px dashed #d0d9e3;
   border-radius: 6px;
   padding: 12px 20px;
-  margin: 22px 0;
+  margin: 22px 0 8px;
+}
+
+.process-ref {
+  font-size: 13px;
+  color: #64748b;
+  margin: 0 0 12px !important;
 }
 
 @media (max-width: 1199px) {
@@ -427,17 +496,8 @@ const handleClose = () => {
 
   .modal-head,
   .modal-body {
-    padding-left: 1.25rem;
-    padding-right: 1.25rem;
-  }
-
-  .modal-foot {
-    flex-direction: column;
-  }
-
-  .modal-foot .btn {
-    width: 100%;
-    justify-content: center;
+    padding-left: 20px;
+    padding-right: 20px;
   }
 }
 </style>
