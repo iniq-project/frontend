@@ -1,6 +1,5 @@
 <script setup>
 import { ref, watch } from "vue"
-import { generateRupe } from "@/utils/rupe"
 
 const props = defineProps({
   open: {
@@ -23,6 +22,8 @@ const formData = ref({
 const errors = ref({})
 const formSubmitted = ref(false)
 const orderRef = ref("")
+const isSubmitting = ref(false)
+const submitError = ref("")
 
 watch(
   () => props.open,
@@ -32,6 +33,8 @@ watch(
       errors.value = {}
       formSubmitted.value = false
       orderRef.value = ""
+      isSubmitting.value = false
+      submitError.value = ""
     }
   },
 )
@@ -62,14 +65,53 @@ const validateForm = () => {
   return Object.keys(newErrors).length === 0
 }
 
-const handleSubmit = () => {
+const handleSubmit = async () => {
+  submitError.value = ""
+
   if (!validateForm()) {
     return
   }
 
-  const { reference } = generateRupe(props.norma?.price)
-  orderRef.value = reference
-  formSubmitted.value = true
+  if (!props.norma?.reference) {
+    submitError.value = "Norma inválida. Feche o modal e tente novamente."
+    return
+  }
+
+  isSubmitting.value = true
+
+  try {
+    const response = await $fetch("/api/processes/normalizacao/purchase", {
+      method: "POST",
+      body: {
+        entityName: formData.value.nomeEntidade.trim(),
+        entityNif: formData.value.nif.trim(),
+        email: formData.value.email.trim(),
+        norma: {
+          cmsId: props.norma.cmsId,
+          code: props.norma.reference,
+          title: props.norma.title,
+          price: Number(props.norma.price ?? 0),
+          ics: props.norma.ics || undefined,
+          category: props.norma.categoria || undefined,
+          year: props.norma.ano || undefined,
+          technicalCommittee: props.norma.comissaoTecnica || undefined,
+          estado: props.norma.estado || undefined,
+        },
+      },
+    })
+
+    orderRef.value = response.rupe?.reference ?? ""
+    formSubmitted.value = true
+  } catch (error) {
+    const fetchError = error
+    submitError.value =
+      fetchError?.data?.statusMessage ??
+      fetchError?.statusMessage ??
+      fetchError?.data?.message ??
+      "Não foi possível concluir a compra. Tente novamente."
+  } finally {
+    isSubmitting.value = false
+  }
 }
 
 const handleClose = () => {
@@ -105,6 +147,7 @@ const handleClose = () => {
                 placeholder="Nome da entidade ou empresa"
                 v-model="formData.nomeEntidade"
                 :class="{ error: errors.nomeEntidade }"
+                :disabled="isSubmitting"
               />
               <span v-if="errors.nomeEntidade" class="error-text">Por favor, informe a entidade</span>
             </div>
@@ -117,6 +160,7 @@ const handleClose = () => {
                 placeholder="nome@exemplo.ao"
                 v-model="formData.email"
                 :class="{ error: errors.email }"
+                :disabled="isSubmitting"
               />
               <span v-if="errors.email" class="error-text">Por favor, informe um e-mail válido</span>
             </div>
@@ -129,14 +173,26 @@ const handleClose = () => {
                 placeholder="Número de Identificação Fiscal"
                 v-model="formData.nif"
                 :class="{ error: errors.nif }"
+                :disabled="isSubmitting"
               />
               <span v-if="errors.nif" class="error-text">Por favor, informe o NIF</span>
             </div>
+            <p v-if="submitError" class="error-text submit-error">{{ submitError }}</p>
             <div class="modal-foot">
-              <button type="button" class="btn btn--ghost" @click="handleClose">Cancelar</button>
-              <button type="submit" class="btn btn--primary">
-                Submeter pedido
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <button type="button" class="btn btn--ghost" @click="handleClose" :disabled="isSubmitting">
+                Cancelar
+              </button>
+              <button type="submit" class="btn btn--primary" :disabled="isSubmitting">
+                {{ isSubmitting ? "A submeter..." : "Submeter pedido" }}
+                <svg
+                  v-if="!isSubmitting"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2.2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
                   <path d="M5 12h14M13 6l6 6-6 6"></path>
                 </svg>
               </button>
@@ -153,7 +209,7 @@ const handleClose = () => {
           <h3>RUPE gerado com sucesso</h3>
           <p>
             Utilize o RUPE abaixo para efectuar o pagamento de {{ formatPrice(norma?.price) }} AOA.
-            Após confirmação do pagamento, o técnico/administrador irá validar e liberar o acesso à norma.
+            Após confirmação automática do pagamento, o acesso à norma ficará disponível.
           </p>
           <div class="order-ref">{{ orderRef }}</div>
           <div class="modal-foot" style="justify-content: center">
@@ -305,12 +361,21 @@ const handleClose = () => {
   box-shadow: 0 0 0 3px rgba(27, 143, 214, 0.15);
 }
 
+.field input:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
 .error-text {
   display: block;
   margin-top: 0.35rem;
   font-size: 0.875rem;
   color: #dc2626;
   font-weight: 500;
+}
+
+.submit-error {
+  margin-bottom: 12px;
 }
 
 .modal-foot {
@@ -335,8 +400,14 @@ const handleClose = () => {
   gap: 0.4rem;
 }
 
-.btn--primary:hover {
+.btn--primary:hover:not(:disabled) {
   background: #082e4f;
+}
+
+.btn--primary:disabled,
+.btn--ghost:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
 }
 
 .btn--ghost {
@@ -350,7 +421,7 @@ const handleClose = () => {
   transition: all 0.2s;
 }
 
-.btn--ghost:hover {
+.btn--ghost:hover:not(:disabled) {
   border-color: #2ba9e0;
 }
 
