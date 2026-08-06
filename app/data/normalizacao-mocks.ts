@@ -1,4 +1,5 @@
 export interface Norma {
+  cmsId?: string
   reference: string
   title: string
   categoria: string

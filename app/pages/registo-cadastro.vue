@@ -65,6 +65,7 @@ const acervoNacional = computed(() =>
   (acervoNacionalData.value?.data?.queryRegulationsContents || []).map((item: any) => {
     const d = item.data
     return {
+      cmsId: item.id || undefined,
       code: d.reference,
       title: d.title,
       areaTecnica: d.category?.[0]?.flatData?.title || "",

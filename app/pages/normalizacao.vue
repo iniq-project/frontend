@@ -60,6 +60,7 @@ const normas = computed(() =>
   rawNormas.value.map((item) => {
     const n = item.data
     return {
+      cmsId: item.id,
       reference: n.reference,
       title: n.title,
       categoria: n.category?.[0]?.flatData?.title || "",

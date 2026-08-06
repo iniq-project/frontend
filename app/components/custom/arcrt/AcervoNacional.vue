@@ -45,7 +45,8 @@ const formatPrice = (price) => {
         <h2>Catálogo de Regulamentos Técnicos</h2>
         <p>
           Pesquise os Regulamentos Técnicos disponíveis e solicite a sua aquisição. Ao clicar em
-          <b>Comprar</b>, é gerado um RUPE para pagamento.
+          <b>Comprar</b>, é gerado um RUPE para pagamento. Após a confirmação, o documento fica
+          disponível no dashboard em “Os Meus Regulamentos”.
         </p>
       </div>
       <UiCategoryTiles :groups="groups" item-label="regulamentos" @select="selectCategory" />
@@ -114,14 +115,6 @@ const formatPrice = (price) => {
             </button>
           </div>
           <h3 class="catalog-item-title">{{ regulamento.title }}</h3>
-          <a
-            v-if="regulamento.documentUrl"
-            :href="regulamento.documentUrl"
-            download
-            class="doc-link"
-          >
-            Descarregar documento (PDF)
-          </a>
         </div>
       </div>
     </template>
@@ -366,19 +359,6 @@ const formatPrice = (price) => {
   color: #0a3a63;
   font-size: 1.15rem;
   font-weight: 700;
-}
-
-.doc-link {
-  display: inline-flex;
-  margin-top: 0.5rem;
-  color: #2ba9e0;
-  font-weight: 600;
-  font-size: 0.9rem;
-  text-decoration: none;
-}
-
-.doc-link:hover {
-  text-decoration: underline;
 }
 
 .btn--primary {
