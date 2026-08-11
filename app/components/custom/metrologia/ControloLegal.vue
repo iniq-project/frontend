@@ -28,6 +28,10 @@ const props = defineProps({
     default:
       "Consulte os serviços actualmente prestados pela Metrologia e a taxa associada. Ao clicar em Solicitar serviço, preencha o formulário de pedido com os dados do instrumento e do requerente.",
   },
+  leiDownloadInfo: {
+    type: Object,
+    default: () => null,
+  },
 })
 
 const emit = defineEmits(["solicitar"])
@@ -52,7 +56,7 @@ const outrosServicos = computed(() =>
 <template>
   <div class="tab-panel">
     <div class="panel-head">
-      <span class="eyebrow">Controlo Metrológico Legal</span>
+      <span class="eyebrow">Metrologia Legal</span>
       <h2>{{ title }}</h2>
       <p>{{ description }}</p>
     </div>
@@ -108,6 +112,22 @@ const outrosServicos = computed(() =>
         </div>
       </div>
     </div>
+
+    <div v-if="leiDownloadInfo" class="lei-wrap">
+      <h4>{{ leiDownloadInfo.title }}</h4>
+      <p>{{ leiDownloadInfo.description }}</p>
+      <a
+        v-if="leiDownloadInfo.documentUrl"
+        :href="leiDownloadInfo.documentUrl"
+        download
+        class="btn btn--ghost"
+      >
+        {{ leiDownloadInfo.buttonText }}
+      </a>
+      <button v-else type="button" class="btn btn--ghost" disabled>
+        {{ leiDownloadInfo.buttonText }}
+      </button>
+    </div>
   </div>
 </template>
 
@@ -129,7 +149,7 @@ const outrosServicos = computed(() =>
   align-items: center;
   gap: 0.5rem;
   font-family: monospace;
-  font-size: 0.75rem;
+  font-size: 0.85rem;
   text-transform: uppercase;
   letter-spacing: 0.15em;
   color: #2ba9e0;
@@ -156,6 +176,7 @@ const outrosServicos = computed(() =>
   color: #475569;
   font-size: 1rem;
   line-height: 1.6;
+  text-align: justify;
 }
 
 .operacoes {
@@ -193,6 +214,7 @@ const outrosServicos = computed(() =>
   color: #475569;
   font-size: 0.95rem;
   line-height: 1.6;
+  text-align: justify;
 }
 
 .operacao-side {
@@ -276,6 +298,48 @@ const outrosServicos = computed(() =>
   color: #475569;
   font-size: 0.9rem;
   line-height: 1.6;
+  text-align: justify;
+}
+
+.lei-wrap {
+  margin-top: 2.5rem;
+  padding: 1.5rem;
+  background: linear-gradient(135deg, #eff6fc 0%, #f0f7f2 100%);
+  border: 1px solid #e6eff6;
+  border-radius: 12px;
+}
+
+.lei-wrap h4 {
+  margin: 0 0 0.5rem 0;
+  color: #0a3a63;
+  font-size: 1.15rem;
+  font-weight: 700;
+}
+
+.lei-wrap p {
+  margin: 0 0 1rem 0;
+  color: #475569;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  text-align: justify;
+}
+
+.lei-wrap .btn--ghost {
+  padding: 0.65rem 1.25rem;
+  border-radius: 8px;
+  border: 1px solid #d0d9e3;
+  background: white;
+  color: #0a3a63;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.lei-wrap .btn--ghost:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
 }
 
 .catalog-item-fee {
@@ -360,6 +424,11 @@ const outrosServicos = computed(() =>
 
   .catalog-item-actions .btn--primary {
     width: 100%;
+  }
+
+  .lei-wrap .btn--ghost {
+    width: 100%;
+    text-align: center;
   }
 }
 </style>

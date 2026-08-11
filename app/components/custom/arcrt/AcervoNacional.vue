@@ -159,7 +159,7 @@ const formatPrice = (price) => {
   align-items: center;
   gap: 0.5rem;
   font-family: monospace;
-  font-size: 0.75rem;
+  font-size: 0.85rem;
   text-transform: uppercase;
   letter-spacing: 0.15em;
   color: #2ba9e0;
@@ -186,6 +186,7 @@ const formatPrice = (price) => {
   color: #475569;
   font-size: 1rem;
   line-height: 1.6;
+  text-align: justify;
 }
 
 .catalog-toolbar {

@@ -41,7 +41,7 @@ defineProps({
   align-items: center;
   gap: 0.5rem;
   font-family: monospace;
-  font-size: 0.75rem;
+  font-size: 0.85rem;
   text-transform: uppercase;
   letter-spacing: 0.15em;
   color: #2ba9e0;
@@ -68,6 +68,7 @@ defineProps({
   color: #475569;
   font-size: 1rem;
   line-height: 1.7;
+  text-align: justify;
 }
 
 .note {

@@ -56,7 +56,7 @@ watch(activeView, () => {
 <template>
   <div class="tab-panel">
     <div class="panel-head">
-      <span class="eyebrow">Comissão Técnica</span>
+      <span class="eyebrow">Gestão de Comissões Técnicas</span>
       <h2>{{ title }}</h2>
       <div v-if="description" class="panel-desc" v-html="description"></div>
     </div>
@@ -165,7 +165,7 @@ watch(activeView, () => {
   align-items: center;
   gap: 0.5rem;
   font-family: monospace;
-  font-size: 0.75rem;
+  font-size: 0.85rem;
   text-transform: uppercase;
   letter-spacing: 0.15em;
   color: #2ba9e0;
@@ -192,6 +192,7 @@ watch(activeView, () => {
   color: #475569;
   font-size: 1rem;
   line-height: 1.6;
+  text-align: justify;
 }
 
 .panel-desc {
@@ -301,6 +302,7 @@ watch(activeView, () => {
   color: #475569;
   font-size: 0.95rem;
   line-height: 1.7;
+  text-align: justify;
 }
 
 .info-block :deep(ul) {

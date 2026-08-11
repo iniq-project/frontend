@@ -41,11 +41,9 @@ export const services: Service[] = [
     number: "02",
     title: "Metrologia",
     subItems: [
-      { id: "controlo-metrologico-legal", number: "01", title: "Controlo Metrológico Legal" },
-      { id: "taxas-metrologia-legal", number: "02", title: "Taxas de Metrologia Legal" },
-      { id: "cooperacao-regional-internacional", number: "03", title: "Cooperação Regional e Internacional" },
-      { id: "metrologia-industrial", number: "04", title: "Metrologia Industrial" },
-      { id: "metrologia-cientifica", number: "05", title: "Metrologia Científica" },
+      { id: "metrologia-legal", number: "01", title: "Metrologia Legal" },
+      { id: "laboratorio-nacional-metrologia", number: "02", title: "Laboratório Nacional de Metrologia" },
+      { id: "cooperacoes", number: "03", title: "Cooperações" },
     ],
   },
   // {
