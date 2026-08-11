@@ -284,7 +284,7 @@ const handleClose = () => {
 
 .eyebrow {
   display: block;
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 700;
   letter-spacing: 0.04em;
   text-transform: uppercase;

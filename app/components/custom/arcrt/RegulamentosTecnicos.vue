@@ -86,7 +86,6 @@ const closeModal = () => {
       :title="consultaPublicaTitle"
       :description="consultaPublicaDescription"
       :projects="consultaPublicaProjects"
-      @open-modal="openModal"
     />
     <CustomArcrtRegulamentosEquivalentes
       v-if="activeView === 'equivalentes'"
@@ -98,12 +97,6 @@ const closeModal = () => {
 
   <CustomArcrtPurchaseModal
     :open="modalMode === 'purchase'"
-    :item="modalItem"
-    @close="closeModal"
-  />
-
-  <CustomArcrtCommentModal
-    :open="modalMode === 'contrib'"
     :item="modalItem"
     @close="closeModal"
   />
@@ -127,7 +120,7 @@ const closeModal = () => {
   align-items: center;
   gap: 0.5rem;
   font-family: monospace;
-  font-size: 0.75rem;
+  font-size: 0.85rem;
   text-transform: uppercase;
   letter-spacing: 0.15em;
   color: #2ba9e0;

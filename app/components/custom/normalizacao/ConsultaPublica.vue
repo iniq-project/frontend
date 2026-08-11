@@ -269,7 +269,7 @@ const handleCommentSubmit = () => {
   align-items: center;
   gap: 0.5rem;
   font-family: monospace;
-  font-size: 0.75rem;
+  font-size: 0.85rem;
   text-transform: uppercase;
   letter-spacing: 0.15em;
   color: #2ba9e0;
@@ -296,6 +296,7 @@ const handleCommentSubmit = () => {
   color: #475569;
   font-size: 1rem;
   line-height: 1.6;
+  text-align: justify;
 }
 
 .consulta {
@@ -342,6 +343,7 @@ const handleCommentSubmit = () => {
   color: #475569;
   font-size: 0.95rem;
   line-height: 1.6;
+  text-align: justify;
 }
 
 .consulta-deadline {
@@ -406,6 +408,7 @@ const handleCommentSubmit = () => {
   font-size: 0.95rem;
   line-height: 1.7;
   white-space: pre-line;
+  text-align: justify;
 }
 
 .documento-caption {
