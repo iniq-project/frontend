@@ -1,22 +1,39 @@
 <script setup>
-defineProps({
-  eyebrow: {
-    type: String,
-    default: "",
-  },
-  title: {
-    type: String,
-    default: "",
-  },
-})
+import { ref, computed } from "vue"
+
+const activeView = ref("industrial")
+
+const viewTitle = computed(() =>
+  activeView.value === "industrial" ? "Metrologia Industrial" : "Metrologia Científica",
+)
 </script>
 
 <template>
   <div class="tab-panel">
     <div class="panel-head">
-      <span v-if="eyebrow" class="eyebrow">{{ eyebrow }}</span>
-      <h2 v-if="title">{{ title }}</h2>
+      <span class="eyebrow">Laboratório Nacional de Metrologia</span>
+      <h2>{{ viewTitle }}</h2>
     </div>
+
+    <div class="view-toggle">
+      <button
+        type="button"
+        class="toggle-btn"
+        :class="{ 'is-active': activeView === 'industrial' }"
+        @click="activeView = 'industrial'"
+      >
+        Metrologia Industrial
+      </button>
+      <button
+        type="button"
+        class="toggle-btn"
+        :class="{ 'is-active': activeView === 'cientifica' }"
+        @click="activeView = 'cientifica'"
+      >
+        Metrologia Científica
+      </button>
+    </div>
+
     <div class="notice">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <circle cx="12" cy="12" r="10"></circle>
@@ -46,7 +63,7 @@ defineProps({
   align-items: center;
   gap: 0.5rem;
   font-family: monospace;
-  font-size: 0.75rem;
+  font-size: 0.85rem;
   text-transform: uppercase;
   letter-spacing: 0.15em;
   color: #2ba9e0;
@@ -66,6 +83,35 @@ defineProps({
   color: #0a3a63;
   margin: 0;
   font-weight: 700;
+}
+
+.view-toggle {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.toggle-btn {
+  padding: 0.65rem 1.25rem;
+  border-radius: 8px;
+  border: 1px solid #d0d9e3;
+  background: white;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #475569;
+  transition: all 0.2s;
+}
+
+.toggle-btn:hover {
+  border-color: #0a3a63;
+}
+
+.toggle-btn.is-active {
+  background: #0a3a63;
+  border-color: #0a3a63;
+  color: white;
 }
 
 .notice {
@@ -97,6 +143,11 @@ defineProps({
 @media (max-width: 767px) {
   .panel-head h2 {
     font-size: 1.25rem;
+  }
+
+  .toggle-btn {
+    flex: 1 1 auto;
+    text-align: center;
   }
 
   .notice {

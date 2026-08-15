@@ -88,7 +88,7 @@ const addressNoBreaks = computed(() =>
   align-items: center;
   gap: 0.5rem;
   font-family: monospace;
-  font-size: 0.75rem;
+  font-size: 0.85rem;
   text-transform: uppercase;
   letter-spacing: 0.15em;
   color: #5cb947;
@@ -116,6 +116,7 @@ const addressNoBreaks = computed(() =>
   color: #cbd5e1;
   line-height: 1.7;
   font-size: 0.95rem;
+  text-align: justify;
 }
 
 .about-text ul {

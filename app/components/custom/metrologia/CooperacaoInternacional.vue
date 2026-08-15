@@ -1,7 +1,7 @@
 <script setup>
-import { ref } from "vue"
+import { ref, computed, watch } from "vue"
 
-defineProps({
+const props = defineProps({
   cooperacoes: {
     type: Array,
     default: () => [],
@@ -20,6 +20,20 @@ defineProps({
   },
 })
 
+const categorias = [
+  "Cooperação Interna",
+  "Cooperação Bilateral",
+  "Cooperação Regional",
+  "Cooperação Continental",
+  "Cooperação Global",
+]
+
+const activeCategoria = ref(categorias[0])
+
+const cooperacoesDaCategoria = computed(() =>
+  props.cooperacoes.filter((c) => c.category === activeCategoria.value),
+)
+
 const selectedCoop = ref(null)
 
 const openDetail = (coop) => {
@@ -29,19 +43,36 @@ const openDetail = (coop) => {
 const backToList = () => {
   selectedCoop.value = null
 }
+
+watch(activeCategoria, () => {
+  selectedCoop.value = null
+})
 </script>
 
 <template>
   <div class="tab-panel">
     <template v-if="!selectedCoop">
       <div class="panel-head">
-        <span class="eyebrow">Cooperação Regional e Internacional</span>
+        <span class="eyebrow">Cooperações</span>
         <h2>{{ title }}</h2>
         <p>{{ description }}</p>
       </div>
 
-      <div class="coop-list">
-        <article class="coop-item" v-for="coop in cooperacoes" :key="coop.id">
+      <div class="view-toggle">
+        <button
+          type="button"
+          class="toggle-btn"
+          v-for="categoria in categorias"
+          :key="categoria"
+          :class="{ 'is-active': activeCategoria === categoria }"
+          @click="activeCategoria = categoria"
+        >
+          {{ categoria }}
+        </button>
+      </div>
+
+      <div v-if="cooperacoesDaCategoria.length" class="coop-list">
+        <article class="coop-item" v-for="coop in cooperacoesDaCategoria" :key="coop.id">
           <div>
             <div class="coop-tags">
               <span class="coop-sigla">{{ coop.sigla }}</span>
@@ -60,6 +91,9 @@ const backToList = () => {
             </svg>
           </a>
         </article>
+      </div>
+      <div v-else class="coop-empty">
+        Nenhuma cooperação registada nesta categoria.
       </div>
     </template>
 
@@ -112,7 +146,7 @@ const backToList = () => {
   align-items: center;
   gap: 0.5rem;
   font-family: monospace;
-  font-size: 0.75rem;
+  font-size: 0.85rem;
   text-transform: uppercase;
   letter-spacing: 0.15em;
   color: #2ba9e0;
@@ -139,6 +173,46 @@ const backToList = () => {
   color: #475569;
   font-size: 1rem;
   line-height: 1.6;
+  text-align: justify;
+}
+
+.view-toggle {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.toggle-btn {
+  padding: 0.65rem 1.25rem;
+  border-radius: 8px;
+  border: 1px solid #d0d9e3;
+  background: white;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #475569;
+  transition: all 0.2s;
+}
+
+.toggle-btn:hover {
+  border-color: #0a3a63;
+}
+
+.toggle-btn.is-active {
+  background: #0a3a63;
+  border-color: #0a3a63;
+  color: white;
+}
+
+.coop-empty {
+  padding: 1.5rem;
+  background: #f8fafc;
+  border: 1px dashed #d0d9e3;
+  border-radius: 10px;
+  color: #64748b;
+  font-size: 0.95rem;
+  font-style: italic;
 }
 
 .coop-list {
@@ -303,6 +377,11 @@ const backToList = () => {
 @media (max-width: 767px) {
   .panel-head h2 {
     font-size: 1.25rem;
+  }
+
+  .toggle-btn {
+    flex: 1 1 auto;
+    text-align: center;
   }
 }
 </style>

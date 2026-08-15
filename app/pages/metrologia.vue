@@ -66,6 +66,7 @@ const cooperacoesInternacionais = computed(() =>
     nomeCompleto: c.fullName,
     sigla: c.acronym,
     tipoParticipacao: c.participationType,
+    category: c.category,
     link: c.link,
     descricaoVinculo: stripHtml(c.iniqRelation),
   })),
@@ -121,40 +122,27 @@ function closeSolicitarModal() {
     </template>
 
     <CustomMetrologiaControloLegal
-      v-if="activeTab === 'controlo-metrologico-legal'"
+      v-if="activeTab === 'metrologia-legal'"
       :operacoes="operacoesControloLegal"
       :servicos="servicosMetrologia"
       :title="legalControlIntro?.title"
       :description="stripHtml(legalControlIntro?.description)"
       :servicos-title="servicosIntro?.title"
       :servicos-description="stripHtml(servicosIntro?.description)"
+      :lei-download-info="leiTaxasDownloadInfo"
       @solicitar="openSolicitarModal"
     />
 
-    <CustomMetrologiaTaxas
-      v-if="activeTab === 'taxas-metrologia-legal'"
-      :servicos="servicosMetrologia"
-      :lei-download-info="leiTaxasDownloadInfo"
+    <CustomMetrologiaLaboratorioNacional
+      v-if="activeTab === 'laboratorio-nacional-metrologia'"
     />
 
     <CustomMetrologiaCooperacaoInternacional
-      v-if="activeTab === 'cooperacao-regional-internacional'"
+      v-if="activeTab === 'cooperacoes'"
       :cooperacoes="cooperacoesInternacionais"
       :title="internationalCooperationIntro?.title"
       :description="stripHtml(internationalCooperationIntro?.description)"
       :vinculo-title="internationalCooperationIntro?.vinculoTitle"
-    />
-
-    <CustomMetrologiaEmDesenvolvimento
-      v-if="activeTab === 'metrologia-industrial'"
-      eyebrow="Metrologia Industrial"
-      title="Metrologia Industrial"
-    />
-
-    <CustomMetrologiaEmDesenvolvimento
-      v-if="activeTab === 'metrologia-cientifica'"
-      eyebrow="Metrologia Científica"
-      title="Metrologia Científica"
     />
   </div>
 
