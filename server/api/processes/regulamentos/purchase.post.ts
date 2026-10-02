@@ -7,5 +7,6 @@ export default defineEventHandler(async (event) => {
     method: 'POST',
     body,
     auth: false,
+    timeout: 180_000,
   })
 })
