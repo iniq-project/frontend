@@ -1,6 +1,5 @@
 <script setup>
 import { ref, computed, watch } from "vue"
-import { generateRupe } from "@/utils/rupe"
 
 const props = defineProps({
   open: {
@@ -29,21 +28,19 @@ const formData = ref({
 })
 
 const files = ref({
+  oficio: null,
   nifDoc: null,
   alvara: null,
   fichaTecnica: null,
 })
 
-const hasAnyDocument = computed(
-  () =>
-    props.service?.requiresNif !== false ||
-    props.service?.requiresAlvara !== false ||
-    !!props.service?.requiresFichaTecnica,
-)
+const hasAnyDocument = computed(() => true)
 
 const errors = ref({})
 const formSubmitted = ref(false)
-const orderRef = ref("")
+const submitError = ref("")
+const isSubmitting = ref(false)
+const processRef = ref("")
 
 watch(
   () => props.open,
@@ -61,10 +58,12 @@ watch(
         telefone: "",
         apresentacao: "",
       }
-      files.value = { nifDoc: null, alvara: null, fichaTecnica: null }
+      files.value = { oficio: null, nifDoc: null, alvara: null, fichaTecnica: null }
       errors.value = {}
       formSubmitted.value = false
-      orderRef.value = ""
+      submitError.value = ""
+      isSubmitting.value = false
+      processRef.value = ""
     }
   },
 )
@@ -83,27 +82,32 @@ const handleFileChange = (event, key) => {
   }
 }
 
+const textValue = (value) => String(value ?? "").trim()
+
 const validateForm = () => {
   const newErrors = {}
 
-  if (!formData.value.tipoInstrumento.trim()) newErrors.tipoInstrumento = true
-  if (!formData.value.marca.trim()) newErrors.marca = true
-  if (!formData.value.modelo.trim()) newErrors.modelo = true
-  if (!formData.value.numeroSerie.trim()) newErrors.numeroSerie = true
-  if (!formData.value.quantidade.trim()) newErrors.quantidade = true
-  if (!formData.value.nomeRequerente.trim()) newErrors.nomeRequerente = true
-  if (!formData.value.nif.trim()) newErrors.nif = true
+  if (!textValue(formData.value.tipoInstrumento)) newErrors.tipoInstrumento = true
+  if (!textValue(formData.value.marca)) newErrors.marca = true
+  if (!textValue(formData.value.modelo)) newErrors.modelo = true
+  if (!textValue(formData.value.numeroSerie)) newErrors.numeroSerie = true
+  if (!textValue(formData.value.quantidade) || Number(formData.value.quantidade) < 1) {
+    newErrors.quantidade = true
+  }
+  if (!textValue(formData.value.nomeRequerente)) newErrors.nomeRequerente = true
+  if (!textValue(formData.value.nif)) newErrors.nif = true
   if (
-    !formData.value.email.trim() ||
-    !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.value.email)
+    !textValue(formData.value.email) ||
+    !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(textValue(formData.value.email))
   ) {
     newErrors.email = true
   }
-  if (!formData.value.telefone.trim()) newErrors.telefone = true
-  if (!formData.value.apresentacao.trim()) newErrors.apresentacao = true
+  if (!textValue(formData.value.telefone)) newErrors.telefone = true
+  if (!textValue(formData.value.apresentacao)) newErrors.apresentacao = true
 
-  if (props.service?.requiresNif !== false && !files.value.nifDoc) newErrors.nifDoc = true
-  if (props.service?.requiresAlvara !== false && !files.value.alvara) newErrors.alvara = true
+  if (!files.value.oficio) newErrors.oficio = true
+  if (!files.value.nifDoc) newErrors.nifDoc = true
+  if (!files.value.alvara) newErrors.alvara = true
   if (props.service?.requiresFichaTecnica && !files.value.fichaTecnica) {
     newErrors.fichaTecnica = true
   }
@@ -123,14 +127,58 @@ const validateForm = () => {
   return true
 }
 
-const handleSubmit = () => {
+const handleSubmit = async () => {
+  submitError.value = ""
+
   if (!validateForm()) {
+    submitError.value = "Preencha os campos obrigatórios e anexe os documentos."
     return
   }
 
-  const { reference } = generateRupe(props.service?.fee)
-  orderRef.value = reference
-  formSubmitted.value = true
+  isSubmitting.value = true
+
+  try {
+    const payload = new FormData()
+    payload.append("name", textValue(formData.value.nomeRequerente))
+    payload.append("email", textValue(formData.value.email))
+    payload.append("phone", textValue(formData.value.telefone))
+    payload.append("nif", textValue(formData.value.nif))
+    payload.append("serviceTitle", props.service?.title ?? "")
+    payload.append("fee", String(props.service?.fee ?? 0))
+    payload.append(
+      "requiresFichaTecnica",
+      props.service?.requiresFichaTecnica ? "true" : "false",
+    )
+    payload.append("instrumentType", textValue(formData.value.tipoInstrumento))
+    payload.append("brand", textValue(formData.value.marca))
+    payload.append("model", textValue(formData.value.modelo))
+    payload.append("serialNumber", textValue(formData.value.numeroSerie))
+    payload.append("quantity", textValue(formData.value.quantidade))
+    payload.append("presentation", textValue(formData.value.apresentacao))
+    payload.append("oficio", files.value.oficio)
+    payload.append("nifDoc", files.value.nifDoc)
+    payload.append("alvara", files.value.alvara)
+    if (files.value.fichaTecnica) {
+      payload.append("fichaTecnica", files.value.fichaTecnica)
+    }
+
+    const response = await $fetch("/api/processes/metrologia/request", {
+      method: "POST",
+      body: payload,
+    })
+
+    processRef.value = response.referenceNumber ?? response.process?.referenceNumber ?? ""
+    formSubmitted.value = true
+  } catch (error) {
+    const fetchError = error
+    submitError.value =
+      fetchError?.data?.statusMessage ??
+      fetchError?.statusMessage ??
+      fetchError?.data?.message ??
+      "Não foi possível submeter o pedido. Tente novamente."
+  } finally {
+    isSubmitting.value = false
+  }
 }
 
 const handleClose = () => {
@@ -291,7 +339,23 @@ const handleClose = () => {
             </div>
 
             <h4 v-if="hasAnyDocument" class="section-title">Documentos obrigatórios</h4>
-            <div v-if="service?.requiresNif !== false" class="field">
+            <div class="field">
+              <label for="m-oficio">Carta ao Director-Geral <span class="req">*</span></label>
+              <div class="file-input-wrapper" :class="{ 'has-error': errors.oficio }">
+                <input
+                  type="file"
+                  id="m-oficio"
+                  name="oficio"
+                  accept=".pdf,application/pdf"
+                  @change="handleFileChange($event, 'oficio')"
+                />
+                <span class="file-label">{{
+                  files.oficio ? files.oficio.name : "Selecionar PDF"
+                }}</span>
+              </div>
+              <span v-if="errors.oficio" class="error-message">Por favor, anexe a carta ao Director-Geral (PDF)</span>
+            </div>
+            <div class="field">
               <label for="m-nifDoc">NIF (documento) <span class="req">*</span></label>
               <div class="file-input-wrapper" :class="{ 'has-error': errors.nifDoc }">
                 <input
@@ -307,7 +371,7 @@ const handleClose = () => {
               </div>
               <span v-if="errors.nifDoc" class="error-message">Por favor, anexe o documento do NIF</span>
             </div>
-            <div v-if="service?.requiresAlvara !== false" class="field">
+            <div class="field">
               <label for="m-alvara">Alvará Comercial <span class="req">*</span></label>
               <div class="file-input-wrapper" :class="{ 'has-error': errors.alvara }">
                 <input
@@ -342,10 +406,17 @@ const handleClose = () => {
               >
             </div>
 
+            <p v-if="submitError" class="error-message">{{ submitError }}</p>
+
             <div class="modal-foot">
               <button type="button" class="btn btn--ghost" @click="handleClose">Cancelar</button>
-              <button type="submit" class="btn btn--primary">
-                Submeter pedido
+              <button
+                type="button"
+                class="btn btn--primary"
+                :disabled="isSubmitting"
+                @click="handleSubmit"
+              >
+                {{ isSubmitting ? "A submeter..." : "Submeter pedido" }}
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
                   <path d="M5 12h14M13 6l6 6-6 6"></path>
                 </svg>
@@ -360,13 +431,13 @@ const handleClose = () => {
               <path d="M20 6 9 17l-5-5"></path>
             </svg>
           </div>
-          <h3>RUPE gerado com sucesso</h3>
+          <h3>Pedido enviado ao Diretor-Geral</h3>
           <p>
-            Utilize o RUPE abaixo para efectuar o pagamento de {{ formatPrice(service?.fee) }} AOA
-            referente a {{ service?.title }}. Após confirmação do pagamento, o processo segue o
-            fluxo interno de aprovação e emissão da certificação.
+            O pedido de {{ service?.title }} foi registado e segue para aprovação do Diretor-Geral.
+            Após a aprovação, receberá por e-mail a referência RUPE para pagamento da taxa de
+            {{ formatPrice(service?.fee) }} AOA.
           </p>
-          <div class="order-ref">{{ orderRef }}</div>
+          <div v-if="processRef" class="order-ref">{{ processRef }}</div>
           <div class="modal-foot" style="justify-content: center">
             <button type="button" class="btn btn--primary" @click="handleClose">Concluir</button>
           </div>
@@ -562,6 +633,7 @@ const handleClose = () => {
 .file-input-wrapper {
   position: relative;
   width: 100%;
+  overflow: hidden;
 }
 
 .file-input-wrapper input[type="file"] {
@@ -634,6 +706,11 @@ const handleClose = () => {
 
 .btn--primary:hover {
   background: #082e4f;
+}
+
+.btn--primary:disabled {
+  opacity: 0.7;
+  cursor: wait;
 }
 
 .btn--ghost {
