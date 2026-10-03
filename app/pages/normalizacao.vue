@@ -126,6 +126,9 @@ const modalMode = ref(null)
 const modalItem = ref(null)
 
 const openModal = (mode, item) => {
+  // #region agent log
+  fetch('http://127.0.0.1:7249/ingest/766b7f22-7053-46ed-ba0d-50b3b2a28909', { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Debug-Session-Id': '28af79' }, body: JSON.stringify({ sessionId: '28af79', runId: 'pre-fix', hypothesisId: 'H1', location: 'normalizacao.vue:openModal', message: 'openModal received', data: { mode, cmsId: item?.cmsId, reference: item?.reference, title: item?.title, price: item?.price, argCount: arguments.length }, timestamp: Date.now() }) }).catch(() => { });
+  // #endregion
   modalMode.value = mode
   modalItem.value = item
 }
@@ -154,48 +157,24 @@ const backToComissoes = () => {
       <CustomHero :data="leader" />
     </template>
 
-    <CustomNormalizacaoComissaoTecnica
-      v-if="activeTab === 'comissao-tecnica'"
-      :comissoes="comissoesTecnicas"
-      :normas="normas"
-      :title="comissaoTecnicaIntro?.title"
-      :description="comissaoTecnicaIntro?.description"
-      :informacoes-gerais="comissaoTecnicaIntro?.informacoesGerais"
-      @view-norma="handleViewNorma"
-    />
+    <CustomNormalizacaoComissaoTecnica v-if="activeTab === 'comissao-tecnica'" :comissoes="comissoesTecnicas"
+      :normas="normas" :title="comissaoTecnicaIntro?.title" :description="comissaoTecnicaIntro?.description"
+      :informacoes-gerais="comissaoTecnicaIntro?.informacoesGerais" @view-norma="handleViewNorma" />
 
-    <CustomNormalizacaoVendaNormas
-      v-if="activeTab === 'venda-normas'"
-      :normas="normasEmVigor"
-      :seed-search="seedSearchTerm"
-      :title="salesrulesIntro?.title"
-      :description="stripHtml(salesrulesIntro?.description)"
-      @open-modal="openModal"
-      @back-to-comissoes="backToComissoes"
-    />
+    <CustomNormalizacaoVendaNormas v-if="activeTab === 'venda-normas'" :normas="normasEmVigor"
+      :seed-search="seedSearchTerm" :title="salesrulesIntro?.title"
+      :description="stripHtml(salesrulesIntro?.description)" @open-modal="openModal"
+      @back-to-comissoes="backToComissoes" />
 
-    <CustomNormalizacaoConsultaPublica
-      v-if="activeTab === 'consulta-publica'"
-      :projects="projetosConsulta"
-      :title="consultaPublicaIntro?.title"
-      :description="stripHtml(consultaPublicaIntro?.description)"
-    />
+    <CustomNormalizacaoConsultaPublica v-if="activeTab === 'consulta-publica'" :projects="projetosConsulta"
+      :title="consultaPublicaIntro?.title" :description="stripHtml(consultaPublicaIntro?.description)" />
 
-    <CustomNormalizacaoCatalogoNormas
-      v-if="activeTab === 'catalogo-livro'"
-      :normas="normas"
-      :seed-search="seedSearchTerm"
-      :title="catalogoNormasIntro?.title"
-      :description="stripHtml(catalogoNormasIntro?.description)"
-      @back-to-comissoes="backToComissoes"
-    />
+    <CustomNormalizacaoCatalogoNormas v-if="activeTab === 'catalogo-livro'" :normas="normas"
+      :seed-search="seedSearchTerm" :title="catalogoNormasIntro?.title"
+      :description="stripHtml(catalogoNormasIntro?.description)" @back-to-comissoes="backToComissoes" />
   </div>
 
-  <CustomNormalizacaoPurchaseModal
-    :open="modalMode === 'venda'"
-    :norma="modalItem"
-    @close="closeModal"
-  />
+  <CustomNormalizacaoPurchaseModal :open="modalMode === 'venda'" :norma="modalItem" @close="closeModal" />
 </template>
 
 <style scoped>
