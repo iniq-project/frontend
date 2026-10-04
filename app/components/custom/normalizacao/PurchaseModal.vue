@@ -1,5 +1,5 @@
 <script setup>
-import { ref, watch } from "vue"
+import { ref, computed, watch, onUnmounted } from "vue"
 
 const props = defineProps({
   open: {
@@ -22,8 +22,60 @@ const formData = ref({
 const errors = ref({})
 const formSubmitted = ref(false)
 const orderRef = ref("")
+const expireAt = ref(null)
+const now = ref(Date.now())
 const isSubmitting = ref(false)
 const submitError = ref("")
+
+let countdownTimer = null
+
+const stopCountdown = () => {
+  if (countdownTimer) {
+    clearInterval(countdownTimer)
+    countdownTimer = null
+  }
+}
+
+const startCountdown = () => {
+  stopCountdown()
+  now.value = Date.now()
+  countdownTimer = setInterval(() => {
+    now.value = Date.now()
+  }, 1000)
+}
+
+const remainingMs = computed(() => {
+  if (!expireAt.value) return 0
+  return Math.max(0, new Date(expireAt.value).getTime() - now.value)
+})
+
+const isExpired = computed(() => Boolean(expireAt.value) && remainingMs.value <= 0)
+
+const countdownParts = computed(() => {
+  const totalSeconds = Math.floor(remainingMs.value / 1000)
+  const days = Math.floor(totalSeconds / 86400)
+  const hours = Math.floor((totalSeconds % 86400) / 3600)
+  const minutes = Math.floor((totalSeconds % 3600) / 60)
+  const seconds = totalSeconds % 60
+
+  return {
+    days: String(days).padStart(2, "0"),
+    hours: String(hours).padStart(2, "0"),
+    minutes: String(minutes).padStart(2, "0"),
+    seconds: String(seconds).padStart(2, "0"),
+  }
+})
+
+const expireAtLabel = computed(() => {
+  if (!expireAt.value) return ""
+  return new Date(expireAt.value).toLocaleString("pt-PT", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  })
+})
 
 watch(
   () => props.open,
@@ -33,11 +85,17 @@ watch(
       errors.value = {}
       formSubmitted.value = false
       orderRef.value = ""
+      expireAt.value = null
       isSubmitting.value = false
       submitError.value = ""
+      stopCountdown()
+    } else {
+      stopCountdown()
     }
   },
 )
+
+onUnmounted(stopCountdown)
 
 const formatPrice = (price) => {
   return (price ?? 0).toLocaleString("pt-PT")
@@ -82,6 +140,7 @@ const handleSubmit = async () => {
   try {
     const response = await $fetch("/api/processes/normalizacao/purchase", {
       method: "POST",
+      timeout: 180_000,
       body: {
         entityName: formData.value.nomeEntidade.trim(),
         entityNif: formData.value.nif.trim(),
@@ -101,7 +160,9 @@ const handleSubmit = async () => {
     })
 
     orderRef.value = response.rupe?.reference ?? ""
+    expireAt.value = response.rupe?.expireAt ?? null
     formSubmitted.value = true
+    if (expireAt.value) startCountdown()
   } catch (error) {
     const fetchError = error
     submitError.value =
@@ -212,6 +273,45 @@ const handleClose = () => {
             Após confirmação automática do pagamento, o acesso à norma ficará disponível.
           </p>
           <div class="order-ref">{{ orderRef }}</div>
+
+          <div class="payment-howto">
+            <p class="payment-howto-title">Como pagar</p>
+            <ol class="payment-howto-steps">
+              <li>Aceda ao <strong>Multicaixa Express</strong> ou a um <strong>ATM</strong></li>
+              <li>Seleccione <strong>Pagamentos</strong></li>
+              <li>Escolha <strong>Pagamentos ao Estado</strong></li>
+              <li>Introduza o número do RUPE acima e confirme o pagamento</li>
+            </ol>
+          </div>
+
+          <div v-if="expireAt" class="expire-countdown" :class="{ expired: isExpired }">
+            <p class="expire-label">
+              {{ isExpired ? "RUPE expirado" : "Tempo restante para pagamento" }}
+            </p>
+            <div v-if="!isExpired" class="countdown-grid" aria-live="polite">
+              <div class="countdown-unit">
+                <span class="countdown-value">{{ countdownParts.days }}</span>
+                <span class="countdown-unit-label">dias</span>
+              </div>
+              <div class="countdown-sep">:</div>
+              <div class="countdown-unit">
+                <span class="countdown-value">{{ countdownParts.hours }}</span>
+                <span class="countdown-unit-label">horas</span>
+              </div>
+              <div class="countdown-sep">:</div>
+              <div class="countdown-unit">
+                <span class="countdown-value">{{ countdownParts.minutes }}</span>
+                <span class="countdown-unit-label">min</span>
+              </div>
+              <div class="countdown-sep">:</div>
+              <div class="countdown-unit">
+                <span class="countdown-value">{{ countdownParts.seconds }}</span>
+                <span class="countdown-unit-label">seg</span>
+              </div>
+            </div>
+            <p class="expire-date">Validade: {{ expireAtLabel }}</p>
+          </div>
+
           <div class="modal-foot" style="justify-content: center">
             <button type="button" class="btn btn--primary" @click="handleClose">Concluir</button>
           </div>
@@ -468,7 +568,119 @@ const handleClose = () => {
   border: 1px dashed #d0d9e3;
   border-radius: 6px;
   padding: 12px 20px;
-  margin: 22px 0;
+  margin: 22px 0 16px;
+}
+
+.payment-howto {
+  margin: 0 auto 20px;
+  max-width: 420px;
+  padding: 16px 18px;
+  text-align: left;
+  border-radius: 10px;
+  background: #f0f9ff;
+  border: 1px solid #bae6fd;
+}
+
+.payment-howto-title {
+  margin: 0 0 10px !important;
+  font-size: 13px;
+  font-weight: 700;
+  color: #0a3a63;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  max-width: none !important;
+}
+
+.payment-howto-steps {
+  margin: 0;
+  padding-left: 1.25rem;
+  color: #334155;
+  font-size: 14px;
+  line-height: 1.55;
+}
+
+.payment-howto-steps li + li {
+  margin-top: 6px;
+}
+
+.payment-howto-steps strong {
+  color: #0a3a63;
+  font-weight: 650;
+}
+
+.expire-countdown {
+  margin: 0 auto 20px;
+  max-width: 420px;
+  padding: 16px 18px;
+  border-radius: 10px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+}
+
+.expire-countdown.expired {
+  background: #fef2f2;
+  border-color: #fecaca;
+}
+
+.expire-label {
+  margin: 0 0 12px !important;
+  font-size: 13px;
+  font-weight: 600;
+  color: #475569;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.expire-countdown.expired .expire-label {
+  color: #b91c1c;
+}
+
+.countdown-grid {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.countdown-unit {
+  min-width: 52px;
+  padding: 8px 6px;
+  border-radius: 8px;
+  background: #eff6fc;
+  border: 1px solid #d0d9e3;
+}
+
+.countdown-value {
+  display: block;
+  font-family: monospace;
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1.1;
+  color: #0a3a63;
+}
+
+.countdown-unit-label {
+  display: block;
+  margin-top: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.countdown-sep {
+  font-family: monospace;
+  font-size: 20px;
+  font-weight: 700;
+  color: #94a3b8;
+  padding-bottom: 14px;
+}
+
+.expire-date {
+  margin: 12px 0 0 !important;
+  font-size: 13px;
+  color: #64748b;
 }
 
 @media (max-width: 1199px) {
