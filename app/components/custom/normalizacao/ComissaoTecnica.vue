@@ -85,9 +85,9 @@ watch(activeView, () => {
     <div v-if="activeView === 'lista'" class="comissoes">
       <template v-if="!selectedComissao">
         <article
-          class="comissao-item comissao-item--clickable"
           v-for="comissao in comissoes"
           :key="comissao.id"
+          class="comissao-item comissao-item--clickable"
           @click="selectComissao(comissao)"
         >
           <div class="comissao-head">

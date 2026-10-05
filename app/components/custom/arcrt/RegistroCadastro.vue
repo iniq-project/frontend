@@ -203,7 +203,7 @@ async function handleSubmit() {
 
     <template v-if="step === 'typology'">
       <div class="tipologias">
-        <article class="tipologia-item" v-for="tipologia in tipologias" :key="tipologia.id">
+        <article v-for="tipologia in tipologias" :key="tipologia.id" class="tipologia-item">
           <h3>{{ tipologia.title }}</h3>
           <button type="button" class="btn btn--primary" @click="chooseTypology(tipologia)">
             Registrar-se
@@ -226,7 +226,8 @@ async function handleSubmit() {
           </div>
 
           <div v-if="formSubmitted" class="success-message">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"
+            <svg
+viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"
               stroke-linejoin="round">
               <path d="M20 6 9 17l-5-5"></path>
             </svg>
@@ -247,13 +248,14 @@ async function handleSubmit() {
               </a>
             </div>
 
-            <form @submit.prevent="handleSubmit" novalidate>
+            <form novalidate @submit.prevent="handleSubmit">
               <div v-if="submitError" class="error-banner">{{ submitError }}</div>
               <div class="field">
                 <label for="nome">Nome completo <span class="req">*</span></label>
                 <div class="input-wrapper" :class="{ 'has-error': errors.nome }">
-                  <input ref="nomeInput" type="text" id="nome" name="nome" required placeholder="O seu nome completo"
-                    v-model="formData.nome" @input="errors.nome = false" />
+                  <input
+id="nome" ref="nomeInput" v-model="formData.nome" type="text" name="nome" required
+                    placeholder="O seu nome completo" @input="errors.nome = false" />
                 </div>
                 <span v-if="errors.nome" class="error-message">Por favor, informe seu nome completo</span>
               </div>
@@ -261,8 +263,9 @@ async function handleSubmit() {
               <div class="field">
                 <label for="email">E-mail <span class="req">*</span></label>
                 <div class="input-wrapper" :class="{ 'has-error': errors.email }">
-                  <input type="email" id="email" name="email" required placeholder="nome@exemplo.ao"
-                    v-model="formData.email" @input="errors.email = false" />
+                  <input
+id="email" v-model="formData.email" type="email" name="email" required
+                    placeholder="nome@exemplo.ao" @input="errors.email = false" />
                 </div>
                 <span v-if="errors.email" class="error-message">Por favor, informe um e-mail válido</span>
               </div>
@@ -270,7 +273,8 @@ async function handleSubmit() {
               <div v-for="slot in documentSlots" :key="slot.type" class="field">
                 <label :for="slot.type">{{ slot.label }} <span class="req">*</span></label>
                 <div class="file-input-wrapper" :class="{ 'has-error': errors[slot.type] }">
-                  <input type="file" :id="slot.type" :name="slot.type" required
+                  <input
+:id="slot.type" type="file" :name="slot.type" required
                     :accept="slot.pdfOnly ? 'application/pdf' : '.pdf,.jpg,.jpeg,.png'"
                     @change="handleFileChange($event, slot.type)" />
                   <span class="file-label">{{ formData.files[slot.type]?.name ?? "Escolher arquivo" }}</span>
@@ -279,7 +283,7 @@ async function handleSubmit() {
               </div>
 
               <div class="form-actions">
-                <button type="button" @click="backToTypology" class="btn btn--ghost" :disabled="isSubmitting">
+                <button type="button" class="btn btn--ghost" :disabled="isSubmitting" @click="backToTypology">
                   Voltar
                 </button>
                 <button type="submit" class="btn btn--primary" :disabled="isSubmitting">

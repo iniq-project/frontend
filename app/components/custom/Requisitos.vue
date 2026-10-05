@@ -11,7 +11,7 @@ interface DownloadInfo {
   buttonText: string
 }
 
-const props = defineProps({
+defineProps({
   eyebrow: {
     type: String,
     default: "Requisitos"
@@ -42,8 +42,9 @@ const props = defineProps({
   }
 })
 
-const emit = defineEmits(['submit'])
+defineEmits(['submit'])
 </script>
+
 <template>
   <section class="mt-12">
     <div class="container">
@@ -55,7 +56,7 @@ const emit = defineEmits(['submit'])
       </div>
 
       <div v-if="requisitos.length > 0" class="requisitos-list">
-        <div class="requisito-item" v-for="requisito in requisitos" :key="requisito.num">
+        <div v-for="requisito in requisitos" :key="requisito.num" class="requisito-item">
           <span class="requisito-num">{{ requisito.num }}</span>
           <span class="requisito-text">{{ requisito.text }}</span>
         </div>
@@ -92,7 +93,7 @@ const emit = defineEmits(['submit'])
 
   <section v-if="showSubmitButton" class="mt-12">
     <div class="container">
-      <button @click="$emit('submit')" class="btn btn--primary">
+      <button class="btn btn--primary" @click="$emit('submit')">
         {{ submitButtonText }}
         <svg
           viewBox="0 0 24 24"

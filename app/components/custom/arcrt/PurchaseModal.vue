@@ -134,7 +134,7 @@ const handleClose = () => {
           <h3 id="arcrtPurchaseModalTitle">Comprar Regulamento Técnico</h3>
           <div class="modal-ref">{{ item?.code }} — {{ item?.title }}</div>
         </div>
-        <button class="modal-close" @click="handleClose" aria-label="Fechar">
+        <button class="modal-close" aria-label="Fechar" @click="handleClose">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
             <path d="M6 6l12 12M18 6 6 18"></path>
           </svg>
@@ -146,11 +146,11 @@ const handleClose = () => {
             <div class="field">
               <label for="rp-entidade">Entidade <span class="req">*</span></label>
               <input
-                type="text"
                 id="rp-entidade"
+                v-model="formData.entidade"
+                type="text"
                 name="entidade"
                 placeholder="Nome da entidade ou empresa"
-                v-model="formData.entidade"
                 :class="{ error: errors.entidade }"
                 :disabled="isSubmitting"
               />
@@ -159,11 +159,11 @@ const handleClose = () => {
             <div class="field">
               <label for="rp-nif">NIF <span class="req">*</span></label>
               <input
-                type="text"
                 id="rp-nif"
+                v-model="formData.nif"
+                type="text"
                 name="nif"
                 placeholder="Número de Identificação Fiscal"
-                v-model="formData.nif"
                 :class="{ error: errors.nif }"
                 :disabled="isSubmitting"
               />
@@ -172,11 +172,11 @@ const handleClose = () => {
             <div class="field">
               <label for="rp-telefone">Número de Telefone <span class="req">*</span></label>
               <input
-                type="tel"
                 id="rp-telefone"
+                v-model="formData.telefone"
+                type="tel"
                 name="telefone"
                 placeholder="+244 9XX XXX XXX"
-                v-model="formData.telefone"
                 :class="{ error: errors.telefone }"
                 :disabled="isSubmitting"
               />
@@ -185,11 +185,11 @@ const handleClose = () => {
             <div class="field">
               <label for="rp-email">E-mail <span class="req">*</span></label>
               <input
-                type="email"
                 id="rp-email"
+                v-model="formData.email"
+                type="email"
                 name="email"
                 placeholder="nome@exemplo.ao"
-                v-model="formData.email"
                 :class="{ error: errors.email }"
                 :disabled="isSubmitting"
               />

@@ -14,6 +14,8 @@ export type DocumentsType =
   | 'DOCUMENTO_TRANSPORTE'
   | 'NOTA_ENTREGA'
   | 'CERTIFICADO_TECNICO'
+  | 'FICHA_TECNICA'
+  | 'NOTA_LIQUIDACAO'
 
 export type ServiceType =
   | 'REGISTO_CADASTRO'

@@ -97,7 +97,7 @@ const handleCommentSubmit = () => {
       </div>
 
       <div class="consulta">
-        <article class="consulta-item" v-for="project in itemsInCategory" :key="project.code">
+        <article v-for="project in itemsInCategory" :key="project.code" class="consulta-item">
           <div>
             <div class="consulta-tags">
               <span class="consulta-code">{{ project.code }}</span>
@@ -165,10 +165,10 @@ const handleCommentSubmit = () => {
               <div class="field">
                 <label for="arc-cp-entidade">Entidade <span class="req">*</span></label>
                 <input
-                  type="text"
                   id="arc-cp-entidade"
-                  placeholder="Nome da entidade ou empresa"
                   v-model="commentForm.entidade"
+                  type="text"
+                  placeholder="Nome da entidade ou empresa"
                   :class="{ error: commentErrors.entidade }"
                 />
                 <span v-if="commentErrors.entidade" class="error-text">Por favor, informe a entidade</span>
@@ -176,10 +176,10 @@ const handleCommentSubmit = () => {
               <div class="field">
                 <label for="arc-cp-telefone">Número de Telefone <span class="req">*</span></label>
                 <input
-                  type="tel"
                   id="arc-cp-telefone"
-                  placeholder="+244 9XX XXX XXX"
                   v-model="commentForm.telefone"
+                  type="tel"
+                  placeholder="+244 9XX XXX XXX"
                   :class="{ error: commentErrors.telefone }"
                 />
                 <span v-if="commentErrors.telefone" class="error-text">Por favor, informe o número de telefone</span>
@@ -187,10 +187,10 @@ const handleCommentSubmit = () => {
               <div class="field">
                 <label for="arc-cp-email">E-mail <span class="req">*</span></label>
                 <input
-                  type="email"
                   id="arc-cp-email"
-                  placeholder="nome@exemplo.ao"
                   v-model="commentForm.email"
+                  type="email"
+                  placeholder="nome@exemplo.ao"
                   :class="{ error: commentErrors.email }"
                 />
                 <span v-if="commentErrors.email" class="error-text">Por favor, informe um e-mail válido</span>
@@ -199,9 +199,9 @@ const handleCommentSubmit = () => {
                 <label for="arc-cp-comentario">Comentário, sugestão ou observação <span class="req">*</span></label>
                 <textarea
                   id="arc-cp-comentario"
+                  v-model="commentForm.comentario"
                   rows="8"
                   placeholder="Indique o artigo/secção e a sua sugestão, com a respectiva fundamentação."
-                  v-model="commentForm.comentario"
                   :class="{ error: commentErrors.comentario }"
                 ></textarea>
                 <span v-if="commentErrors.comentario" class="error-text">Por favor, escreva o seu comentário</span>
@@ -209,7 +209,7 @@ const handleCommentSubmit = () => {
               <div class="field">
                 <label for="arc-cp-anexo">Anexar documento (opcional)</label>
                 <div class="file-input-wrapper">
-                  <input type="file" id="arc-cp-anexo" @change="handleFileChange" />
+                  <input id="arc-cp-anexo" type="file" @change="handleFileChange" />
                   <span class="file-label">{{ attachment ? attachment.name : "Selecionar ficheiro" }}</span>
                 </div>
               </div>

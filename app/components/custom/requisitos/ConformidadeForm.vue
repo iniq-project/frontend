@@ -154,7 +154,7 @@ function resetForm() {
       <div class="form-section">
         <div class="form-header">
           <h3>Submeter Processo de Avaliação de Conformidade</h3>
-          <button @click="emit('close')" class="btn btn--ghost">
+          <button class="btn btn--ghost" @click="emit('close')">
             Voltar
           </button>
         </div>
@@ -176,7 +176,7 @@ function resetForm() {
           >
         </div>
 
-        <form v-else @submit.prevent="handleSubmit" novalidate>
+        <form v-else novalidate @submit.prevent="handleSubmit">
           <div class="field">
             <label for="nome"
               >Nome completo <span class="req">*</span></label
@@ -186,13 +186,13 @@ function resetForm() {
               :class="{ 'has-error': errors.nome }"
             >
               <input
-                ref="nomeInput"
-                type="text"
                 id="nome"
+                ref="nomeInput"
+                v-model="formData.nome"
+                type="text"
                 name="nome"
                 required
                 placeholder="O seu nome completo"
-                v-model="formData.nome"
                 @input="errors.nome = false"
               />
             </div>
@@ -208,12 +208,12 @@ function resetForm() {
               :class="{ 'has-error': errors.email }"
             >
               <input
-                type="email"
                 id="email"
+                v-model="formData.email"
+                type="email"
                 name="email"
                 required
                 placeholder="nome@exemplo.ao"
-                v-model="formData.email"
                 @input="errors.email = false"
               />
             </div>
@@ -231,8 +231,8 @@ function resetForm() {
               :class="{ 'has-error': errors.doc1 }"
             >
               <input
-                type="file"
                 id="doc1"
+                type="file"
                 name="doc1"
                 required
                 @change="handleFileChange($event, 'doc1')"
@@ -255,8 +255,8 @@ function resetForm() {
               :class="{ 'has-error': errors.doc2 }"
             >
               <input
-                type="file"
                 id="doc2"
+                type="file"
                 name="doc2"
                 required
                 @change="handleFileChange($event, 'doc2')"
@@ -279,8 +279,8 @@ function resetForm() {
               :class="{ 'has-error': errors.doc3 }"
             >
               <input
-                type="file"
                 id="doc3"
+                type="file"
                 name="doc3"
                 required
                 @change="handleFileChange($event, 'doc3')"
@@ -304,8 +304,8 @@ function resetForm() {
               :class="{ 'has-error': errors.doc4 }"
             >
               <input
-                type="file"
                 id="doc4"
+                type="file"
                 name="doc4"
                 required
                 @change="handleFileChange($event, 'doc4')"
@@ -328,8 +328,8 @@ function resetForm() {
               :class="{ 'has-error': errors.doc5 }"
             >
               <input
-                type="file"
                 id="doc5"
+                type="file"
                 name="doc5"
                 required
                 @change="handleFileChange($event, 'doc5')"
@@ -353,8 +353,8 @@ function resetForm() {
               :class="{ 'has-error': errors.doc6 }"
             >
               <input
-                type="file"
                 id="doc6"
+                type="file"
                 name="doc6"
                 required
                 @change="handleFileChange($event, 'doc6')"
@@ -378,8 +378,8 @@ function resetForm() {
               :class="{ 'has-error': errors.doc7 }"
             >
               <input
-                type="file"
                 id="doc7"
+                type="file"
                 name="doc7"
                 required
                 @change="handleFileChange($event, 'doc7')"
@@ -396,8 +396,8 @@ function resetForm() {
           <div class="form-actions">
             <button
               type="button"
-              @click="emit('close')"
               class="btn btn--ghost"
+              @click="emit('close')"
             >
               Voltar
             </button>

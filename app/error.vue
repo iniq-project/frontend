@@ -6,16 +6,12 @@ interface Props {
   homeHref?: string
 }
 
-const props = withDefaults(defineProps<Props>(), {
+withDefaults(defineProps<Props>(), {
   code: '404',
   title: 'Página não encontrada',
   message: 'A página que procura pode ter sido removida, renomeada ou está temporariamente indisponível.',
   homeHref: '/',
 })
-
-const emit = defineEmits<{
-  (e: 'retry'): void
-}>()
 
 function handleRetry() {
     window.location.reload()

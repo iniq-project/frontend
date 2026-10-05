@@ -22,13 +22,29 @@ if (activeSubItemId) {
   }, { immediate: true })
 }
 
-const activeTab = ref('catalogo')
+interface Course {
+  id: number
+  title: string
+  category: string
+  level: string
+  duration: string
+  modality: string
+  startDate: string
+  price: number
+  description: string
+  modules: string[]
+  instructor: string
+  instructorRole: string
+  thumbnail: string
+  refNumber?: string
+}
+
 const modalOpen = ref(false)
 const modalMode = ref('detalhe')
 const formSubmitted = ref(false)
-const selectedCourse = ref<any>(null)
+const selectedCourse = ref<Course | null>(null)
 
-const courses = ref([
+const courses = ref<Course[]>([
   {
     id: 1,
     title: 'Gestão da Qualidade',
@@ -125,7 +141,7 @@ const formatPrice = (price: number) => {
   return price.toLocaleString('pt-PT')
 }
 
-const openModal = (course: any) => {
+const openModal = (course: Course) => {
   selectedCourse.value = course
   modalMode.value = 'detalhe'
   formSubmitted.value = false
@@ -138,6 +154,7 @@ const closeModal = () => {
 }
 
 const handleSubmit = () => {
+  if (!selectedCourse.value) return
   const refNumber = Math.floor(10000 + Math.random() * 89999)
   selectedCourse.value.refNumber = `MATRÍCULA: INIQ-2026-${refNumber}`
   formSubmitted.value = true
@@ -145,6 +162,7 @@ const handleSubmit = () => {
 </script>
 
 <template>
+  <div class="single-root">
   <div class="combined-card">
     <!-- Top info - only show when no sub-item is selected -->
     <template v-if="!isSubItemSelected">
@@ -221,9 +239,9 @@ const handleSubmit = () => {
 
           <div class="course-grid">
             <article
-              class="course-card"
               v-for="course in courses"
               :key="course.id"
+              class="course-card"
               @click="openModal(course)"
             >
               <div class="course-thumb">
@@ -284,7 +302,7 @@ const handleSubmit = () => {
   <div v-if="modalOpen" class="modal" :class="{ open: modalOpen }" @click.self="closeModal">
     <div class="modal__scrim" @click="closeModal"></div>
     <div class="modal__panel modal__panel--wide" role="dialog" aria-modal="true" aria-labelledby="cdTitle">
-      <button class="modal__close" @click="closeModal" aria-label="Fechar">
+      <button class="modal__close" aria-label="Fechar" @click="closeModal">
         <svg
           viewBox="0 0 24 24"
           fill="none"
@@ -296,7 +314,7 @@ const handleSubmit = () => {
         </svg>
       </button>
 
-      <div v-if="modalMode === 'detalhe'" class="cd show" id="cdView">
+      <div v-if="modalMode === 'detalhe'" id="cdView" class="cd show">
         <div class="cd__hero">
           <img class="cd__hero-img" :src="selectedCourse?.thumbnail" :alt="selectedCourse?.title" />
         </div>
@@ -425,7 +443,7 @@ const handleSubmit = () => {
         </div>
       </div>
 
-      <div v-if="modalMode === 'inscricao'" class="modal__body" id="enrollView">
+      <div v-if="modalMode === 'inscricao'" id="enrollView" class="modal__body">
         <div class="modal__head" style="padding: 0 0 18px; position: static">
           <div>
             <span class="eyebrow">Inscrição</span>
@@ -433,25 +451,25 @@ const handleSubmit = () => {
             <div class="ref">{{ selectedCourse?.title }}</div>
           </div>
         </div>
-        <form @submit.prevent="handleSubmit" id="enrollForm" novalidate>
+        <form id="enrollForm" novalidate @submit.prevent="handleSubmit">
           <div class="field-row">
             <div class="field">
               <label for="e-nome">Nome completo <span class="req">*</span></label>
               <input
-                type="text"
                 id="e-nome"
+                v-model="formData.nome"
+                type="text"
                 required
                 placeholder="Nome do formando"
-                v-model="formData.nome"
               />
             </div>
             <div class="field">
               <label for="e-entidade">Entidade / Empresa</label>
               <input
-                type="text"
                 id="e-entidade"
-                placeholder="Opcional"
                 v-model="formData.entidade"
+                type="text"
+                placeholder="Opcional"
               />
             </div>
           </div>
@@ -459,21 +477,21 @@ const handleSubmit = () => {
             <div class="field">
               <label for="e-email">E-mail <span class="req">*</span></label>
               <input
-                type="email"
                 id="e-email"
+                v-model="formData.email"
+                type="email"
                 required
                 placeholder="nome@exemplo.ao"
-                v-model="formData.email"
               />
             </div>
             <div class="field">
               <label for="e-tel">Telefone <span class="req">*</span></label>
               <input
-                type="tel"
                 id="e-tel"
+                v-model="formData.telefone"
+                type="tel"
                 required
                 placeholder="+244 9XX XXX XXX"
-                v-model="formData.telefone"
               />
             </div>
           </div>
@@ -482,10 +500,10 @@ const handleSubmit = () => {
               NIF / BI <span class="hint" style="display: inline; margin: 0">(para o recibo)</span>
             </label>
             <input
-              type="text"
               id="e-nif"
-              placeholder="Opcional"
               v-model="formData.nif"
+              type="text"
+              placeholder="Opcional"
             />
           </div>
           <div class="field">
@@ -493,10 +511,10 @@ const handleSubmit = () => {
             <div class="pay-options">
               <label class="pay-opt" :class="{ sel: formData.pagamento === 'Referência Multicaixa' }">
                 <input
+                  v-model="formData.pagamento"
                   type="radio"
                   name="epay"
                   value="Referência Multicaixa"
-                  v-model="formData.pagamento"
                   checked
                 />
                 <span>
@@ -505,10 +523,10 @@ const handleSubmit = () => {
               </label>
               <label class="pay-opt" :class="{ sel: formData.pagamento === 'Multicaixa Express' }">
                 <input
+                  v-model="formData.pagamento"
                   type="radio"
                   name="epay"
                   value="Multicaixa Express"
-                  v-model="formData.pagamento"
                 />
                 <span>
                   <b>Multicaixa Express</b><span>QR code ou link por SMS</span>
@@ -555,7 +573,7 @@ const handleSubmit = () => {
             <button type="button" class="btn btn--ghost" @click="modalMode = 'detalhe'">
               Voltar
             </button>
-            <button type="submit" class="btn btn--primary" id="enrollSubmit">
+            <button id="enrollSubmit" type="submit" class="btn btn--primary">
               Confirmar inscrição
               <svg
                 viewBox="0 0 24 24"
@@ -572,7 +590,7 @@ const handleSubmit = () => {
         </form>
       </div>
 
-      <div v-if="formSubmitted" class="modal__body" id="enrollSuccess">
+      <div v-if="formSubmitted" id="enrollSuccess" class="modal__body">
         <div class="modal-success show" style="display: block">
           <div class="ok">
             <svg
@@ -601,9 +619,14 @@ const handleSubmit = () => {
       </div>
     </div>
   </div>
+  </div>
 </template>
 
 <style scoped>
+.single-root {
+  display: contents;
+}
+
 .combined-card {
   background: white;
   border-radius: 12px;

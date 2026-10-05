@@ -8,13 +8,14 @@ const route = useRoute()
 const router = useRouter()
 const isHomePage = computed(() => route.path === "/")
 
-const { getMenuTitle } = await useMenuTitles()
-const menuTitle = (service: Service) => getMenuTitle(service.id, service.title)
-
 const { query } = useSquidex()
-const areaReservadaData = await query(areaReservadaQuery, {
-  key: "reservedarea",
-})
+const [{ getMenuTitle }, areaReservadaData] = await Promise.all([
+  useMenuTitles(),
+  query(areaReservadaQuery, {
+    key: "reservedarea",
+  }),
+])
+const menuTitle = (service: Service) => getMenuTitle(service.id, service.title)
 const areaReservada = computed(() => {
   const d = areaReservadaData.value?.data?.queryReservedareaContents?.[0]?.data
   return {

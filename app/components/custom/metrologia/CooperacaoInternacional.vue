@@ -60,10 +60,10 @@ watch(activeCategoria, () => {
 
       <div class="view-toggle">
         <button
-          type="button"
-          class="toggle-btn"
           v-for="categoria in categorias"
           :key="categoria"
+          type="button"
+          class="toggle-btn"
           :class="{ 'is-active': activeCategoria === categoria }"
           @click="activeCategoria = categoria"
         >
@@ -72,7 +72,7 @@ watch(activeCategoria, () => {
       </div>
 
       <div v-if="cooperacoesDaCategoria.length" class="coop-list">
-        <article class="coop-item" v-for="coop in cooperacoesDaCategoria" :key="coop.id">
+        <article v-for="coop in cooperacoesDaCategoria" :key="coop.id" class="coop-item">
           <div>
             <div class="coop-tags">
               <span class="coop-sigla">{{ coop.sigla }}</span>

@@ -75,7 +75,7 @@ const activeSubItemId = inject('activeSubItemId')
 const isSubItemSelected = ref(false)
 
 if (activeSubItemId) {
-  watch(activeSubItemId, (newId: any) => {
+  watch(activeSubItemId, (newId: unknown) => {
     isSubItemSelected.value = !!newId
   }, { immediate: true })
 }
@@ -237,7 +237,7 @@ const formatDate = (dateStr: string) => {
 
               <!-- Enroll Button -->
               <div v-if="currentEdition.isOpen" class="enroll-section">
-                <button v-if="!showForm && !showSuccess" @click="showForm = true" class="enroll-btn">Inscrever-se</button>
+                <button v-if="!showForm && !showSuccess" class="enroll-btn" @click="showForm = true">Inscrever-se</button>
               </div>
             </div>
 
@@ -246,7 +246,7 @@ const formatDate = (dateStr: string) => {
               <div class="form-card">
                 <div class="form-header">
                   <h3>Formulário de Inscrição</h3>
-                  <button @click="resetForm" class="close-form-btn">
+                  <button class="close-form-btn" @click="resetForm">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
                       <line x1="18" y1="6" x2="6" y2="18"></line>
                       <line x1="6" y1="6" x2="18" y2="18"></line>
@@ -257,10 +257,10 @@ const formatDate = (dateStr: string) => {
                   <div class="form-group">
                     <label for="organizationName">Nome da Empresa/Laboratório <span class="required">*</span></label>
                     <input
-                      type="text"
                       id="organizationName"
-                      placeholder="Ex.: Laboratório Central de Ensaios, Lda."
                       v-model="form.organizationName"
+                      type="text"
+                      placeholder="Ex.: Laboratório Central de Ensaios, Lda."
                       :class="{ error: errors.organizationName }"
                     />
                     <p v-if="errors.organizationName" class="error-text">{{ errors.organizationName }}</p>
@@ -269,10 +269,10 @@ const formatDate = (dateStr: string) => {
                     <div class="form-group">
                       <label for="nif">NIF <span class="required">*</span></label>
                       <input
-                        type="text"
                         id="nif"
-                        placeholder="Ex.: 5417123456"
                         v-model="form.nif"
+                        type="text"
+                        placeholder="Ex.: 5417123456"
                         :class="{ error: errors.nif }"
                       />
                       <p v-if="errors.nif" class="error-text">{{ errors.nif }}</p>
@@ -280,10 +280,10 @@ const formatDate = (dateStr: string) => {
                     <div class="form-group">
                       <label for="sector">Setor de Atividade <span class="required">*</span></label>
                       <input
-                        type="text"
                         id="sector"
-                        placeholder="Ex.: Metalomecânica, Alimentar, Construção…"
                         v-model="form.sector"
+                        type="text"
+                        placeholder="Ex.: Metalomecânica, Alimentar, Construção…"
                         :class="{ error: errors.sector }"
                       />
                       <p v-if="errors.sector" class="error-text">{{ errors.sector }}</p>
@@ -293,10 +293,10 @@ const formatDate = (dateStr: string) => {
                     <div class="form-group">
                       <label for="email">Email <span class="required">*</span></label>
                       <input
-                        type="email"
                         id="email"
-                        placeholder="nome@exemplo.ao"
                         v-model="form.email"
+                        type="email"
+                        placeholder="nome@exemplo.ao"
                         :class="{ error: errors.email }"
                       />
                       <p v-if="errors.email" class="error-text">{{ errors.email }}</p>
@@ -304,10 +304,10 @@ const formatDate = (dateStr: string) => {
                     <div class="form-group">
                       <label for="phone">Telefone <span class="required">*</span></label>
                       <input
-                        type="tel"
                         id="phone"
-                        placeholder="+244 9XX XXX XXX"
                         v-model="form.phone"
+                        type="tel"
+                        placeholder="+244 9XX XXX XXX"
                         :class="{ error: errors.phone }"
                       />
                       <p v-if="errors.phone" class="error-text">{{ errors.phone }}</p>
@@ -317,14 +317,14 @@ const formatDate = (dateStr: string) => {
                     <label for="dossier">Upload do Dossier de Candidatura <span class="required">*</span></label>
                     <div class="file-upload-wrapper">
                       <input
+                        id="dossier"
                         ref="fileInput"
                         type="file"
-                        id="dossier"
-                        @change="handleFileChange"
                         hidden
                         accept=".pdf,.doc,.docx,.zip"
+                        @change="handleFileChange"
                       />
-                      <button type="button" @click="fileInput?.click()" class="file-upload-btn">
+                      <button type="button" class="file-upload-btn" @click="fileInput?.click()">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
                           <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
                           <polyline points="7 10 12 15 17 10"></polyline>
@@ -337,7 +337,7 @@ const formatDate = (dateStr: string) => {
                     <p v-if="errors.dossier" class="error-text">{{ errors.dossier }}</p>
                   </div>
                   <div class="form-actions">
-                    <button type="button" @click="resetForm" class="btn cancel-btn">Cancelar</button>
+                    <button type="button" class="btn cancel-btn" @click="resetForm">Cancelar</button>
                     <button type="submit" class="btn submit-btn">Submeter Inscrição</button>
                   </div>
                 </form>
@@ -354,7 +354,7 @@ const formatDate = (dateStr: string) => {
                 <p>O seu número de inscrição é:</p>
                 <div class="registration-number">{{ registrationNumber }}</div>
                 <p>Um email de confirmação foi enviado para {{ form.email }}</p>
-                <button @click="resetForm" class="btn submit-btn">Nova Inscrição</button>
+                <button class="btn submit-btn" @click="resetForm">Nova Inscrição</button>
               </div>
             </div>
           </div>

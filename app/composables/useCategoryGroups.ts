@@ -5,7 +5,12 @@ export interface CategoryGroup {
   count: number
 }
 
-export function useCategoryGroups<T extends Record<string, any>>(
+function categoryName(item: object, categoryKey: string): string {
+  const raw = (item as Record<string, unknown>)[categoryKey]
+  return typeof raw === "string" && raw.length > 0 ? raw : "Sem categoria"
+}
+
+export function useCategoryGroups<T extends object>(
   source: MaybeRefOrGetter<T[]>,
   categoryKey: string = "categoria",
 ) {
@@ -14,7 +19,7 @@ export function useCategoryGroups<T extends Record<string, any>>(
   const groups = computed<CategoryGroup[]>(() => {
     const counts = new Map<string, number>()
     for (const item of list.value) {
-      const name = item[categoryKey] || "Sem categoria"
+      const name = categoryName(item, categoryKey)
       counts.set(name, (counts.get(name) || 0) + 1)
     }
     return [...counts.entries()]
@@ -26,7 +31,7 @@ export function useCategoryGroups<T extends Record<string, any>>(
 
   const itemsInCategory = computed(() =>
     selectedCategory.value
-      ? list.value.filter((item) => item[categoryKey] === selectedCategory.value)
+      ? list.value.filter((item) => categoryName(item, categoryKey) === selectedCategory.value)
       : [],
   )
 

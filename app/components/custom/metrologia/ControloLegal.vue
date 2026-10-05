@@ -63,9 +63,9 @@ const outrosServicos = computed(() =>
 
     <div class="operacoes">
       <article
-        class="operacao-item"
         v-for="operacao in operacoes"
         :key="operacao.id"
+        class="operacao-item"
       >
         <div class="operacao-main">
           <h3>{{ operacao.title }}</h3>
@@ -87,7 +87,7 @@ const outrosServicos = computed(() =>
       </article>
     </div>
 
-    <div class="servicos-section" v-if="outrosServicos.length">
+    <div v-if="outrosServicos.length" class="servicos-section">
       <div class="panel-head">
         <span class="eyebrow">Outros Serviços</span>
         <h2>{{ servicosTitle }}</h2>
@@ -95,7 +95,7 @@ const outrosServicos = computed(() =>
       </div>
 
       <div class="catalog">
-        <div class="catalog-item" v-for="service in outrosServicos" :key="service.id">
+        <div v-for="service in outrosServicos" :key="service.id" class="catalog-item">
           <div class="catalog-item-top">
             <h3 class="catalog-item-title">{{ service.title }}</h3>
             <div class="catalog-item-fee">

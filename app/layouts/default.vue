@@ -4,8 +4,10 @@ import quemSomos from "@/gql/quem-somos.gql"
 import parceiros from "@/gql/parceiros.gql"
  
 const { query } = useSquidex()
-const data = await query(quemSomos, { key: "about" })
-const partnerData = await query(parceiros, { key: "partner" })
+const [data, partnerData] = await Promise.all([
+  query(quemSomos, { key: "about" }),
+  query(parceiros, { key: "partner" }),
+])
 
 const aboutInfo = computed(() => data.value?.data.queryAboutContents?.[0]?.data)
 const partnerInfo = computed(() => partnerData.value?.data.queryPartnerContents?.[0]?.data)
@@ -22,7 +24,7 @@ const closeMenu = () => {
   menuOpen.value = false
 }
 
-const handleSelectService = (serviceId) => {
+const handleSelectService = (_serviceId) => {
   activeSubItemId.value = null
 }
 
@@ -40,21 +42,13 @@ watch(
 )
 
 
-let loader = ref(true);
-onMounted(() => {
-  setTimeout(() => {
-    loader.value = false;
-  }, 3000);
-});
-
-
 provide("activeSubItemId", activeSubItemId)
 </script>
 
 <template>
-  <UiLoaderComponent v-if="loader" />
-  <div v-show="!loader" class="new-layout">
-    <UiHeaderComponent @toggle-menu="toggleMenu" :menu-open="menuOpen" />
+  <div class="single-root">
+  <div class="new-layout">
+    <UiHeaderComponent :menu-open="menuOpen" @toggle-menu="toggleMenu" />
     <div class="mobile-overlay" :class="{ open: menuOpen }" aria-hidden="true" @click="closeMenu" />
     <div class="main-container">
       <UiSideBarComponent :data="aboutInfo" class="sidebar-left">
@@ -69,7 +63,8 @@ provide("activeSubItemId", activeSubItemId)
       <main class="center-content">
         <slot />
       </main>
-      <UiNavigatorBarComponent class="sidebar-right" :class="{ open: menuOpen }" @select-service="handleSelectService"
+      <UiNavigatorBarComponent
+class="sidebar-right" :class="{ open: menuOpen }" @select-service="handleSelectService"
         @select-subitem="handleSelectSubItem" @close="closeMenu" />
       <div class="carousel-spacer"></div>
       <div class="partner-carousel-wrapper">
@@ -77,9 +72,14 @@ provide("activeSubItemId", activeSubItemId)
       </div>
     </div>
   </div>
+  </div>
 </template>
 
 <style scoped>
+.single-root {
+  display: contents;
+}
+
 .new-layout {
   min-height: 100vh;
   display: flex;

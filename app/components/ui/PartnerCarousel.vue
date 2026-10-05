@@ -15,7 +15,7 @@ const allPartners = computed(() => [...partners.value, ...partners.value])
 const currentPosition = ref(0)
 const slideWidth = 200
 const maxPosition = ref(0)
-let autoScrollInterval: any = null
+let autoScrollInterval: ReturnType<typeof setInterval> | null = null
 
 const startAutoScroll = () => {
   autoScrollInterval = setInterval(() => {
@@ -65,9 +65,9 @@ onUnmounted(() => {
     <div class="carousel-container">
       <div class="carousel-track" :style="{ transform: `translateX(-${currentPosition}px)` }">
         <a
-          class="partner-slide"
           v-for="(partner, index) in allPartners"
           :key="index"
+          class="partner-slide"
           :href="partner.url"
           target="_blank"
           rel="noopener noreferrer"
