@@ -190,7 +190,7 @@ const handleClose = () => {
           <h3 id="purchaseModalTitle">Solicitar Norma</h3>
           <div class="modal-ref">{{ norma?.reference }} — {{ norma?.title }}</div>
         </div>
-        <button class="modal-close" @click="handleClose" aria-label="Fechar">
+        <button class="modal-close" aria-label="Fechar" @click="handleClose">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
             <path d="M6 6l12 12M18 6 6 18"></path>
           </svg>
@@ -202,11 +202,11 @@ const handleClose = () => {
             <div class="field">
               <label for="p-entidade">Entidade <span class="req">*</span></label>
               <input
-                type="text"
                 id="p-entidade"
+                v-model="formData.nomeEntidade"
+                type="text"
                 required
                 placeholder="Nome da entidade ou empresa"
-                v-model="formData.nomeEntidade"
                 :class="{ error: errors.nomeEntidade }"
                 :disabled="isSubmitting"
               />
@@ -215,11 +215,11 @@ const handleClose = () => {
             <div class="field">
               <label for="p-email">E-mail <span class="req">*</span></label>
               <input
-                type="email"
                 id="p-email"
+                v-model="formData.email"
+                type="email"
                 required
                 placeholder="nome@exemplo.ao"
-                v-model="formData.email"
                 :class="{ error: errors.email }"
                 :disabled="isSubmitting"
               />
@@ -228,11 +228,11 @@ const handleClose = () => {
             <div class="field">
               <label for="p-nif">NIF <span class="req">*</span></label>
               <input
-                type="text"
                 id="p-nif"
+                v-model="formData.nif"
+                type="text"
                 required
                 placeholder="Número de Identificação Fiscal"
-                v-model="formData.nif"
                 :class="{ error: errors.nif }"
                 :disabled="isSubmitting"
               />
@@ -240,7 +240,7 @@ const handleClose = () => {
             </div>
             <p v-if="submitError" class="error-text submit-error">{{ submitError }}</p>
             <div class="modal-foot">
-              <button type="button" class="btn btn--ghost" @click="handleClose" :disabled="isSubmitting">
+              <button type="button" class="btn btn--ghost" :disabled="isSubmitting" @click="handleClose">
                 Cancelar
               </button>
               <button type="submit" class="btn btn--primary" :disabled="isSubmitting">

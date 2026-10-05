@@ -94,8 +94,8 @@ watch(
             <path d="m21 21-4.3-4.3"></path>
           </svg>
           <input
-            type="text"
             v-model="searchTerm"
+            type="text"
             placeholder="Pesquisar por título ou ICS…"
             aria-label="Pesquisar normas"
           />
@@ -121,7 +121,7 @@ watch(
       </p>
 
       <div class="catalog">
-        <div class="catalog-item" v-for="norma in filteredNormas" :key="norma.reference">
+        <div v-for="norma in filteredNormas" :key="norma.reference" class="catalog-item">
           <div class="catalog-item-top">
             <div class="catalog-item-code">{{ norma.reference }}</div>
             <span class="badge badge--sector badge--green">{{ norma.categoria }}</span>

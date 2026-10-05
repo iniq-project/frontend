@@ -13,8 +13,10 @@ useHead({
 })
 
 const { query } = useSquidex()
-const data = await query(avaliacaoConformidade, { key: "queryHomeevaluationContents" })
-const requisitosData = await query(requisitosQuery, { key: "queryRequirementContents" })
+const [data, requisitosData] = await Promise.all([
+  query(avaliacaoConformidade, { key: "queryHomeevaluationContents" }),
+  query(requisitosQuery, { key: "queryRequirementContents" }),
+])
 
 
 const evaluation = computed(
@@ -28,7 +30,7 @@ const requisitosTitle = computed(() => requisitosContent.value?.title)
 const requisitosDescription = computed(() => requisitosContent.value?.description)
 const requisitosList = computed(() => {
   const rules = requisitosContent.value?.rules || []
-  return rules.map((rule: any, index: number) => ({
+  return rules.map((rule: { title?: string }, index: number) => ({
     num: index + 1,
     text: rule?.title
   }))
@@ -49,7 +51,7 @@ const activeSubItemId = inject("activeSubItemId")
 const isSubItemSelected = ref(false)
 const showForm = ref(false)
 
-function handleFormSubmit(formData: any) {
+function handleFormSubmit(formData: Record<string, unknown>) {
   console.log("Form submitted with data:", formData)
 }
 

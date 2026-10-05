@@ -30,11 +30,12 @@ const addressNoBreaks = computed(() =>
       </div>
     </div>
     <div class="sidebar-footer">
-      <div class="gov-info gov-info--desktop" v-if="data?.address" v-html="data?.address"></div>
-      <div class="gov-info gov-info--mobile" v-if="data?.address" v-html="addressNoBreaks"></div>
+      <div v-if="data?.address" class="gov-info gov-info--desktop" v-html="data?.address"></div>
+      <div v-if="data?.address" class="gov-info gov-info--mobile" v-html="addressNoBreaks"></div>
     </div>
   </aside>
 </template>
+
 <style scoped>
 .about-text :deep(ul) {
   list-style: none;

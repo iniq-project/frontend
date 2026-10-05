@@ -97,9 +97,9 @@ const handleCommentSubmit = () => {
       </div>
       <div class="consulta">
         <article
-          class="consulta-item"
           v-for="project in itemsInCategory"
           :key="project.code"
+          class="consulta-item"
         >
           <div>
             <div class="consulta-tags">
@@ -176,10 +176,10 @@ const handleCommentSubmit = () => {
               <div class="field">
                 <label for="cp-nome">Nome <span class="req">*</span></label>
                 <input
-                  type="text"
                   id="cp-nome"
-                  placeholder="O seu nome"
                   v-model="commentForm.nome"
+                  type="text"
+                  placeholder="O seu nome"
                   :class="{ error: commentErrors.nome }"
                 />
                 <span v-if="commentErrors.nome" class="error-text">Por favor, informe o seu nome</span>
@@ -187,10 +187,10 @@ const handleCommentSubmit = () => {
               <div class="field">
                 <label for="cp-email">E-mail <span class="req">*</span></label>
                 <input
-                  type="email"
                   id="cp-email"
-                  placeholder="nome@exemplo.com"
                   v-model="commentForm.email"
+                  type="email"
+                  placeholder="nome@exemplo.com"
                   :class="{ error: commentErrors.email }"
                 />
                 <span v-if="commentErrors.email" class="error-text">Por favor, informe um e-mail válido</span>
@@ -198,10 +198,10 @@ const handleCommentSubmit = () => {
               <div class="field">
                 <label for="cp-tel">Número de Telefone <span class="req">*</span></label>
                 <input
-                  type="tel"
                   id="cp-tel"
-                  placeholder="+244 9XX XXX XXX"
                   v-model="commentForm.telefone"
+                  type="tel"
+                  placeholder="+244 9XX XXX XXX"
                   :class="{ error: commentErrors.telefone }"
                 />
                 <span v-if="commentErrors.telefone" class="error-text">Por favor, informe o número de telefone</span>
@@ -210,9 +210,9 @@ const handleCommentSubmit = () => {
                 <label for="cp-comentario">Comentário <span class="req">*</span></label>
                 <textarea
                   id="cp-comentario"
+                  v-model="commentForm.comentario"
                   rows="8"
                   placeholder="Indique o artigo/secção e a redacção alternativa proposta, com a respectiva fundamentação."
-                  v-model="commentForm.comentario"
                   :class="{ error: commentErrors.comentario }"
                 ></textarea>
                 <span v-if="commentErrors.comentario" class="error-text">Por favor, escreva o seu comentário</span>

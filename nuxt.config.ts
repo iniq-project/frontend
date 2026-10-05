@@ -1,6 +1,18 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
-  app: {
+
+
+  modules: [
+    "@nuxt/eslint",
+    "@nuxt/ui",
+    "@nuxtjs/apollo"
+  ],
+
+  ssr: true,
+
+  devtools: {
+    enabled: true
+  },  app: {
     head: {
       title: "",
       meta: [
@@ -16,32 +28,9 @@ export default defineNuxtConfig({
     },
   },
 
-  devtools: {
-    enabled: true
-  },
-
-  nitro: {
-    preset: "netlify"
-  },
-
   css: [
     "~/assets/css/main.css"
   ],
-
-  modules: [
-    "@nuxt/eslint",
-    "@nuxt/ui",
-    "@nuxtjs/apollo"
-  ],
-
-  // @ts-ignore
-  apollo: {
-    clients: {
-      default: {
-        httpEndpoint: `${process.env.SQUIDEX_URL}/api/content/${process.env.SQUIDEX_APP_NAME}/graphql`,
-      }
-    },
-  },
 
   runtimeConfig: {
     squidex: {
@@ -67,13 +56,8 @@ export default defineNuxtConfig({
 
   compatibilityDate: "2025-01-15",
 
-  eslint: {
-    config: {
-      stylistic: {
-        commaDangle: "never",
-        braceStyle: "1tbs"
-      }
-    }
+  nitro: {
+    preset: "netlify"
   },
 
   // Configuração para permitir acesso via ngrok
@@ -83,5 +67,21 @@ export default defineNuxtConfig({
     }
   },
 
-  ssr: true
+  // @ts-expect-error apollo client config is provided by @nuxtjs/apollo
+  apollo: {
+    clients: {
+      default: {
+        httpEndpoint: `${process.env.SQUIDEX_URL}/api/content/${process.env.SQUIDEX_APP_NAME}/graphql`,
+      }
+    },
+  },
+
+  eslint: {
+    config: {
+      stylistic: {
+        commaDangle: "never",
+        braceStyle: "1tbs"
+      }
+    }
+  },
 })

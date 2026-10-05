@@ -68,8 +68,8 @@ const formatPrice = (price) => {
             <path d="m21 21-4.3-4.3"></path>
           </svg>
           <input
-            type="text"
             v-model="searchTerm"
+            type="text"
             placeholder="Pesquisar por título…"
             aria-label="Pesquisar regulamentos"
           />
@@ -96,7 +96,7 @@ const formatPrice = (price) => {
       </p>
 
       <div class="catalog">
-        <div class="catalog-item" v-for="regulamento in filteredRegulamentos" :key="regulamento.code">
+        <div v-for="regulamento in filteredRegulamentos" :key="regulamento.code" class="catalog-item">
           <div class="catalog-item-top">
             <div class="catalog-item-code">{{ regulamento.code }}</div>
             <span class="badge badge--sector badge--green">{{ regulamento.areaTecnica }}</span>

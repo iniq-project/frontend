@@ -19,13 +19,28 @@ useHead({
 })
 
 const { query } = useSquidex()
-const data = await query(home, { key: "home" })
+const [
+  data,
+  requisitosData,
+  tipologiasData,
+  orgaoLegisladorData,
+  acervoNacionalData,
+  consultaPublicaData,
+  equivalentesData,
+] = await Promise.all([
+  query(home, { key: "homeregister" }),
+  query(requisitosQuery, { key: "queryRequirementregisterContents" }),
+  query(tipologiasQuery, { key: "registrationtype" }),
+  query(orgaoLegisladorQuery, { key: "inforegulation" }),
+  query(acervoNacionalQuery, { key: "regulations" }),
+  query(consultaPublicaQuery, { key: "regulationconsultation" }),
+  query(equivalentesQuery, { key: "regulationequivalent" }),
+])
 
 const leader = computed(
   () => data.value?.data.queryHomeregisterContents?.[0]?.data?.leader,
 )
 
-const requisitosData = await query(requisitosQuery, { key: "queryRequirementregisterContents" })
 const requisitosContent = computed(() => {
   return requisitosData.value?.data?.queryRequirementregisterContents?.[0]?.data?.requirement
 })
@@ -33,7 +48,7 @@ const requisitosTitle = computed(() => requisitosContent.value?.title)
 const requisitosDescription = computed(() => requisitosContent.value?.description)
 const requisitosList = computed(() => {
   const rules = requisitosContent.value?.rules || []
-  return rules.map((rule: any, index: number) => ({
+  return rules.map((rule: { title?: string }, index: number) => ({
     num: index + 1,
     text: rule?.title,
   }))
@@ -49,20 +64,27 @@ const downloadInfo = computed(() => {
   }
 })
 
-const tipologiasData = await query(tipologiasQuery, { key: "registrationtype" })
 const tipologias = computed(() => {
   const types = tipologiasData.value?.data?.queryRegistrationtypeContents?.[0]?.data?.types || []
-  return types.map((t: any) => ({ id: t.title, title: t.title }))
+  return types.map((t: { title?: string }) => ({ id: t.title, title: t.title }))
 })
 
-const orgaoLegisladorData = await query(orgaoLegisladorQuery, { key: "inforegulation" })
 const orgaoLegislador = computed(
   () => orgaoLegisladorData.value?.data?.queryInforegulationContents?.[0]?.data,
 )
 
-const acervoNacionalData = await query(acervoNacionalQuery, { key: "regulations" })
 const acervoNacional = computed(() =>
-  (acervoNacionalData.value?.data?.queryRegulationsContents || []).map((item: any) => {
+  (acervoNacionalData.value?.data?.queryRegulationsContents || []).map((item: {
+    id?: string
+    data?: {
+      reference?: string
+      title?: string
+      category?: { flatData?: { title?: string } }[]
+      estado?: string
+      price?: number
+      document?: { url?: string }[]
+    }
+  }) => {
     const d = item.data
     return {
       cmsId: item.id || undefined,
@@ -76,12 +98,18 @@ const acervoNacional = computed(() =>
   }),
 )
 
-const consultaPublicaData = await query(consultaPublicaQuery, { key: "regulationconsultation" })
 const consultaPublicaIntro = computed(
   () => consultaPublicaData.value?.data?.queryRegulationconsultationContents?.[0]?.data,
 )
 const consultaPublicaProjects = computed(() =>
-  (consultaPublicaIntro.value?.projects || []).map((p: any) => ({
+  (consultaPublicaIntro.value?.projects || []).map((p: {
+    reference?: string
+    title?: string
+    category?: { flatData?: { title?: string } }[]
+    description?: string
+    deadline?: string
+    document?: { url?: string }[]
+  }) => ({
     code: p.reference,
     title: p.title,
     areaTecnica: p.category?.[0]?.flatData?.title || "",
@@ -91,12 +119,18 @@ const consultaPublicaProjects = computed(() =>
   })),
 )
 
-const equivalentesData = await query(equivalentesQuery, { key: "regulationequivalent" })
 const equivalentesIntro = computed(
   () => equivalentesData.value?.data?.queryRegulationequivalentContents?.[0]?.data,
 )
 const equivalentes = computed(() =>
-  (equivalentesIntro.value?.equivalents || []).map((e: any) => ({
+  (equivalentesIntro.value?.equivalents || []).map((e: {
+    reference?: string
+    title?: string
+    category?: { flatData?: { title?: string } }[]
+    country?: string
+    organism?: string
+    estado?: string
+  }) => ({
     code: e.reference,
     title: e.title,
     areaTecnica: e.category?.[0]?.flatData?.title || "",

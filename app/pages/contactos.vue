@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import contactosQuery from "@/gql/contactos/index.gql"
-import { stripHtml } from "@/utils/stripHtml"
 
 definePageMeta({
   layout: 'default',
@@ -95,37 +94,37 @@ function handleSubmit() {
               <span><b>Mensagem enviada.</b> Obrigado pelo seu contacto — responderemos por e-mail brevemente.</span>
             </div>
 
-            <form v-else @submit.prevent="handleSubmit" novalidate>
+            <form v-else novalidate @submit.prevent="handleSubmit">
               <div class="field-row">
                 <div class="field">
                   <label for="c-nome">Nome completo <span class="req">*</span></label>
-                  <input type="text" id="c-nome" name="nome" required placeholder="O seu nome" v-model="formData.nome" />
+                  <input id="c-nome" v-model="formData.nome" type="text" name="nome" required placeholder="O seu nome" />
                 </div>
                 <div class="field">
                   <label for="c-entidade">Entidade / Empresa</label>
-                  <input type="text" id="c-entidade" name="entidade" placeholder="Opcional" v-model="formData.entidade" />
+                  <input id="c-entidade" v-model="formData.entidade" type="text" name="entidade" placeholder="Opcional" />
                 </div>
               </div>
               <div class="field-row">
                 <div class="field">
                   <label for="c-email">E-mail <span class="req">*</span></label>
-                  <input type="email" id="c-email" name="email" required placeholder="nome@exemplo.ao" v-model="formData.email" />
+                  <input id="c-email" v-model="formData.email" type="email" name="email" required placeholder="nome@exemplo.ao" />
                 </div>
                 <div class="field">
                   <label for="c-tel">Telefone</label>
-                  <input type="tel" id="c-tel" name="telefone" placeholder="+244 9XX XXX XXX" v-model="formData.telefone" />
+                  <input id="c-tel" v-model="formData.telefone" type="tel" name="telefone" placeholder="+244 9XX XXX XXX" />
                 </div>
               </div>
               <div class="field">
                 <label for="c-assunto">Assunto <span class="req">*</span></label>
-                <select id="c-assunto" name="assunto" required v-model="formData.assunto">
+                <select id="c-assunto" v-model="formData.assunto" name="assunto" required>
                   <option value="">Seleccione um assunto…</option>
                   <option v-for="option in subjectOptions" :key="option">{{ option }}</option>
                 </select>
               </div>
               <div class="field">
                 <label for="c-msg">Mensagem <span class="req">*</span></label>
-                <textarea id="c-msg" name="mensagem" required placeholder="Descreva o seu pedido…" style="min-height:130px;" v-model="formData.mensagem"></textarea>
+                <textarea id="c-msg" v-model="formData.mensagem" name="mensagem" required placeholder="Descreva o seu pedido…" style="min-height:130px;"></textarea>
               </div>
               <div class="modal__foot" style="justify-content:flex-start;">
                 <button type="submit" class="btn btn--primary">
@@ -178,7 +177,7 @@ function handleSubmit() {
             <h2 style="font-size:clamp(24px,3vw,34px);">Contactos por área</h2>
           </div>
           <div class="ct-dept">
-            <div class="dept" v-for="dept in departments" :key="dept.name">
+            <div v-for="dept in departments" :key="dept.name" class="dept">
               <h4>{{ dept.name }}</h4>
               <div class="role">{{ dept.area }}</div>
               <p><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"></rect><path d="m3 7 9 6 9-6"></path></svg><a :href="`mailto:${dept.email}`">{{ dept.email }}</a></p>

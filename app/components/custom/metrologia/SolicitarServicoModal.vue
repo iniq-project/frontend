@@ -196,7 +196,7 @@ const handleClose = () => {
           <h3 id="solicitarModalTitle">Solicitar Serviço</h3>
           <div class="modal-ref">{{ service?.title }}</div>
         </div>
-        <button class="modal-close" @click="handleClose" aria-label="Fechar">
+        <button class="modal-close" aria-label="Fechar" @click="handleClose">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
             <path d="M6 6l12 12M18 6 6 18"></path>
           </svg>
@@ -204,17 +204,17 @@ const handleClose = () => {
       </div>
       <div class="modal-body">
         <div v-if="!formSubmitted" class="form-wrap">
-          <form @submit.prevent="handleSubmit" novalidate>
+          <form novalidate @submit.prevent="handleSubmit">
             <h4 class="section-title">Dados do instrumento</h4>
             <div class="field-row">
               <div class="field">
                 <label for="m-tipo">Tipo de instrumento <span class="req">*</span></label>
                 <input
-                  type="text"
                   id="m-tipo"
+                  v-model="formData.tipoInstrumento"
+                  type="text"
                   name="tipoInstrumento"
                   placeholder="Ex.: Balança, bomba de combustível…"
-                  v-model="formData.tipoInstrumento"
                   :class="{ error: errors.tipoInstrumento }"
                 />
                 <span v-if="errors.tipoInstrumento" class="error-text">Por favor, informe o tipo de instrumento</span>
@@ -222,11 +222,11 @@ const handleClose = () => {
               <div class="field">
                 <label for="m-marca">Marca <span class="req">*</span></label>
                 <input
-                  type="text"
                   id="m-marca"
+                  v-model="formData.marca"
+                  type="text"
                   name="marca"
                   placeholder="Ex.: Mettler Toledo, Endress+Hauser…"
-                  v-model="formData.marca"
                   :class="{ error: errors.marca }"
                 />
                 <span v-if="errors.marca" class="error-text">Por favor, informe a marca</span>
@@ -236,11 +236,11 @@ const handleClose = () => {
               <div class="field">
                 <label for="m-modelo">Modelo <span class="req">*</span></label>
                 <input
-                  type="text"
                   id="m-modelo"
+                  v-model="formData.modelo"
+                  type="text"
                   name="modelo"
                   placeholder="Ex.: XPR205, PROline Promag W400…"
-                  v-model="formData.modelo"
                   :class="{ error: errors.modelo }"
                 />
                 <span v-if="errors.modelo" class="error-text">Por favor, informe o modelo</span>
@@ -248,11 +248,11 @@ const handleClose = () => {
               <div class="field">
                 <label for="m-serie">Número de série <span class="req">*</span></label>
                 <input
-                  type="text"
                   id="m-serie"
+                  v-model="formData.numeroSerie"
+                  type="text"
                   name="numeroSerie"
                   placeholder="Número de série do instrumento"
-                  v-model="formData.numeroSerie"
                   :class="{ error: errors.numeroSerie }"
                 />
                 <span v-if="errors.numeroSerie" class="error-text">Por favor, informe o número de série</span>
@@ -261,12 +261,12 @@ const handleClose = () => {
             <div class="field">
               <label for="m-qtd">Quantidade de instrumentos a certificar <span class="req">*</span></label>
               <input
+                id="m-qtd"
+                v-model="formData.quantidade"
                 type="number"
                 min="1"
-                id="m-qtd"
                 name="quantidade"
                 placeholder="Ex.: 1"
-                v-model="formData.quantidade"
                 :class="{ error: errors.quantidade }"
               />
               <span v-if="errors.quantidade" class="error-text">Por favor, informe a quantidade</span>
@@ -276,11 +276,11 @@ const handleClose = () => {
             <div class="field">
               <label for="m-nome">Nome do requerente <span class="req">*</span></label>
               <input
-                type="text"
                 id="m-nome"
+                v-model="formData.nomeRequerente"
+                type="text"
                 name="nomeRequerente"
                 placeholder="O seu nome completo"
-                v-model="formData.nomeRequerente"
                 :class="{ error: errors.nomeRequerente }"
               />
               <span v-if="errors.nomeRequerente" class="error-text">Por favor, informe o nome do requerente</span>
@@ -289,11 +289,11 @@ const handleClose = () => {
               <div class="field">
                 <label for="m-nif">NIF <span class="req">*</span></label>
                 <input
-                  type="text"
                   id="m-nif"
+                  v-model="formData.nif"
+                  type="text"
                   name="nif"
                   placeholder="Ex.: 5417123456"
-                  v-model="formData.nif"
                   :class="{ error: errors.nif }"
                 />
                 <span v-if="errors.nif" class="error-text">Por favor, informe o NIF</span>
@@ -301,11 +301,11 @@ const handleClose = () => {
               <div class="field">
                 <label for="m-email">E-mail <span class="req">*</span></label>
                 <input
-                  type="email"
                   id="m-email"
+                  v-model="formData.email"
+                  type="email"
                   name="email"
                   placeholder="nome@exemplo.ao"
-                  v-model="formData.email"
                   :class="{ error: errors.email }"
                 />
                 <span v-if="errors.email" class="error-text">Por favor, informe um e-mail válido</span>
@@ -314,11 +314,11 @@ const handleClose = () => {
             <div class="field">
               <label for="m-tel">Número de Telefone <span class="req">*</span></label>
               <input
-                type="tel"
                 id="m-tel"
+                v-model="formData.telefone"
+                type="tel"
                 name="telefone"
                 placeholder="+244 9XX XXX XXX"
-                v-model="formData.telefone"
                 :class="{ error: errors.telefone }"
               />
               <span v-if="errors.telefone" class="error-text">Por favor, informe o número de telefone</span>
@@ -329,10 +329,10 @@ const handleClose = () => {
               >
               <textarea
                 id="m-apresentacao"
+                v-model="formData.apresentacao"
                 name="apresentacao"
                 rows="4"
                 placeholder="Apresente-se brevemente e indique a quantidade de instrumentos a certificar."
-                v-model="formData.apresentacao"
                 :class="{ error: errors.apresentacao }"
               ></textarea>
               <span v-if="errors.apresentacao" class="error-text">Por favor, preencha esta informação</span>
@@ -343,8 +343,8 @@ const handleClose = () => {
               <label for="m-oficio">Carta ao Director-Geral <span class="req">*</span></label>
               <div class="file-input-wrapper" :class="{ 'has-error': errors.oficio }">
                 <input
-                  type="file"
                   id="m-oficio"
+                  type="file"
                   name="oficio"
                   accept=".pdf,application/pdf"
                   @change="handleFileChange($event, 'oficio')"
@@ -359,8 +359,8 @@ const handleClose = () => {
               <label for="m-nifDoc">NIF (documento) <span class="req">*</span></label>
               <div class="file-input-wrapper" :class="{ 'has-error': errors.nifDoc }">
                 <input
-                  type="file"
                   id="m-nifDoc"
+                  type="file"
                   name="nifDoc"
                   accept=".pdf,image/*"
                   @change="handleFileChange($event, 'nifDoc')"
@@ -375,8 +375,8 @@ const handleClose = () => {
               <label for="m-alvara">Alvará Comercial <span class="req">*</span></label>
               <div class="file-input-wrapper" :class="{ 'has-error': errors.alvara }">
                 <input
-                  type="file"
                   id="m-alvara"
+                  type="file"
                   name="alvara"
                   accept=".pdf,image/*"
                   @change="handleFileChange($event, 'alvara')"
@@ -391,8 +391,8 @@ const handleClose = () => {
               <label for="m-ficha">Ficha Técnica da Balança <span class="req">*</span></label>
               <div class="file-input-wrapper" :class="{ 'has-error': errors.fichaTecnica }">
                 <input
-                  type="file"
                   id="m-ficha"
+                  type="file"
                   name="fichaTecnica"
                   accept=".pdf,image/*"
                   @change="handleFileChange($event, 'fichaTecnica')"

@@ -15,33 +15,42 @@ useHead({
 })
 
 const { query } = useSquidex()
-const data = await query(home, { key: "normalization" })
+const [
+  data,
+  vendaNormasData,
+  catalogoNormasData,
+  normasData,
+  comissaoTecnicaData,
+  comissaoTecnicaIntroData,
+  consultasPublicasData,
+] = await Promise.all([
+  query(home, { key: "normalization" }),
+  query(vendaNormasQuery, { key: "salesrules" }),
+  query(catalogoNormasQuery, { key: "nationalcatalog" }),
+  query(normasQuery, { key: "standard" }),
+  query(comissaoTecnicaQuery, { key: "technicalcommittee" }),
+  query(comissaoTecnicaIntroQuery, { key: "technicalcommitteeintro" }),
+  query(consultasPublicasQuery, { key: "publicconsultation" }),
+])
 
 const leader = computed(
   () => data.value?.data.queryHomenormalizationContents?.[0]?.data?.leader,
 )
 
-const vendaNormasData = await query(vendaNormasQuery, { key: "salesrules" })
 const salesrulesIntro = computed(
   () => vendaNormasData.value?.data?.querySalesrulesContents?.[0]?.data,
 )
 
-const catalogoNormasData = await query(catalogoNormasQuery, { key: "nationalcatalog" })
 const catalogoNormasIntro = computed(
   () => catalogoNormasData.value?.data?.queryNationalcatalogContents?.[0]?.data,
 )
 
-const normasData = await query(normasQuery, { key: "standard" })
 const rawNormas = computed(() => normasData.value?.data?.queryStandardContents || [])
 
-const comissaoTecnicaData = await query(comissaoTecnicaQuery, { key: "technicalcommittee" })
 const rawComissoes = computed(
   () => comissaoTecnicaData.value?.data?.queryTechnicalcommitteeContents || [],
 )
 
-const comissaoTecnicaIntroData = await query(comissaoTecnicaIntroQuery, {
-  key: "technicalcommitteeintro",
-})
 const comissaoTecnicaIntro = computed(
   () => comissaoTecnicaIntroData.value?.data?.queryTechnicalcommitteeintroContents?.[0]?.data,
 )
@@ -86,7 +95,6 @@ const comissoesTecnicas = computed(() =>
   })),
 )
 
-const consultasPublicasData = await query(consultasPublicasQuery, { key: "publicconsultation" })
 const consultaPublicaIntro = computed(
   () => consultasPublicasData.value?.data?.queryPublicconsultationContents?.[0]?.data,
 )
@@ -151,33 +159,44 @@ const backToComissoes = () => {
   seedSearchTerm.value = ""
 }
 </script>
+
 <template>
+  <div class="single-root">
   <div class="combined-card">
     <template v-if="!isSubItemSelected">
       <CustomHero :data="leader" />
     </template>
 
-    <CustomNormalizacaoComissaoTecnica v-if="activeTab === 'comissao-tecnica'" :comissoes="comissoesTecnicas"
+    <CustomNormalizacaoComissaoTecnica
+v-if="activeTab === 'comissao-tecnica'" :comissoes="comissoesTecnicas"
       :normas="normas" :title="comissaoTecnicaIntro?.title" :description="comissaoTecnicaIntro?.description"
       :informacoes-gerais="comissaoTecnicaIntro?.informacoesGerais" @view-norma="handleViewNorma" />
 
-    <CustomNormalizacaoVendaNormas v-if="activeTab === 'venda-normas'" :normas="normasEmVigor"
+    <CustomNormalizacaoVendaNormas
+v-if="activeTab === 'venda-normas'" :normas="normasEmVigor"
       :seed-search="seedSearchTerm" :title="salesrulesIntro?.title"
       :description="stripHtml(salesrulesIntro?.description)" @open-modal="openModal"
       @back-to-comissoes="backToComissoes" />
 
-    <CustomNormalizacaoConsultaPublica v-if="activeTab === 'consulta-publica'" :projects="projetosConsulta"
+    <CustomNormalizacaoConsultaPublica
+v-if="activeTab === 'consulta-publica'" :projects="projetosConsulta"
       :title="consultaPublicaIntro?.title" :description="stripHtml(consultaPublicaIntro?.description)" />
 
-    <CustomNormalizacaoCatalogoNormas v-if="activeTab === 'catalogo-livro'" :normas="normas"
+    <CustomNormalizacaoCatalogoNormas
+v-if="activeTab === 'catalogo-livro'" :normas="normas"
       :seed-search="seedSearchTerm" :title="catalogoNormasIntro?.title"
       :description="stripHtml(catalogoNormasIntro?.description)" @back-to-comissoes="backToComissoes" />
   </div>
 
   <CustomNormalizacaoPurchaseModal :open="modalMode === 'venda'" :norma="modalItem" @close="closeModal" />
+  </div>
 </template>
 
 <style scoped>
+.single-root {
+  display: contents;
+}
+
 .combined-card {
   background: white;
   border-radius: 12px;

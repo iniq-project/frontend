@@ -17,19 +17,54 @@ useHead({
 })
 
 const { query } = useSquidex()
-const data = await query(home, { key: "metrologia-home" })
+const [
+  data,
+  servicosData,
+  legalControlData,
+  internationalCooperationData,
+  legalFeeData,
+] = await Promise.all([
+  query(home, { key: "metrologia-home" }),
+  query(servicosQuery, { key: "servicesmetrology" }),
+  query(legalControlQuery, { key: "legalcontrol" }),
+  query(internationalCooperationQuery, { key: "internationalcooperation" }),
+  query(legalFeeQuery, { key: "legalfee" }),
+])
 
 const leader = computed(
   () => data.value?.data.queryHomemetrologyContents?.[0]?.data?.leader,
 )
 
-const servicosData = await query(servicosQuery, { key: "servicesmetrology" })
 const servicosIntro = computed(
   () => servicosData.value?.data?.queryServicesmetrologyContents?.[0]?.data,
 )
+interface ServicoCms {
+  title?: string
+  description?: string
+  fee?: number
+  requiresFichaTecnica?: boolean
+  requiresNif?: boolean
+  requiresAlvara?: boolean
+}
+
+interface OperacaoCms {
+  title?: string
+  description?: string
+  servicoTitle?: string
+}
+
+interface CooperacaoCms {
+  acronym?: string
+  fullName?: string
+  participationType?: string
+  category?: string
+  link?: string
+  iniqRelation?: string
+}
+
 const servicosMetrologia = computed(() =>
   (servicosIntro.value?.services || []).map(
-    (s: any) => ({
+    (s: ServicoCms) => ({
       id: slugify(s.title),
       title: s.title,
       description: stripHtml(s.description),
@@ -41,12 +76,11 @@ const servicosMetrologia = computed(() =>
   ),
 )
 
-const legalControlData = await query(legalControlQuery, { key: "legalcontrol" })
 const legalControlIntro = computed(
   () => legalControlData.value?.data?.queryLegalcontrolContents?.[0]?.data,
 )
 const operacoesControloLegal = computed(() =>
-  (legalControlIntro.value?.operations || []).map((o: any) => ({
+  (legalControlIntro.value?.operations || []).map((o: OperacaoCms) => ({
     id: slugify(o.title),
     title: o.title,
     description: stripHtml(o.description),
@@ -54,14 +88,11 @@ const operacoesControloLegal = computed(() =>
   })),
 )
 
-const internationalCooperationData = await query(internationalCooperationQuery, {
-  key: "internationalcooperation",
-})
 const internationalCooperationIntro = computed(
   () => internationalCooperationData.value?.data?.queryInternationalcooperationContents?.[0]?.data,
 )
 const cooperacoesInternacionais = computed(() =>
-  (internationalCooperationIntro.value?.cooperations || []).map((c: any) => ({
+  (internationalCooperationIntro.value?.cooperations || []).map((c: CooperacaoCms) => ({
     id: slugify(c.acronym),
     nomeCompleto: c.fullName,
     sigla: c.acronym,
@@ -72,7 +103,6 @@ const cooperacoesInternacionais = computed(() =>
   })),
 )
 
-const legalFeeData = await query(legalFeeQuery, { key: "legalfee" })
 const leiTaxasDownloadInfo = computed(() => {
   const d = legalFeeData.value?.data?.queryLegalfeeContents?.[0]?.data
   if (!d) return { title: "", description: "", buttonText: "", documentUrl: "" }
@@ -116,6 +146,7 @@ function closeSolicitarModal() {
 </script>
 
 <template>
+  <div class="single-root">
   <div class="combined-card">
     <template v-if="!isSubItemSelected">
       <CustomHero :data="leader" />
@@ -151,9 +182,14 @@ function closeSolicitarModal() {
     :service="modalService"
     @close="closeSolicitarModal"
   />
+  </div>
 </template>
 
 <style scoped>
+.single-root {
+  display: contents;
+}
+
 .combined-card {
   background: white;
   border-radius: 12px;

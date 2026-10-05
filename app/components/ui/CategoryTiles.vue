@@ -25,14 +25,14 @@ const filteredGroups = computed(() => {
 
 <template>
   <div class="category-browser">
-    <div class="category-search" v-if="groups.length > 4">
+    <div v-if="groups.length > 4" class="category-search">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
         <circle cx="11" cy="11" r="7"></circle>
         <path d="m21 21-4.3-4.3"></path>
       </svg>
       <input
-        type="text"
         v-model="searchTerm"
+        type="text"
         placeholder="Pesquisar categoria…"
         aria-label="Pesquisar categoria"
       />
@@ -44,10 +44,10 @@ const filteredGroups = computed(() => {
 
     <div class="category-tiles">
       <button
-        type="button"
-        class="category-tile"
         v-for="group in filteredGroups"
         :key="group.name"
+        type="button"
+        class="category-tile"
         @click="emit('select', group.name)"
       >
         <span class="category-tile-icon">

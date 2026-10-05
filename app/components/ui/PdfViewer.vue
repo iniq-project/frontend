@@ -96,20 +96,20 @@ watch(() => props.src, renderPdf)
         type="button"
         class="pdf-zoom-btn"
         :disabled="zoom <= ZOOM_MIN"
-        @click="zoomOut"
         aria-label="Diminuir zoom"
+        @click="zoomOut"
       >
         −
       </button>
-      <button type="button" class="pdf-zoom-level" @click="zoomReset" title="Repor zoom">
+      <button type="button" class="pdf-zoom-level" title="Repor zoom" @click="zoomReset">
         {{ Math.round(zoom * 100) }}%
       </button>
       <button
         type="button"
         class="pdf-zoom-btn"
         :disabled="zoom >= ZOOM_MAX"
-        @click="zoomIn"
         aria-label="Aumentar zoom"
+        @click="zoomIn"
       >
         +
       </button>
