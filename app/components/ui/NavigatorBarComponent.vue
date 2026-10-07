@@ -68,6 +68,14 @@ const activeService = computed(() =>
   services.find((s) => s.id === activeServiceId.value),
 )
 
+const activeSubItems = computed(() => activeService.value?.subItems ?? [])
+
+function onSelectSubItem(subItem: SubItem) {
+  const service = activeService.value
+  if (!service) return
+  selectSubItem(service, subItem)
+}
+
 const pathToId: Record<string, string> = {
   "/normalizacao": "normalizacao",
   "/metrologia": "metrologia",
@@ -81,8 +89,9 @@ const pathToId: Record<string, string> = {
 }
 
 onMounted(() => {
-  if (pathToId[route.path]) {
-    activeServiceId.value = pathToId[route.path]
+  const serviceId = pathToId[route.path]
+  if (serviceId) {
+    activeServiceId.value = serviceId
     showSubItems.value = true
     activeSubItemId.value = null
   }
@@ -97,7 +106,7 @@ watch(
       showSubItems.value = false
       emit("select-service", null)
     } else if (pathToId[newPath]) {
-      activeServiceId.value = pathToId[newPath]
+      activeServiceId.value = pathToId[newPath] ?? null
       showSubItems.value = true
       activeSubItemId.value = null
     }
@@ -129,11 +138,11 @@ watch(
         <button class="back-to-services" @click="goBackToServices">
           ← Voltar à Página Inicial
         </button>
-        <div v-if="activeService.subItems?.length" class="subitems-list">
-          <button v-for="subItem in activeService.subItems" :key="subItem.id" class="subitem" :class="{
+        <div v-if="activeSubItems.length" class="subitems-list">
+          <button v-for="subItem in activeSubItems" :key="subItem.id" class="subitem" :class="{
             active: activeSubItemId === subItem.id,
             disabled: subItem.disabled,
-          }" @click="selectSubItem(activeService, subItem)">
+          }" @click="onSelectSubItem(subItem)">
             <span class="n">{{ subItem.number }}</span>
             <span>{{ subItem.title }}</span>
           </button>

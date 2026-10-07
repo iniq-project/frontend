@@ -27,7 +27,7 @@ export const useSquidex = () => {
         body: { instance, query: queryString, variables },
       })
     )
-    return data
+    return computed(() => (data.value ?? null) as T | null)
   }
 
   return { query }

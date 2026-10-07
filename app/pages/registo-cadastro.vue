@@ -88,12 +88,12 @@ const acervoNacional = computed(() =>
     const d = item.data
     return {
       cmsId: item.id || undefined,
-      code: d.reference,
-      title: d.title,
-      areaTecnica: d.category?.[0]?.flatData?.title || "",
-      estado: (d.estado || "Em vigor").toLowerCase(),
-      price: d.price || 0,
-      documentUrl: d.document?.[0]?.url || "",
+      code: d?.reference,
+      title: d?.title,
+      areaTecnica: d?.category?.[0]?.flatData?.title || "",
+      estado: (d?.estado || "Em vigor").toLowerCase(),
+      price: d?.price || 0,
+      documentUrl: d?.document?.[0]?.url || "",
     }
   }),
 )

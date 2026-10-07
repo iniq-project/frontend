@@ -93,8 +93,9 @@ watch(step, async (newStep) => {
 
 function handleFileChange(event: Event, docType: DocumentsType) {
   const target = event.target as HTMLInputElement
-  if (target.files && target.files.length > 0) {
-    formData.value.files[docType] = target.files[0]
+  const file = target.files?.[0]
+  if (file) {
+    formData.value.files[docType] = file
     if (errors.value[docType]) {
       errors.value[docType] = false
     }
