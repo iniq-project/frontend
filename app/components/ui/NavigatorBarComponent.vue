@@ -126,7 +126,8 @@ watch(
     <h2>{{ showSubItems ? "Processos" : "Serviços e Processos" }}</h2>
     <nav class="services-list">
       <template v-if="!showSubItems">
-        <button v-for="service in services" :key="service.id" class="service-item" :class="{
+        <button
+v-for="service in services" :key="service.id" class="service-item" :class="{
           active: activeServiceId === service.id,
           disabled: service.disabled,
         }" @click="selectService(service)">
@@ -139,7 +140,8 @@ watch(
           ← Voltar à Página Inicial
         </button>
         <div v-if="activeSubItems.length" class="subitems-list">
-          <button v-for="subItem in activeSubItems" :key="subItem.id" class="subitem" :class="{
+          <button
+v-for="subItem in activeSubItems" :key="subItem.id" class="subitem" :class="{
             active: activeSubItemId === subItem.id,
             disabled: subItem.disabled,
           }" @click="onSelectSubItem(subItem)">
