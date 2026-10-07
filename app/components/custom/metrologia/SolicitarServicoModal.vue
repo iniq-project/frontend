@@ -130,7 +130,7 @@ const validateForm = () => {
     newErrors[key] =
       errors.value[key] === FILE_TOO_LARGE_MESSAGE ? FILE_TOO_LARGE_MESSAGE : message
   }
-  requiredFileMessage("oficio", "Por favor, anexe a carta ao Director-Geral (PDF)")
+  requiredFileMessage("oficio", "Por favor, anexe a carta (PDF)")
   requiredFileMessage("nifDoc", "Por favor, anexe o documento do NIF")
   requiredFileMessage("alvara", "Por favor, anexe o Alvará Comercial")
   if (props.service?.requiresFichaTecnica) {
@@ -369,7 +369,7 @@ const handleClose = () => {
 
             <h4 v-if="hasAnyDocument" class="section-title">Documentos obrigatórios</h4>
             <div class="field">
-              <label for="m-oficio">Carta ao Director-Geral <span class="req">*</span></label>
+              <label for="m-oficio">Carta <span class="req">*</span></label>
               <div class="file-input-wrapper" :class="{ 'has-error': errors.oficio }">
                 <input
                   id="m-oficio"
@@ -462,9 +462,9 @@ const handleClose = () => {
               <path d="M20 6 9 17l-5-5"></path>
             </svg>
           </div>
-          <h3>Pedido enviado ao Diretor-Geral</h3>
+          <h3>Pedido enviado</h3>
           <p>
-            O pedido de {{ service?.title }} foi registado e segue para aprovação do Diretor-Geral.
+            O pedido de {{ service?.title }} foi registado e segue para aprovação.
             Após a aprovação, receberá por e-mail a referência RUPE para pagamento da taxa de
             {{ formatPrice(service?.fee) }} AOA.
           </p>
