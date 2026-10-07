@@ -7,7 +7,7 @@ definePageMeta({
 })
 
 useHead({
-  title: "INIQ » Formação e Certificação de Especialistas para Qualidade",
+  title: "INIQ » Eventos",
 })
 
 const { query } = useSquidex()

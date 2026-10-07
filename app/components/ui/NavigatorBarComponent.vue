@@ -45,8 +45,10 @@ const selectService = (service: Service) => {
 
 const goBackToServices = () => {
   showSubItems.value = false
+  activeServiceId.value = null
   activeSubItemId.value = null
   emit("select-service", null)
+  router.push("/")
 }
 
 const selectSubItem = (service: Service, subItem: SubItem) => {
@@ -66,17 +68,19 @@ const activeService = computed(() =>
   services.find((s) => s.id === activeServiceId.value),
 )
 
+const pathToId: Record<string, string> = {
+  "/normalizacao": "normalizacao",
+  "/metrologia": "metrologia",
+  "/registo-cadastro": "registo-cadastro",
+  "/importacao": "importacao",
+  "/formacao": "formacao",
+  "/rotulos": "rotulos",
+  "/premio-qualidade": "premio-qualidade",
+  "/eventos": "eventos",
+  "/forum": "forum",
+}
+
 onMounted(() => {
-  const pathToId: Record<string, string> = {
-    "/normas-tecnicas": "normas-tecnicas",
-    "/metrologia": "metrologia",
-    "/importacao": "importacao",
-    "/formacao": "formacao",
-    "/rotulos": "rotulos",
-    "/premio-qualidade": "premio-qualidade",
-    "/certificacao": "certificacao",
-    "/registo-cadastro": "registo-cadastro",
-  }
   if (pathToId[route.path]) {
     activeServiceId.value = pathToId[route.path]
     showSubItems.value = true
@@ -92,24 +96,10 @@ watch(
       activeSubItemId.value = null
       showSubItems.value = false
       emit("select-service", null)
-    } else {
-      const pathToId: Record<string, string> = {
-        "/normas-tecnicas": "normas-tecnicas",
-        "/metrologia": "metrologia",
-        "/acreditacao": "acreditacao",
-        "/importacao": "importacao",
-        "/formacao": "formacao",
-        "/rotulos": "rotulos",
-        "/regulamentos": "regulamentos",
-        "/premio-qualidade": "premio-qualidade",
-        "/certificacao": "certificacao",
-        "/registo-cadastro": "registo-cadastro",
-      }
-      if (pathToId[newPath]) {
-        activeServiceId.value = pathToId[newPath]
-        showSubItems.value = true
-        activeSubItemId.value = null
-      }
+    } else if (pathToId[newPath]) {
+      activeServiceId.value = pathToId[newPath]
+      showSubItems.value = true
+      activeSubItemId.value = null
     }
   },
 )
@@ -118,55 +108,32 @@ watch(
 <template>
   <aside class="sidebar-right">
     <button class="drawer-close" @click="emit('close')">
-      <svg
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="2"
-        stroke-linecap="round"
-      >
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
         <path d="M18 6L6 18M6 6l12 12" />
       </svg>
     </button>
-    <NuxtLink
-      v-if="!isHomePage && !showSubItems"
-      to="/"
-      class="back-btn"
-      @click="goHome"
-      >← Voltar à Página Inicial
+    <NuxtLink v-if="!isHomePage && !showSubItems" to="/" class="back-btn" @click="goHome">← Voltar à Página Inicial
     </NuxtLink>
     <h2>{{ showSubItems ? "Processos" : "Serviços e Processos" }}</h2>
     <nav class="services-list">
       <template v-if="!showSubItems">
-        <button
-          v-for="service in services"
-          :key="service.id"
-          class="service-item"
-          :class="{
-            active: activeServiceId === service.id,
-            disabled: service.disabled,
-          }"
-          @click="selectService(service)"
-        >
+        <button v-for="service in services" :key="service.id" class="service-item" :class="{
+          active: activeServiceId === service.id,
+          disabled: service.disabled,
+        }" @click="selectService(service)">
           <span class="n">{{ service.number }}</span>
           <span>{{ menuTitle(service) }}</span>
         </button>
       </template>
       <template v-else>
         <button class="back-to-services" @click="goBackToServices">
-          ← Voltar para serviços
+          ← Voltar à Página Inicial
         </button>
         <div v-if="activeService.subItems?.length" class="subitems-list">
-          <button
-            v-for="subItem in activeService.subItems"
-            :key="subItem.id"
-            class="subitem"
-            :class="{
-              active: activeSubItemId === subItem.id,
-              disabled: subItem.disabled,
-            }"
-            @click="selectSubItem(activeService, subItem)"
-          >
+          <button v-for="subItem in activeService.subItems" :key="subItem.id" class="subitem" :class="{
+            active: activeSubItemId === subItem.id,
+            disabled: subItem.disabled,
+          }" @click="selectSubItem(activeService, subItem)">
             <span class="n">{{ subItem.number }}</span>
             <span>{{ subItem.title }}</span>
           </button>
@@ -174,12 +141,7 @@ watch(
       </template>
     </nav>
     <div class="area-reservada-wrapper">
-      <a
-        :href="areaReservada.link"
-        target="_blank"
-        rel="noopener noreferrer"
-        class="area-reservada"
-      >
+      <a :href="areaReservada.link" target="_blank" rel="noopener noreferrer" class="area-reservada">
         {{ areaReservada.label }}
       </a>
     </div>
