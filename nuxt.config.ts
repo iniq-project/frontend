@@ -67,7 +67,6 @@ export default defineNuxtConfig({
     }
   },
 
-  // @ts-expect-error apollo client config is provided by @nuxtjs/apollo
   apollo: {
     clients: {
       default: {

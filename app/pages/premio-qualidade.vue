@@ -67,8 +67,8 @@ const editions = computed(() => {
   const raw = data.value?.data?.queryPremioEditionsContents?.[0]?.data?.editions
   return raw || mockEditions
 })
-const currentEdition = computed(() => editions.value.find(e => e.isOpen) || editions.value[0])
-const pastEditions = computed(() => editions.value.filter(e => !e.isOpen).sort((a, b) => b.year - a.year))
+const currentEdition = computed(() => editions.value.find((e: { isOpen?: boolean }) => e.isOpen) || editions.value[0])
+const pastEditions = computed(() => editions.value.filter((e: { isOpen?: boolean }) => !e.isOpen).sort((a: { year: number }, b: { year: number }) => b.year - a.year))
 
 const activeSubItemId = inject('activeSubItemId')
 

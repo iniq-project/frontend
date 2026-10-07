@@ -7,10 +7,18 @@ export default defineEventHandler(async (event) => {
 
   const instances = getSquidexInstances(config)
   const selected = instances[instance as keyof typeof instances] ?? instances.squidex
+  const { url, appName, clientId, clientSecret } = selected
 
-  const token = await getSquidexToken(selected.url, selected.clientId, selected.clientSecret)
+  if (!url || !appName || !clientId || !clientSecret) {
+    throw createError({
+      statusCode: 500,
+      statusMessage: 'Squidex configuration is incomplete',
+    })
+  }
 
-  return $fetch(`${selected.url}/api/content/${selected.appName}/graphql`, {
+  const token = await getSquidexToken(url, clientId, clientSecret)
+
+  return $fetch(`${url}/api/content/${appName}/graphql`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

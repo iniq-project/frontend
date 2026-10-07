@@ -7,7 +7,7 @@ definePageMeta({
 })
 
 useHead({
-  title: "INIQ » Formação e Certificação de Especialistas para Qualidade",
+  title: "INIQ » FIQ-CPLP / Fórum da I.E da Qualidade da CPLP",
 })
 
 const { query } = useSquidex()

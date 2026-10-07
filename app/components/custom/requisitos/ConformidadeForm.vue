@@ -44,10 +44,13 @@ watch(() => props.show, async (newValue) => {
   }
 });
 
-function handleFileChange(event: Event, docKey: keyof typeof formData) {
+type DocField = "doc1" | "doc2" | "doc3" | "doc4" | "doc5" | "doc6" | "doc7";
+
+function handleFileChange(event: Event, docKey: DocField) {
   const target = event.target as HTMLInputElement;
-  if (target.files && target.files.length > 0) {
-    formData.value[docKey] = target.files[0];
+  const file = target.files?.[0];
+  if (file) {
+    formData.value[docKey] = file;
     // Clear error for this field
     if (errors.value[docKey]) {
       errors.value[docKey] = false;

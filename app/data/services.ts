@@ -1,4 +1,3 @@
-
 export interface Service {
   id: string
   number: string
@@ -30,10 +29,22 @@ export const services: Service[] = [
     number: "01",
     title: "Normalização",
     subItems: [
-      { id: "comissao-tecnica", number: "01", title: "Gestão de Comissões Técnicas" },
+      {
+        id: "comissao-tecnica",
+        number: "01",
+        title: "Gestão de Comissões Técnicas",
+      },
       { id: "venda-normas", number: "02", title: "Venda de Normas" },
-      { id: "consulta-publica", number: "03", title: "Projectos de Normas em Consulta Pública" },
-      { id: "catalogo-livro", number: "04", title: "Catálogo Nacional de Normas" }
+      {
+        id: "consulta-publica",
+        number: "03",
+        title: "Projectos de Normas em Consulta Pública",
+      },
+      {
+        id: "catalogo-livro",
+        number: "04",
+        title: "Catálogo Nacional de Normas",
+      },
     ],
   },
   {
@@ -42,7 +53,11 @@ export const services: Service[] = [
     title: "Metrologia",
     subItems: [
       { id: "metrologia-legal", number: "01", title: "Metrologia Legal" },
-      { id: "laboratorio-nacional-metrologia", number: "02", title: "Laboratório Nacional de Metrologia" },
+      {
+        id: "laboratorio-nacional-metrologia",
+        number: "02",
+        title: "Laboratório Nacional de Metrologia",
+      },
       { id: "cooperacoes", number: "03", title: "Cooperações" },
     ],
   },
@@ -54,34 +69,46 @@ export const services: Service[] = [
   //     { id: "solicitar-servico", number: "01", title: "Ver Requisitos" }
   //   ]
   // },
-    {
+  {
     id: "registo-cadastro",
     number: "03",
     title: "Acreditação, Registro e Cadastro, Regulamentos Técnicos",
     subItems: [
       { id: "acreditacao", number: "01", title: "Acreditação" },
-      { id: "regulamentos-tecnicos", number: "02", title: "Regulamentos Técnicos" },
+      {
+        id: "regulamentos-tecnicos",
+        number: "02",
+        title: "Regulamentos Técnicos",
+      },
       { id: "registro-cadastro", number: "03", title: "Registro e Cadastro" },
       { id: "ponto-focal-sadcas", number: "04", title: "Ponto Focal SADCAS" },
-    ]
+    ],
   },
-    {
+  {
     id: "importacao",
     number: "04",
-    disabled: true,
     title: "Validação, Verificação e Certificação de Produtos e Serviços",
     subItems: [
-      { id: "solicitar-servico", number: "01", title: "Solicitar Serviço" }
-    ]
+      {
+        id: "solicitar-servico",
+        number: "01",
+        title: "Solicitar Serviço",
+        disabled: true,
+      },
+    ],
   },
-{
+  {
     id: "formacao",
     number: "05",
-    disabled: true,
     title: "Formação e Certificação de Especialistas para Qualidade",
     subItems: [
-      { id: "solicitar-servico", number: "01", title: "Solicitar Curso" }
-    ]
+      {
+        id: "solicitar-servico",
+        number: "01",
+        title: "Solicitar Serviço",
+        disabled: true,
+      },
+    ],
   },
 
   {
@@ -90,42 +117,48 @@ export const services: Service[] = [
     disabled: true,
     title: "Validação e Certificação de Conformidade de Rótulos e Embalagens",
     subItems: [
-      { id: "solicitar-servico", number: "01", title: "Solicitar Serviço" }
-    ]
+      { id: "solicitar-servico", number: "01", title: "Solicitar Serviço" },
+    ],
   },
   {
     id: "premio-qualidade",
     number: "07",
     title: "Prémio Nacional da Qualidade",
     subItems: [
-      { id: "solicitar-servico", number: "01", title: "Solicitar Serviço", disabled: true }
-    ]
+      {
+        id: "solicitar-servico",
+        number: "01",
+        title: "Solicitar Serviço",
+        disabled: true,
+      },
+    ],
   },
-    {
+  {
     id: "eventos",
     number: "08",
-    disabled: true,
     title: "Eventos",
     subItems: [
-      { id: "solicitar-servico", number: "01", title: "Solicitar Serviço" }
-    ]
-  },
       {
+        id: "solicitar-servico",
+        number: "01",
+        title: "Solicitar Serviço",
+        disabled: true,
+      },
+    ],
+  },
+  {
     id: "forum",
     number: "09",
-    disabled: true,
     title: "FIQ-CPLP / Fórum da I.E da Qualidade da CPLP",
     subItems: [
-      { id: "solicitar-servico", number: "01", title: "Solicitar Serviço" }
-    ]
-  }
-
-
-
-
-
-
-
+      {
+        id: "solicitar-servico",
+        number: "01",
+        title: "Solicitar Serviço",
+        disabled: true,
+      },
+    ],
+  },
 
   // {
   //   id: "certificacao",
@@ -154,10 +187,6 @@ export const services: Service[] = [
   //     { id: "solicitar-servico", number: "01", title: "Ver Requisitos" }
   //   ]
   // },
-
-
-
-
 
   // {
   //   id: "regulamentos",

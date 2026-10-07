@@ -36,6 +36,10 @@ const files = ref({
 
 const hasAnyDocument = computed(() => true)
 
+const MAX_FILE_SIZE = 2 * 1024 * 1024
+const FILE_TOO_LARGE_MESSAGE = "O ficheiro não pode exceder 2 MB"
+const PHONE_PATTERN = /^\d{9}$/
+
 const errors = ref({})
 const formSubmitted = ref(false)
 const submitError = ref("")
@@ -72,10 +76,26 @@ const formatPrice = (price) => {
   return (price ?? 0).toLocaleString("pt-PT")
 }
 
+const sanitizePhone = (value) => String(value ?? "").replace(/\D/g, "").slice(0, 9)
+
+const onTelefoneInput = (event) => {
+  formData.value.telefone = sanitizePhone(event.target.value)
+  if (errors.value.telefone) {
+    errors.value.telefone = false
+  }
+}
+
 const handleFileChange = (event, key) => {
   const target = event.target
   if (target.files && target.files.length > 0) {
-    files.value[key] = target.files[0]
+    const file = target.files[0]
+    if (file.size > MAX_FILE_SIZE) {
+      files.value[key] = null
+      target.value = ""
+      errors.value[key] = FILE_TOO_LARGE_MESSAGE
+      return
+    }
+    files.value[key] = file
     if (errors.value[key]) {
       errors.value[key] = false
     }
@@ -102,14 +122,19 @@ const validateForm = () => {
   ) {
     newErrors.email = true
   }
-  if (!textValue(formData.value.telefone)) newErrors.telefone = true
+  if (!PHONE_PATTERN.test(textValue(formData.value.telefone))) newErrors.telefone = true
   if (!textValue(formData.value.apresentacao)) newErrors.apresentacao = true
 
-  if (!files.value.oficio) newErrors.oficio = true
-  if (!files.value.nifDoc) newErrors.nifDoc = true
-  if (!files.value.alvara) newErrors.alvara = true
-  if (props.service?.requiresFichaTecnica && !files.value.fichaTecnica) {
-    newErrors.fichaTecnica = true
+  const requiredFileMessage = (key, message) => {
+    if (files.value[key]) return
+    newErrors[key] =
+      errors.value[key] === FILE_TOO_LARGE_MESSAGE ? FILE_TOO_LARGE_MESSAGE : message
+  }
+  requiredFileMessage("oficio", "Por favor, anexe a carta (PDF)")
+  requiredFileMessage("nifDoc", "Por favor, anexe o documento do NIF")
+  requiredFileMessage("alvara", "Por favor, anexe o Alvará Comercial")
+  if (props.service?.requiresFichaTecnica) {
+    requiredFileMessage("fichaTecnica", "Por favor, anexe a Ficha Técnica da Balança")
   }
 
   errors.value = newErrors
@@ -315,13 +340,17 @@ const handleClose = () => {
               <label for="m-tel">Número de Telefone <span class="req">*</span></label>
               <input
                 id="m-tel"
-                v-model="formData.telefone"
+                :value="formData.telefone"
                 type="tel"
                 name="telefone"
-                placeholder="+244 9XX XXX XXX"
+                placeholder="999999999"
+                maxlength="9"
+                inputmode="numeric"
+                autocomplete="tel"
                 :class="{ error: errors.telefone }"
+                @input="onTelefoneInput"
               />
-              <span v-if="errors.telefone" class="error-text">Por favor, informe o número de telefone</span>
+              <span v-if="errors.telefone" class="error-text">O número deve ter 9 dígitos, no formato 999999999</span>
             </div>
             <div class="field">
               <label for="m-apresentacao"
@@ -340,7 +369,7 @@ const handleClose = () => {
 
             <h4 v-if="hasAnyDocument" class="section-title">Documentos obrigatórios</h4>
             <div class="field">
-              <label for="m-oficio">Carta ao Director-Geral <span class="req">*</span></label>
+              <label for="m-oficio">Carta <span class="req">*</span></label>
               <div class="file-input-wrapper" :class="{ 'has-error': errors.oficio }">
                 <input
                   id="m-oficio"
@@ -353,7 +382,8 @@ const handleClose = () => {
                   files.oficio ? files.oficio.name : "Selecionar PDF"
                 }}</span>
               </div>
-              <span v-if="errors.oficio" class="error-message">Por favor, anexe a carta ao Director-Geral (PDF)</span>
+              <span class="file-hint">Máximo 2 MB</span>
+              <span v-if="errors.oficio" class="error-message">{{ errors.oficio }}</span>
             </div>
             <div class="field">
               <label for="m-nifDoc">NIF (documento) <span class="req">*</span></label>
@@ -369,7 +399,8 @@ const handleClose = () => {
                   files.nifDoc ? files.nifDoc.name : "Selecionar ficheiro"
                 }}</span>
               </div>
-              <span v-if="errors.nifDoc" class="error-message">Por favor, anexe o documento do NIF</span>
+              <span class="file-hint">Máximo 2 MB</span>
+              <span v-if="errors.nifDoc" class="error-message">{{ errors.nifDoc }}</span>
             </div>
             <div class="field">
               <label for="m-alvara">Alvará Comercial <span class="req">*</span></label>
@@ -385,7 +416,8 @@ const handleClose = () => {
                   files.alvara ? files.alvara.name : "Selecionar ficheiro"
                 }}</span>
               </div>
-              <span v-if="errors.alvara" class="error-message">Por favor, anexe o Alvará Comercial</span>
+              <span class="file-hint">Máximo 2 MB</span>
+              <span v-if="errors.alvara" class="error-message">{{ errors.alvara }}</span>
             </div>
             <div v-if="service?.requiresFichaTecnica" class="field">
               <label for="m-ficha">Ficha Técnica da Balança <span class="req">*</span></label>
@@ -401,9 +433,8 @@ const handleClose = () => {
                   files.fichaTecnica ? files.fichaTecnica.name : "Selecionar ficheiro"
                 }}</span>
               </div>
-              <span v-if="errors.fichaTecnica" class="error-message"
-                >Por favor, anexe a Ficha Técnica da Balança</span
-              >
+              <span class="file-hint">Máximo 2 MB</span>
+              <span v-if="errors.fichaTecnica" class="error-message">{{ errors.fichaTecnica }}</span>
             </div>
 
             <p v-if="submitError" class="error-message">{{ submitError }}</p>
@@ -431,9 +462,9 @@ const handleClose = () => {
               <path d="M20 6 9 17l-5-5"></path>
             </svg>
           </div>
-          <h3>Pedido enviado ao Diretor-Geral</h3>
+          <h3>Pedido enviado</h3>
           <p>
-            O pedido de {{ service?.title }} foi registado e segue para aprovação do Diretor-Geral.
+            O pedido de {{ service?.title }} foi registado e segue para aprovação.
             Após a aprovação, receberá por e-mail a referência RUPE para pagamento da taxa de
             {{ formatPrice(service?.fee) }} AOA.
           </p>
@@ -628,6 +659,13 @@ const handleClose = () => {
   font-size: 0.875rem;
   color: #dc2626;
   font-weight: 500;
+}
+
+.file-hint {
+  display: block;
+  margin-top: 0.35rem;
+  font-size: 0.8125rem;
+  color: #5b7c99;
 }
 
 .file-input-wrapper {
