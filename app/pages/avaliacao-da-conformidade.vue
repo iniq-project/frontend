@@ -13,14 +13,10 @@ useHead({
 })
 
 const { query } = useSquidex()
-// The Squidex app has no dedicated "Homeevaluation"/"Requirement" schemas, so we
-// reuse the generic section-leader and requirement singletons until they exist.
-const data = await query(avaliacaoConformidade, {
-  key: "avaliacaoConformidadeLeader",
-})
-const requisitosData = await query(requisitosQuery, {
-  key: "avaliacaoConformidadeRequisitos",
-})
+const [data, requisitosData] = await Promise.all([
+  query(avaliacaoConformidade, { key: "queryHomeevaluationContents" }),
+  query(requisitosQuery, { key: "queryRequirementContents" }),
+])
 
 const evaluation = computed(
   () => data.value?.data?.queryHomeresponsibleContents?.[0]?.data?.leader,
