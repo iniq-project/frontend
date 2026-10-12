@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { inject, watch, ref, computed } from "vue"
-import gql from "@/gql/premio-qualidade/index.gql"
+import gql from "@/gql/formacao/index.gql"
 
 definePageMeta({
   layout: "default",
@@ -11,10 +11,10 @@ useHead({
 })
 
 const { query } = useSquidex()
-const data = await query(gql, { key: "premio" })
+const data = await query(gql, { key: "formacao" })
 
 const leader = computed(
-  () => data.value?.data?.queryHomepremioqualidadeContents?.[0]?.data?.leader,
+  () => data.value?.data?.queryHomeformacaoContents?.[0]?.data?.leader,
 )
 
 const activeSubItemId = inject("activeSubItemId")
