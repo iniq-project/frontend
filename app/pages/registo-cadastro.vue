@@ -38,7 +38,7 @@ const [
 ])
 
 const leader = computed(
-  () => data.value?.data.queryHomeregisterContents?.[0]?.data?.leader,
+  () => data.value?.data?.queryHomeregisterContents?.[0]?.data?.leader,
 )
 
 const requisitosContent = computed(() => {

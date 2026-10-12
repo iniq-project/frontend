@@ -9,8 +9,8 @@ const [data, partnerData] = await Promise.all([
   query(parceiros, { key: "partner" }),
 ])
 
-const aboutInfo = computed(() => data.value?.data.queryAboutContents?.[0]?.data)
-const partnerInfo = computed(() => partnerData.value?.data.queryPartnerContents?.[0]?.data)
+const aboutInfo = computed(() => data.value?.data?.queryAboutContents?.[0]?.data)
+const partnerInfo = computed(() => partnerData.value?.data?.queryPartnerContents?.[0]?.data)
 
 const route = useRoute()
 const activeSubItemId = ref(null)

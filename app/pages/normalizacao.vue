@@ -34,7 +34,7 @@ const [
 ])
 
 const leader = computed(
-  () => data.value?.data.queryHomenormalizationContents?.[0]?.data?.leader,
+  () => data.value?.data?.queryHomenormalizationContents?.[0]?.data?.leader,
 )
 
 const salesrulesIntro = computed(

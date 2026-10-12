@@ -32,7 +32,7 @@ const [
 ])
 
 const leader = computed(
-  () => data.value?.data.queryHomemetrologyContents?.[0]?.data?.leader,
+  () => data.value?.data?.queryHomemetrologyContents?.[0]?.data?.leader,
 )
 
 const servicosIntro = computed(
