@@ -21,25 +21,13 @@ export const useSquidex = () => {
       ? graphqlQuery
       : print(graphqlQuery)
 
-    const { data } = await useAsyncData<T>(key, async () => {
-      const response = await $fetch<any>('/api/squidex', {
+    const { data } = await useAsyncData<T>(key, () =>
+      $fetch('/api/squidex', {
         method: 'POST',
         body: { instance, query: queryString, variables },
       })
-
-      // Squidex answers GraphQL schema errors with HTTP 200 + { errors: [...] }
-      // and no `data`. Surface them instead of letting `undefined` propagate
-      // into the pages (which would crash SSR on the first field access).
-      if (response && Array.isArray(response.errors) && response.errors.length) {
-        console.warn(
-          `[squidex] GraphQL errors for key "${key || 'anonymous'}":`,
-          response.errors.map((e: any) => e.message).join(' | ')
-        )
-      }
-
-      return response
-    })
-    return data
+    )
+    return computed(() => (data.value ?? null) as T | null)
   }
 
   return { query }
