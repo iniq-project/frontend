@@ -13,7 +13,7 @@ const { query } = useSquidex()
 const data = await query(home, { key: "home" })
 
 const leader = computed(
-  () => data.value?.data.queryHomeresponsibleContents?.[0]?.data?.leader,
+  () => data.value?.data?.queryHomeresponsibleContents?.[0]?.data?.leader,
 )
 </script>
 

@@ -13,26 +13,33 @@ useHead({
 })
 
 const { query } = useSquidex()
-const [data, requisitosData] = await Promise.all([
-  query(avaliacaoConformidade, { key: "queryHomeevaluationContents" }),
-  query(requisitosQuery, { key: "queryRequirementContents" }),
-])
-
+// The Squidex app has no dedicated "Homeevaluation"/"Requirement" schemas, so we
+// reuse the generic section-leader and requirement singletons until they exist.
+const data = await query(avaliacaoConformidade, {
+  key: "avaliacaoConformidadeLeader",
+})
+const requisitosData = await query(requisitosQuery, {
+  key: "avaliacaoConformidadeRequisitos",
+})
 
 const evaluation = computed(
-  () => data.value?.data.queryHomeevaluationContents?.[0]?.data?.leader,
+  () => data.value?.data?.queryHomeresponsibleContents?.[0]?.data?.leader,
 )
 const requisitosContent = computed(() => {
-  const result = requisitosData.value?.data?.queryRequirementContents?.[0]?.data?.rules
+  const result =
+    requisitosData.value?.data?.queryRequirementregisterContents?.[0]?.data
+      ?.requirement
   return result
 })
 const requisitosTitle = computed(() => requisitosContent.value?.title)
-const requisitosDescription = computed(() => requisitosContent.value?.description)
+const requisitosDescription = computed(
+  () => requisitosContent.value?.description,
+)
 const requisitosList = computed(() => {
   const rules = requisitosContent.value?.rules || []
   return rules.map((rule: { title?: string }, index: number) => ({
     num: index + 1,
-    text: rule?.title
+    text: rule?.title,
   }))
 })
 const downloadInfo = computed(() => {
@@ -42,7 +49,7 @@ const downloadInfo = computed(() => {
     title: model.title,
     description: model.description,
     link: model.url?.[0]?.url,
-    buttonText: "Baixar"
+    buttonText: "Baixar",
   }
 })
 
@@ -69,7 +76,7 @@ if (activeSubItemId) {
 <template>
   <div class="combined-card">
     <template v-if="!isSubItemSelected">
-     <CustomHero :data="evaluation" />
+      <CustomHero :data="evaluation" />
     </template>
 
     <template v-if="isSubItemSelected">
