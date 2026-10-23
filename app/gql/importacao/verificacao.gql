@@ -1,0 +1,10 @@
+query fetch {
+  queryImportacaoverificacaoContents {
+    data: flatData {
+      eyebrow
+      title
+      description
+      buttonText
+    }
+  }
+}
