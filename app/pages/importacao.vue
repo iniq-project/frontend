@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import { inject, watch, ref, computed } from "vue"
 import gql from "@/gql/importacao/index.gql"
+import validacaoQuery from "@/gql/importacao/validacao.gql"
+import verificacaoQuery from "@/gql/importacao/verificacao.gql"
+import certificacaoQuery from "@/gql/importacao/certificacao.gql"
 
 definePageMeta({
   layout: "default",
@@ -11,20 +14,42 @@ useHead({
 })
 
 const { query } = useSquidex()
-const data = await query(gql, { key: "importacao" })
+const [data, validacaoData, verificacaoData, certificacaoData] = await Promise.all([
+  query(gql, { key: "importacao" }),
+  query(validacaoQuery, { key: "importacaovalidacao" }),
+  query(verificacaoQuery, { key: "importacaoverificacao" }),
+  query(certificacaoQuery, { key: "importacaocertificacao" }),
+])
 
 const leader = computed(
   () => data.value?.data?.queryHomeimportacaoContents?.[0]?.data?.leader,
 )
 
+const validacao = computed(
+  () => validacaoData.value?.data?.queryImportacaovalidacaoContents?.[0]?.data,
+)
+
+const verificacao = computed(
+  () => verificacaoData.value?.data?.queryImportacaoverificacaoContents?.[0]?.data,
+)
+
+const certificacao = computed(
+  () => certificacaoData.value?.data?.queryImportacaocertificacaoContents?.[0]?.data,
+)
+
+const candidaturaAberta = ref(false)
+
 const activeSubItemId = inject("activeSubItemId")
+const activeTab = ref<string | null>(null)
 const isSubItemSelected = ref(false)
 
 if (activeSubItemId) {
   watch(
     activeSubItemId,
-    (newId: unknown) => {
+    (newId) => {
       isSubItemSelected.value = !!newId
+      activeTab.value = newId as string | null
+      candidaturaAberta.value = false
     },
     { immediate: true },
   )
@@ -36,5 +61,44 @@ if (activeSubItemId) {
     <template v-if="!isSubItemSelected">
       <CustomHero :data="leader" />
     </template>
+
+    <CustomImportacaoValidacao
+      v-if="activeTab === 'validacao'"
+      :eyebrow="validacao?.eyebrow"
+      :title="validacao?.title"
+      :description="validacao?.description"
+      :list-title="validacao?.listTitle"
+      :items="validacao?.items || []"
+    />
+
+    <CustomImportacaoVerificacao
+      v-if="activeTab === 'verificacao'"
+      :eyebrow="verificacao?.eyebrow"
+      :title="verificacao?.title"
+      :description="verificacao?.description"
+      :button-text="verificacao?.buttonText"
+      @candidatar="candidaturaAberta = true"
+    />
+
+    <CustomImportacaoCertificacao
+      v-if="activeTab === 'certificacao'"
+      :eyebrow="certificacao?.eyebrow"
+      :title="certificacao?.title"
+      :description="certificacao?.description"
+      :steps="certificacao?.steps || []"
+    />
+
+    <CustomImportacaoCandidaturaModal
+      :open="candidaturaAberta"
+      @close="candidaturaAberta = false"
+    />
   </div>
 </template>
+
+<style scoped>
+.combined-card {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(10, 58, 99, 0.08);
+}
+</style>

@@ -90,11 +90,21 @@ export const services: Service[] = [
     title: "Validação, Verificação e Certificação de Produtos e Serviços",
     subItems: [
       {
-        id: "solicitar-servico",
+        id: "validacao",
         number: "01",
-        title: "Solicitar Serviço",
-        disabled: true,
+        title: "Validação",
       },
+      {
+        id: "verificacao",
+        number: "02",
+        title: "Verificação",
+      },
+      {
+        id: "certificacao",
+        number: "03",
+        title: "Certificação",
+      },
+
     ],
   },
   {
