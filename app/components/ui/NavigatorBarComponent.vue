@@ -3,6 +3,7 @@ import { ref, computed, watch, onMounted } from "vue"
 import { useRoute, useRouter } from "vue-router"
 import { services, type Service, type SubItem } from "~/data/services"
 import areaReservadaQuery from "@/gql/auxiliares/areaReservada.gql"
+import { readImportacaoProcesso } from "@/utils/importacao-processo"
 
 const route = useRoute()
 const router = useRouter()
@@ -57,6 +58,13 @@ const selectSubItem = (service: Service, subItem: SubItem) => {
   activeSubItemId.value = subItem.id
   emit("select-subitem", service.id, subItem.id)
   emit("close")
+
+  if (service.id === "importacao") {
+    router.push({
+      path: "/importacao",
+      query: { processo: subItem.id },
+    })
+  }
 }
 
 const goHome = () => {
@@ -88,13 +96,25 @@ const pathToId: Record<string, string> = {
   "/forum": "forum",
 }
 
+function syncImportacaoProcesso() {
+  const processo = readImportacaoProcesso(route.query.processo)
+  activeSubItemId.value = processo
+  if (processo) emit("select-subitem", "importacao", processo)
+}
+
 onMounted(() => {
   const serviceId = pathToId[route.path]
-  if (serviceId) {
-    activeServiceId.value = serviceId
-    showSubItems.value = true
-    activeSubItemId.value = null
+  if (!serviceId) return
+
+  activeServiceId.value = serviceId
+  showSubItems.value = true
+
+  if (serviceId === "importacao") {
+    syncImportacaoProcesso()
+    return
   }
+
+  activeSubItemId.value = null
 })
 
 watch(
@@ -105,11 +125,29 @@ watch(
       activeSubItemId.value = null
       showSubItems.value = false
       emit("select-service", null)
-    } else if (pathToId[newPath]) {
-      activeServiceId.value = pathToId[newPath] ?? null
-      showSubItems.value = true
-      activeSubItemId.value = null
+      return
     }
+
+    const serviceId = pathToId[newPath]
+    if (!serviceId) return
+
+    activeServiceId.value = serviceId
+    showSubItems.value = true
+
+    if (newPath === "/importacao") {
+      syncImportacaoProcesso()
+      return
+    }
+
+    activeSubItemId.value = null
+  },
+)
+
+watch(
+  () => route.query.processo,
+  () => {
+    if (route.path !== "/importacao") return
+    syncImportacaoProcesso()
   },
 )
 </script>

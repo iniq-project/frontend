@@ -2,6 +2,7 @@
 import { provide, ref, watch, computed } from "vue"
 import quemSomos from "@/gql/quem-somos.gql"
 import parceiros from "@/gql/parceiros.gql"
+import { readImportacaoProcesso } from "@/utils/importacao-processo"
  
 const { query } = useSquidex()
 const [data, partnerData] = await Promise.all([
@@ -33,12 +34,27 @@ const handleSelectSubItem = (serviceId, subItemId) => {
 }
 
 watch(
-  () => route.path,
-  (newPath) => {
-    if (newPath === "/") {
+  () => [route.path, route.query.processo],
+  () => {
+    if (route.path === "/") {
+      activeSubItemId.value = null
+      return
+    }
+
+    if (route.path === "/importacao") {
+      activeSubItemId.value = readImportacaoProcesso(route.query.processo)
+      return
+    }
+
+    if (
+      activeSubItemId.value === "validacao"
+      || activeSubItemId.value === "verificacao"
+      || activeSubItemId.value === "certificacao"
+    ) {
       activeSubItemId.value = null
     }
-  }
+  },
+  { immediate: true },
 )
 
 
