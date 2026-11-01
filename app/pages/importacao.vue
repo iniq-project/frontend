@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { inject, watch, ref, computed } from "vue"
+import { inject, watch, ref, computed, type Ref } from "vue"
 import gql from "@/gql/importacao/index.gql"
 import validacaoQuery from "@/gql/importacao/validacao.gql"
 import verificacaoQuery from "@/gql/importacao/verificacao.gql"
 import certificacaoQuery from "@/gql/importacao/certificacao.gql"
+import { readImportacaoProcesso } from "@/utils/importacao-processo"
 
 definePageMeta({
   layout: "default",
@@ -39,21 +40,21 @@ const certificacao = computed(
 
 const candidaturaAberta = ref(false)
 
-const activeSubItemId = inject("activeSubItemId")
+const route = useRoute()
+const activeSubItemId = inject<Ref<string | null>>("activeSubItemId")
 const activeTab = ref<string | null>(null)
 const isSubItemSelected = ref(false)
 
-if (activeSubItemId) {
-  watch(
-    activeSubItemId,
-    (newId) => {
-      isSubItemSelected.value = !!newId
-      activeTab.value = newId as string | null
-      candidaturaAberta.value = false
-    },
-    { immediate: true },
-  )
-}
+watch(
+  [() => activeSubItemId?.value ?? null, () => route.query.processo],
+  ([injected, query]) => {
+    const next = readImportacaoProcesso(injected) || readImportacaoProcesso(query)
+    isSubItemSelected.value = !!next
+    activeTab.value = next
+    candidaturaAberta.value = false
+  },
+  { immediate: true },
+)
 </script>
 
 <template>
