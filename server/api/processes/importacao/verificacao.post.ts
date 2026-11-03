@@ -1,7 +1,9 @@
 import { backendFetch } from '../../../utils/backend'
 
 export default defineEventHandler(async (event) => {
-  const body = await readBody(event)
+  // Reencaminha o multipart original (com o boundary do browser) sem reconstruir o FormData
+  const body = await readRawBody(event, false)
+  const contentType = getRequestHeader(event, 'content-type')
 
   return backendFetch<{
     process?: { id: string; referenceNumber: string }
@@ -9,6 +11,7 @@ export default defineEventHandler(async (event) => {
   }>(event, '/process/importacao/verificacao', {
     method: 'POST',
     body,
+    headers: contentType ? { 'Content-Type': contentType } : {},
     auth: false,
     timeout: 180_000,
   })

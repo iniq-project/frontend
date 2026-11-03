@@ -43,15 +43,16 @@ export async function backendFetch<T>(
   path: string,
   options: {
     method?: 'GET' | 'POST' | 'PATCH' | 'DELETE'
-    body?: BodyInit | Record<string, unknown> | null
+    body?: BodyInit | Uint8Array | Record<string, unknown> | null
     auth?: boolean
     timeout?: number
+    headers?: Record<string, string>
   } = {},
 ): Promise<T> {
   const config = useRuntimeConfig(event)
   const { method = 'GET', body, auth = true, timeout } = options
 
-  const headers: Record<string, string> = {}
+  const headers: Record<string, string> = { ...options.headers }
 
   if (auth) {
     const token = getToken(event)
@@ -61,7 +62,8 @@ export async function backendFetch<T>(
     headers.Authorization = `Bearer ${token}`
   }
 
-  const isJsonBody = body !== undefined && body !== null && !(body instanceof FormData)
+  // instanceof FormData falha em alguns runtimes (ex.: Netlify), por isso só objetos simples são JSON
+  const isJsonBody = Object.prototype.toString.call(body) === '[object Object]'
 
   if (isJsonBody) {
     headers['Content-Type'] = 'application/json'
@@ -72,7 +74,7 @@ export async function backendFetch<T>(
       method,
       headers,
       body: body as BodyInit,
-      timeout: timeout ?? (body instanceof FormData ? 120_000 : 30_000),
+      timeout: timeout ?? (body && !isJsonBody ? 120_000 : 30_000),
     }) as T
   } catch (error: unknown) {
     const fetchError = error as { statusCode?: number; status?: number }
