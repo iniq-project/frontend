@@ -6,9 +6,7 @@ definePageMeta({
   layout: "default",
 })
 
-useHead({
-  title: "INIQ » Formação e Certificação de Especialistas para Qualidade",
-})
+await useServiceTitle("formacao")
 
 const { query } = useSquidex()
 const data = await query(gql, { key: "formacao" })

@@ -14,9 +14,7 @@ definePageMeta({
   layout: "default",
 })
 
-useHead({
-  title: "INIQ » Acreditação, Registro e Cadastro, Regulamentos Técnicos",
-})
+await useServiceTitle("registo-cadastro")
 
 const { query } = useSquidex()
 const [

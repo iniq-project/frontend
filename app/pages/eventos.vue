@@ -6,9 +6,7 @@ definePageMeta({
   layout: "default",
 })
 
-useHead({
-  title: "INIQ » Eventos",
-})
+await useServiceTitle("eventos")
 
 const { query } = useSquidex()
 const data = await query(gql, { key: "eventos" })
