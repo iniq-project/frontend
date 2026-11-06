@@ -92,17 +92,17 @@ export const services: Service[] = [
       {
         id: "validacao",
         number: "01",
-        title: "Validação",
+        title: "Verificação da Conformidade e importação de Produtos",
       },
       {
         id: "verificacao",
         number: "02",
-        title: "Verificação",
+        title: "Verificação da Conformidade e Certificação de Produtos",
       },
       {
         id: "certificacao",
         number: "03",
-        title: "Certificação",
+        title: "Verificação da Conformidade e Certificações de Serviços",
       },
 
     ],

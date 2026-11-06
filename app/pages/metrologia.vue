@@ -12,9 +12,7 @@ definePageMeta({
   layout: "default",
 })
 
-useHead({
-  title: "INIQ » Metrologia",
-})
+await useServiceTitle("metrologia")
 
 const { query } = useSquidex()
 const [

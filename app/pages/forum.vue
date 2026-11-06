@@ -6,9 +6,7 @@ definePageMeta({
   layout: "default",
 })
 
-useHead({
-  title: "INIQ » FIQ-CPLP / Fórum da I.E da Qualidade da CPLP",
-})
+await useServiceTitle("forum")
 
 const { query } = useSquidex()
 const data = await query(gql, { key: "forum" })

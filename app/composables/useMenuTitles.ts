@@ -21,7 +21,7 @@ export async function useMenuTitles() {
     const value = field
       ? menuData.value?.data?.queryMenuserviceContents?.[0]?.data?.[field]
       : undefined
-    return value || fallback
+    return typeof value === "string" && value.trim() ? value.trim() : fallback
   }
 
   return { getMenuTitle }

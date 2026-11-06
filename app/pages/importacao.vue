@@ -10,9 +10,7 @@ definePageMeta({
   layout: "default",
 })
 
-useHead({
-  title: "INIQ » Validação, Verificação e Certificação de Produtos e Serviços",
-})
+await useServiceTitle("importacao")
 
 const { query } = useSquidex()
 const [data, validacaoData, verificacaoData, certificacaoData] = await Promise.all([
@@ -63,13 +61,13 @@ watch(
       <CustomHero :data="leader" />
     </template>
 
-    <CustomImportacaoValidacao
+    <CustomImportacaoVerificacao
       v-if="activeTab === 'validacao'"
       :eyebrow="validacao?.eyebrow"
       :title="validacao?.title"
       :description="validacao?.description"
-      :list-title="validacao?.listTitle"
-      :items="validacao?.items || []"
+      :button-text="validacao?.buttonText"
+      @candidatar="candidaturaAberta = true"
     />
 
     <CustomImportacaoVerificacao
@@ -81,12 +79,11 @@ watch(
       @candidatar="candidaturaAberta = true"
     />
 
-    <CustomImportacaoCertificacao
+    <CustomImportacaoServicos
       v-if="activeTab === 'certificacao'"
       :eyebrow="certificacao?.eyebrow"
       :title="certificacao?.title"
       :description="certificacao?.description"
-      :steps="certificacao?.steps || []"
     />
 
     <CustomImportacaoCandidaturaModal
