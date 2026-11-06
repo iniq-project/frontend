@@ -10,9 +10,7 @@ import consultasPublicasQuery from "@/gql/normalizacao/consultasPublicas.gql"
 import { formatDate } from "@/utils/formatDate"
 import { stripHtml } from "@/utils/stripHtml"
 
-useHead({
-  title: "INIQ » Normalização",
-})
+await useServiceTitle("normalizacao")
 
 const { query } = useSquidex()
 const [

@@ -6,9 +6,7 @@ definePageMeta({
   layout: 'default',
 })
 
-useHead({
-  title: 'INIQ » Prémio Nacional da Qualidade',
-})
+const pageTitle = await useServiceTitle("premio-qualidade")
 
 const { query } = useSquidex()
 const data = await query(gql, { key: 'premio' })
@@ -171,7 +169,7 @@ const formatDate = (dateStr: string) => {
         <div class="container">
           <div class="panel-head">
             <span class="eyebrow">Informações Gerais</span>
-            <h2>Prémio Nacional da Qualidade</h2>
+            <h2>{{ pageTitle }}</h2>
             <p>Reconhecimento da excelência e das boas práticas de gestão da qualidade nas organizações nacionais, segundo modelos de excelência reconhecidos.</p>
           </div>
 
