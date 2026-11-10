@@ -490,8 +490,7 @@ const handleClose = () => {
           <div v-show="currentStep === 0" class="step">
             <h4 class="section-title">{{ steps[0]!.title }}</h4>
             <p class="form-lead">
-              Os dados preenchidos serão usados na emissão do certificado final.
-              Reveja com atenção antes de submeter.
+              Preencha os Dados com bastante atenção. Reveja antes de Submeter.
             </p>
             <div class="field">
               <label for="v-entidade"
